@@ -1,0 +1,14 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "include": [
+    "renderer/env.d.ts",
+    "renderer/**/*",
+    "renderer/**/*.tsx",
+    "preload/*.d.ts"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "Bundler"
+  }
+}
