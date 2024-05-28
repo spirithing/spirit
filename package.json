@@ -18,16 +18,21 @@
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
-    "@electron-toolkit/utils": "^3.0.0"
+    "@electron-toolkit/utils": "^3.0.0",
+    "@shikitor/react": "^0.1.3",
+    "markdown-it": "^14.1.0",
+    "openai": "^4.47.1"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^1.0.1",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@shikijs/markdown-it": "^1.6.0",
     "@types/node": "^18.19.33",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
+    "dprint": "^0.46.1",
     "electron": "^28.2.0",
     "electron-builder": "^24.9.1",
     "electron-vite": "^2.2.0",
@@ -36,6 +41,7 @@
     "prettier": "^3.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sass": "^1.77.2",
     "typescript": "^5.4.5",
     "vite": "^5.0.12",
     "vitest": "^1.6.0"
