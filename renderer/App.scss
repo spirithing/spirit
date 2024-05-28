@@ -1,0 +1,16 @@
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  gap: 10px;
+}
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  flex-grow: 1;
+  height: 0;
+
+  overflow-y: auto;
+}

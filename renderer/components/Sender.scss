@@ -1,0 +1,18 @@
+.spirit-sender {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: var(--bg);
+  &__icon {
+    border: 1px solid var(--fg);
+    border-radius: 4px;
+  }
+}
+.spirit-sender .shikitor {
+  flex-grow: 1;
+  .shikitor-gutter-line-highlighted:before {
+    display: none;
+  }
+}
