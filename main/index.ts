@@ -1,9 +1,9 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, globalShortcut, shell } from 'electron'
 import { join } from 'path'
 import icon from '../resources/icon.png?asset'
 
-function createWindow(): void {
+function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
@@ -25,14 +25,6 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
-  globalShortcut.register('command+space', () => {
-    if (mainWindow.isVisible()) {
-      app.hide()
-    } else {
-      mainWindow.setVisibleOnAllWorkspaces(true)
-      mainWindow.show()
-    }
-  })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
@@ -46,6 +38,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  return mainWindow
 }
 
 // This method will be called when Electron has finished
@@ -62,10 +55,15 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
-
-  createWindow()
+  const mainWindow = createWindow()
+  globalShortcut.register('command+space', () => {
+    if (mainWindow.isVisible()) {
+      app.hide()
+    } else {
+      mainWindow.setVisibleOnAllWorkspaces(true)
+      mainWindow.show()
+    }
+  })
 
   app.on('activate', function() {
     // On macOS it's common to re-create a window in the app when the
@@ -82,6 +80,3 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
