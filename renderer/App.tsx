@@ -100,7 +100,7 @@ export function App() {
       user: bots.documentHelper,
       ctime: Date.now()
     })
-    const latestMessage = newMessages[newMessages.length - 1]
+    const latestMessage = newMessages[0]
     let streamMessage = ''
     for await (const { choices: [{ delta }] } of completions) {
       streamMessage += delta.content ?? ''
