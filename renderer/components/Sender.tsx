@@ -25,6 +25,7 @@ export function Sender(props: SenderProps) {
       value={text}
       onChange={setText}
       defaultOptions={{
+        language: 'markdown',
         lineNumbers: 'off',
         theme: 'material-theme-darker'
       }}
