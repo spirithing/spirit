@@ -1,6 +1,7 @@
 import './Message.scss'
 
 import React from 'react'
+import { Button } from 'tdesign-react'
 
 type NestedPropsGenerator<Prefix extends string, T> = {
   [K in keyof T as `${Prefix}:${K & string}`]?: T[K]
@@ -30,7 +31,7 @@ export type MessageProps = NestedPropsGenerator<'onClick', OnClicks> & {
 }
 
 export function Message(props: MessageProps) {
-  const { value, onChange, onDelete, textRender } = props
+  const { value, textRender } = props
   const callFunc = <P extends keyof MessageProps & (`onClick:${string}`)>(
     key: P,
     ...args: Parameters<NonNullable<MessageProps[P]>>
@@ -54,8 +55,21 @@ export function Message(props: MessageProps) {
               {textRender?.(value.text) ?? value.text}
             </div>
             <div className='message-actions'>
-              <span className='shikitor-icon'>edit</span>
-              <span className='shikitor-icon'>delete</span>
+              <Button
+                variant='text'
+                shape='square'
+                size='small'
+              >
+                <span className='s-icon'>edit</span>
+              </Button>
+              <Button
+                variant='text'
+                shape='square'
+                size='small'
+                theme='danger'
+              >
+                <span className='s-icon'>delete</span>
+              </Button>
             </div>
             <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
           </>
