@@ -1,16 +1,52 @@
 .spirit-sender {
+  --icon-size: 32px;
+
   display: flex;
   align-items: flex-start;
   gap: 10px;
   padding: 10px;
-  border-radius: 8px;
+
+  font-size: 16px;
+  border-radius: 16px;
   background-color: var(--bg);
+  border: 1px solid var(--fg);
+  &__prefix {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .2s;
+    &:hover {
+      background-color: color-mix(in srgb, var(--fg), var(--bg) 50%);
+    }
+  }
+  @keyframes floating {
+    0% {
+      transform: translateY(2px);
+    }
+    25% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(2px);
+    }
+    75% {
+      transform: translateY(4px);
+    }
+    100% {
+      transform: translateY(2px);
+    }
+  }
   &__icon {
-    border: 1px solid var(--fg);
-    border-radius: 4px;
+    width: var(--icon-size);
+    margin-top: -2px;
+    transform: translateY(2px);
+    animation: floating 1s infinite linear;
   }
 }
 .spirit-sender .shikitor {
+  --line-height: var(--icon-size);
+
   flex-grow: 1;
   .shikitor-gutter-line-highlighted:before {
     display: none;

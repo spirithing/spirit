@@ -11,13 +11,16 @@ export interface SenderProps {
 }
 
 export function Sender(props: SenderProps) {
+  const prefix = 'spirit-sender'
   const {
     onSend
   } = props
   const [text, setText] = useState('')
   const { setColor } = useColor(() => {}, [])
-  return <div className='spirit-sender'>
-    <img src={favicon} width={20} className='spirit-sender__icon' />
+  return <div className={prefix}>
+    <div className={`${prefix}__prefix`}>
+      <img className={`${prefix}__icon`} src={favicon} />
+    </div>
     <Editor
       value={text}
       onChange={setText}
