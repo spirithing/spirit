@@ -7,7 +7,7 @@
   padding: 10px;
 
   font-size: 16px;
-  border-radius: 16px;
+  border-radius: var(--td-radius-medium);
   background-color: var(--bg);
   border: 1px solid var(--fg);
   &__prefix {
