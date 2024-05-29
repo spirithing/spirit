@@ -41,7 +41,8 @@ export function Sender(props: SenderProps) {
       defaultOptions={{
         language: 'markdown',
         lineNumbers: 'off',
-        theme: 'material-theme-darker'
+        theme: 'material-theme-darker',
+        autoSize: { maxRows: 6 }
       }}
       plugins={plugins}
       onColorChange={setColor}
