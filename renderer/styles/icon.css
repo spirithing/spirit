@@ -7,7 +7,7 @@
     'woff2'
   );
 }
-.s-icon {
+.s-icon, .shikitor-icon {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
