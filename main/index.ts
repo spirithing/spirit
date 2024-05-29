@@ -1,7 +1,7 @@
 import './store'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, globalShortcut, shell } from 'electron'
+import { app, BrowserWindow, globalShortcut, screen, shell } from 'electron'
 import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
@@ -9,8 +9,6 @@ import icon from '../resources/icon.png?asset'
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
     resizable: false,
     show: true,
     autoHideMenuBar: true,
@@ -24,6 +22,18 @@ function createWindow() {
       contextIsolation: false
     }
   })
+  function showInMouseHoverDisplay() {
+    const displays = screen.getAllDisplays()
+    const mousePoint = screen.getCursorScreenPoint()
+    const display = displays.find(display => {
+      const { x, y, width, height } = display.bounds
+      return x <= mousePoint.x && mousePoint.x <= x + width && y <= mousePoint.y && mousePoint.y <= y + height
+    })
+    if (!display) return
+    mainWindow.setBounds(display.bounds)
+    mainWindow.show()
+  }
+  mainWindow.setBounds(screen.getPrimaryDisplay().bounds)
 
   mainWindow.on('ready-to-show', () => mainWindow.show())
 
@@ -44,7 +54,7 @@ function createWindow() {
     if (mainWindow.isVisible()) {
       mainWindow.hide()
     } else {
-      mainWindow.show()
+      showInMouseHoverDisplay()
     }
   })
 }
