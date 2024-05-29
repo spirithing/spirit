@@ -6,9 +6,10 @@ import { activeWindow } from 'get-windows'
 import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
-import { setStore } from './store'
+import { lisStore, setStore } from './store'
 
 function createWindow() {
+  const displayStoreUUID = Math.random().toString(36).slice(2)
   async function storeActiveWindowMessage() {
     try {
       setStore('activeWindow', await activeWindow())
@@ -46,9 +47,9 @@ function createWindow() {
     if (!display) return
     mainWindow.setBounds(display.bounds)
     mainWindow.show()
-    setStore('display', true)
+    setStore('display', true, displayStoreUUID)
   }
-  setStore('display', true)
+  setStore('display', true, displayStoreUUID)
   mainWindow.setBounds(screen.getPrimaryDisplay().bounds)
 
   mainWindow.on('ready-to-show', () => mainWindow.show())
@@ -68,12 +69,20 @@ function createWindow() {
   mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   globalShortcut.register('command+space', () => {
     if (mainWindow.isVisible()) {
-      setStore('display', false)
+      setStore('display', false, displayStoreUUID)
       mainWindow.hide()
     } else {
       showInMouseHoverDisplay()
     }
   })
+  lisStore('display', value => {
+    if (value) {
+      showInMouseHoverDisplay()
+    } else {
+      setStore('display', false, displayStoreUUID)
+      mainWindow.hide()
+    }
+  }, displayStoreUUID)
 }
 
 app.on('window-all-closed', () => {

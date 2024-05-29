@@ -42,6 +42,13 @@ export function setStore<
 export function getStore<K extends keyof Store>(key: K) {
   return store.get(key) as Store[K]
 }
+export function lisStore<K extends keyof Store>(key: K, listener: (value: Store[K]) => void, uuid: string) {
+  const storeListeners = storeListenersMap.get(key) ?? new Map()
+  if (!storeListenersMap.has(key)) {
+    storeListenersMap.set(key, storeListeners)
+  }
+  storeListeners.set(uuid, listener)
+}
 ipcMain.handle('getStore', (_, key: string) => {
   return getStore(key as keyof Store)
 })
@@ -61,11 +68,11 @@ ipcMain.on('setStore', (event, uuid: string, key: string, value: unknown) => {
   event.returnValue = true
 })
 ipcMain.on('listenStore', (event, key: string, uuid: string) => {
-  const storeListeners = storeListenersMap.get(key) ?? new Map()
-  if (!storeListenersMap.has(key)) {
-    storeListenersMap.set(key, storeListeners)
-  }
-  storeListeners.set(uuid, (v: unknown) => event.sender.send(`storeChange:${uuid}`, v, key))
+  lisStore(
+    key as keyof Store,
+    (v: unknown) => event.sender.send(`storeChange:${uuid}`, v, key),
+    uuid
+  )
   event.returnValue = true
 })
 ipcMain.on('unlistenStore', (event, key: string, uuid: string) => {

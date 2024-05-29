@@ -9,9 +9,11 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { useState } from 'react'
+import { MessagePlugin } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
 import { useColor } from '../hooks/useColor'
+import { useElectronStore } from '../store'
 
 export interface SenderProps {
   onSend(text: string, dispatch: (text: string) => void): void
@@ -29,6 +31,7 @@ export function Sender(props: SenderProps) {
   const {
     onSend
   } = props
+  const [, setDisplay] = useElectronStore('display')
   const [text, setText] = useState('')
   const { setColor } = useColor(() => {}, [])
   return <div className={prefix}>
@@ -50,6 +53,13 @@ export function Sender(props: SenderProps) {
         shikitor.focus()
       }}
       onKeydown={e => {
+        if (e.key === 'Escape' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+          if (text) {
+            MessagePlugin.warning('Are you sure to clear the text?')
+          } else {
+            setDisplay(false)
+          }
+        }
         if (e.key === 'Enter' && e.metaKey) {
           e.preventDefault()
           onSend(text, setText)
