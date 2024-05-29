@@ -26,7 +26,7 @@ const store = new Map<string, unknown>()
 for (const [key, value] of Object.entries(config)) {
   store.set(key, value)
 }
-function setStore(key: string, value: unknown, uuid?: string) {
+export function setStore(key: string, value: unknown, uuid?: string) {
   store.set(key, value)
   fs.writeFileSync(configPath, JSON.stringify(Object.fromEntries(store.entries())))
   const storeListeners = storeListenersMap.get(key)
@@ -36,7 +36,7 @@ function setStore(key: string, value: unknown, uuid?: string) {
     listener(value)
   })
 }
-function getStore(key: string) {
+export function getStore(key: string) {
   return store.get(key)
 }
 ipcMain.handle('getStore', (_, key: string) => {
