@@ -28,6 +28,7 @@
     "@electron-toolkit/eslint-config-ts": "^1.0.1",
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@shikijs/markdown-it": "^1.6.0",
+    "@types/markdown-it": "^14.1.1",
     "@types/node": "^18.19.33",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
