@@ -1,4 +1,5 @@
 import '@shikitor/react/index.css'
+import 'tdesign-react/es/style/index.css'
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

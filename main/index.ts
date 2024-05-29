@@ -1,6 +1,9 @@
+import './store'
+
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, globalShortcut, shell } from 'electron'
 import { join } from 'path'
+
 import icon from '../resources/icon.png?asset'
 
 function createWindow() {

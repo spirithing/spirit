@@ -5,10 +5,18 @@ import MarkdownIt from 'markdown-it'
 import type { ClientOptions } from 'openai'
 import OpenAI from 'openai'
 import { useRef, useState } from 'react'
+import { Card, Input, Select } from 'tdesign-react'
 
 import type { IMessage, IUser } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
+import { useElectronStore } from './store'
+
+declare module 'spirit' {
+  export interface Store {
+    openaiConfig: ClientOptions
+  }
+}
 
 type MessageItem = IMessage & {
   hidden?: boolean
@@ -48,19 +56,14 @@ export function App() {
     }).then(plugin => mdRef.current?.use(plugin))
   }
 
-  const storageConfig = JSON.parse(
-    localStorage.getItem('openai-config') ?? '{ "baseURL": "https://api.openai.com/v1" }'
-  )
-  const [config, setConfig] = useState(
-    {
-      ...storageConfig,
-      dangerouslyAllowBrowser: true
-    } as ClientOptions
-  )
+  const [config, setConfig] = useElectronStore('openaiConfig')
   const openaiRef = useRef<OpenAI | null>(null)
   function createOpenAI() {
-    if (!config.apiKey || !config.baseURL) return
-    openaiRef.current = new OpenAI(config)
+    if (!config || !config.apiKey || !config.baseURL) return
+    openaiRef.current = new OpenAI({
+      ...config,
+      dangerouslyAllowBrowser: true
+    })
   }
   openaiRef.current === null && createOpenAI()
 
@@ -113,6 +116,30 @@ export function App() {
     <Sender
       onSend={sendMessage}
     />
+    <Card>
+      <div className='config'>
+        <div className='config-item'>
+          <label>API Key</label>
+          <Input
+            value={config ? config.apiKey : ''}
+            onChange={v => setConfig({ ...config, apiKey: v })}
+          />
+        </div>
+        <div className='config-item'>
+          <label>Base URL</label>
+          <Select
+            filterable
+            creatable
+            options={[
+              { label: 'OpenAI', value: 'https://api.openai.com/v1' },
+              { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
+            ]}
+            value={config ? config.baseURL ?? '' : ''}
+            onChange={v => setConfig({ ...config, baseURL: v as string })}
+          />
+        </div>
+      </div>
+    </Card>
     <div className='messages'>
       {messages.map((message, i) => (
         <Message
