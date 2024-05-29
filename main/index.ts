@@ -2,11 +2,24 @@ import './store'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, globalShortcut, screen, shell } from 'electron'
+import { activeWindow } from 'get-windows'
 import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
+import { setStore } from './store'
 
 function createWindow() {
+  async function storeActiveWindowMessage() {
+    try {
+      const win = await activeWindow()
+      setStore('activeWindow', win)
+    } catch (e) {
+      console.error(e)
+      setStore('activeWindow:Error', e)
+    }
+  }
+  // noinspection JSIgnoredPromiseFromCall
+  storeActiveWindowMessage()
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     resizable: false,
@@ -23,6 +36,8 @@ function createWindow() {
     }
   })
   function showInMouseHoverDisplay() {
+    // noinspection JSIgnoredPromiseFromCall
+    storeActiveWindowMessage()
     const displays = screen.getAllDisplays()
     const mousePoint = screen.getCursorScreenPoint()
     const display = displays.find(display => {
@@ -32,7 +47,9 @@ function createWindow() {
     if (!display) return
     mainWindow.setBounds(display.bounds)
     mainWindow.show()
+    setStore('display', true)
   }
+  setStore('display', true)
   mainWindow.setBounds(screen.getPrimaryDisplay().bounds)
 
   mainWindow.on('ready-to-show', () => mainWindow.show())
@@ -52,6 +69,7 @@ function createWindow() {
   mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   globalShortcut.register('command+space', () => {
     if (mainWindow.isVisible()) {
+      setStore('display', false)
       mainWindow.hide()
     } else {
       showInMouseHoverDisplay()

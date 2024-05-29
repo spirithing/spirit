@@ -4,7 +4,8 @@
     "sharing/*.d.ts",
     "electron.vite.config.*",
     "main/**/*",
-    "preload/**/*"
+    "preload/**/*",
+    "renderer/**/*.share.d.ts"
   ],
   "compilerOptions": {
     "composite": true,

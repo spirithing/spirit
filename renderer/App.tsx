@@ -2,21 +2,14 @@ import './App.scss'
 
 import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
-import type { ClientOptions } from 'openai'
 import OpenAI from 'openai'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Card, Input, Select } from 'tdesign-react'
 
 import type { IMessage, IUser } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
 import { useElectronStore } from './store'
-
-declare module 'spirit' {
-  export interface Store {
-    openaiConfig: ClientOptions
-  }
-}
 
 type MessageItem = IMessage & {
   hidden?: boolean
@@ -56,6 +49,13 @@ export function App() {
     }).then(plugin => mdRef.current?.use(plugin))
   }
 
+  const [displaying] = useElectronStore('display')
+  useEffect(() => {
+    document.body.classList.toggle('displaying', !!displaying)
+    return () => {
+      document.body.classList.remove('displaying')
+    }
+  }, [displaying])
   const [config, setConfig] = useElectronStore('openaiConfig')
   const openaiRef = useRef<OpenAI | null>(null)
   function createOpenAI() {
