@@ -57,11 +57,11 @@ app.whenReady().then(() => {
   })
 
   const mainWindow = createWindow()
+  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   globalShortcut.register('command+space', () => {
     if (mainWindow.isVisible()) {
-      app.hide()
+      mainWindow.hide()
     } else {
-      mainWindow.setVisibleOnAllWorkspaces(true)
       mainWindow.show()
     }
   })
