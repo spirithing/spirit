@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
+import type { Store } from 'spirit'
 
 const appPath = app.getPath('userData')
 if (!fs.existsSync(appPath)) {
@@ -26,7 +27,9 @@ const store = new Map<string, unknown>()
 for (const [key, value] of Object.entries(config)) {
   store.set(key, value)
 }
-export function setStore(key: string, value: unknown, uuid?: string) {
+export function setStore<
+  K extends keyof Store,
+>(key: K, value: Store[K], uuid?: string) {
   store.set(key, value)
   fs.writeFileSync(configPath, JSON.stringify(Object.fromEntries(store.entries())))
   const storeListeners = storeListenersMap.get(key)
@@ -36,14 +39,15 @@ export function setStore(key: string, value: unknown, uuid?: string) {
     listener(value)
   })
 }
-export function getStore(key: string) {
-  return store.get(key)
+export function getStore<K extends keyof Store>(key: K) {
+  return store.get(key) as Store[K]
 }
 ipcMain.handle('getStore', (_, key: string) => {
-  return getStore(key)
+  return getStore(key as keyof Store)
 })
 ipcMain.on('setStore', (event, uuid: string, key: string, value: unknown) => {
   const keyExists = store.has(key)
+  // @ts-ignore
   setStore(key, value, uuid)
   if (!keyExists) {
     BrowserWindow.getAllWindows().forEach(window => {

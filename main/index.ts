@@ -11,11 +11,10 @@ import { setStore } from './store'
 function createWindow() {
   async function storeActiveWindowMessage() {
     try {
-      const win = await activeWindow()
-      setStore('activeWindow', win)
+      setStore('activeWindow', await activeWindow())
     } catch (e) {
       console.error(e)
-      setStore('activeWindow:Error', e)
+      setStore('activeWindow:Error', String(e))
     }
   }
   // noinspection JSIgnoredPromiseFromCall
