@@ -26,13 +26,13 @@ const store = new Map<string, unknown>()
 for (const [key, value] of Object.entries(config)) {
   store.set(key, value)
 }
-function setStore(uuid: string, key: string, value: unknown) {
+function setStore(key: string, value: unknown, uuid?: string) {
   store.set(key, value)
   fs.writeFileSync(configPath, JSON.stringify(Object.fromEntries(store.entries())))
   const storeListeners = storeListenersMap.get(key)
   if (!storeListeners || storeListeners.size === 0) return
   storeListeners.forEach((listener, key) => {
-    if (key === uuid) return
+    if (uuid !== undefined && key === uuid) return
     listener(value)
   })
 }
@@ -44,7 +44,7 @@ ipcMain.handle('getStore', (_, key: string) => {
 })
 ipcMain.on('setStore', (event, uuid: string, key: string, value: unknown) => {
   const keyExists = store.has(key)
-  setStore(uuid, key, value)
+  setStore(key, value, uuid)
   if (!keyExists) {
     BrowserWindow.getAllWindows().forEach(window => {
       window.webContents.send('addKey', key)
