@@ -9,7 +9,7 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { useState } from 'react'
-import { MessagePlugin } from 'tdesign-react'
+import { DialogPlugin } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
 import { useColor } from '../hooks/useColor'
@@ -17,6 +17,7 @@ import { useElectronStore } from '../store'
 
 export interface SenderProps {
   onSend(text: string, dispatch: (text: string) => void): void
+  onClear?(): void
 }
 
 const plugins = [
@@ -29,7 +30,8 @@ const plugins = [
 export function Sender(props: SenderProps) {
   const prefix = 'spirit-sender'
   const {
-    onSend
+    onSend,
+    onClear
   } = props
   const [, setDisplay] = useElectronStore('display')
   const [text, setText] = useState('')
@@ -55,10 +57,21 @@ export function Sender(props: SenderProps) {
       onKeydown={e => {
         if (e.key === 'Escape' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
           if (text) {
-            MessagePlugin.warning('Are you sure to clear the text?')
+            const ins = DialogPlugin.confirm({
+              header: 'Clear the input',
+              body: 'Are you sure to clear the input?',
+              onConfirm: () => {
+                setText('')
+                ins.hide()
+              },
+              onClose: () => ins.hide()
+            })
           } else {
             setDisplay(false)
           }
+        }
+        if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+          onClear?.()
         }
         if (e.key === 'Enter' && e.metaKey) {
           e.preventDefault()

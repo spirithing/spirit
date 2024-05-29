@@ -4,7 +4,7 @@ import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
 import { useEffect, useRef, useState } from 'react'
-import { Card, Input, Select } from 'tdesign-react'
+import { Card, DialogPlugin, Input, Select } from 'tdesign-react'
 
 import type { IMessage, IUser } from './components/Message'
 import { Message } from './components/Message'
@@ -23,10 +23,11 @@ type Bot = IUser & {
 }
 const bots = {
   documentHelper: {
-    name: 'Document Helper Bot',
+    name: '器灵',
     avatar: `${import.meta.env.BASE_URL}public/favicon.svg`,
     description:
-      'A bot that helps you document your to code. The shikitor is a editor that supports markdown and code highlighting.'
+      '一个 AI 助手，中文环境下的分类为器灵，英文环境下的分类为 Spirit。通过快捷入口触发，帮助用户解决问题，也可以陪用户聊天。\n'
+      + '器灵的中文意义是「器物的灵魂」，万物皆有灵，那么电脑的灵便是 AI 了。'
   }
 } satisfies Record<string, Bot>
 
@@ -115,6 +116,17 @@ export function App() {
   return <>
     <Sender
       onSend={sendMessage}
+      onClear={() => {
+        const ins = DialogPlugin.confirm({
+          header: 'Clear all messages',
+          body: 'Are you sure to clear all messages?',
+          onConfirm() {
+            setMessages([])
+            ins.hide()
+          },
+          onClose: () => ins.hide()
+        })
+      }}
     />
     <Card>
       <div className='config'>
