@@ -1,6 +1,14 @@
 @keyframes fade-in {
   0% {
     opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes move-in {
+  0% {
+    opacity: 0;
     transform: translateY(50px);
   }
   100% {
@@ -9,19 +17,25 @@
   }
 }
 body {
+  height: 100vh;
   opacity: 0;
-  transform: translateY(50px);
+  box-shadow: inset 0 0 320px 80px var(--bg);
   &.displaying {
     animation: fade-in .5s forwards;
+    #root {
+      animation: move-in .5s forwards;
+    }
   }
 }
-
 #root {
   --td-radius-medium: 16px;
 
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  margin: 0 auto;
+  padding: 10vh 0;
+  height: 80vh;
+  width: 60vw;
   gap: 10px;
 }
 .messages {
