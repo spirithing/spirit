@@ -33,7 +33,8 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  padding: 10vh 0;
+  padding: 10vh 15vw;
+  filter: drop-shadow(0 0 6px var(--bg));
   height: 80vh;
   width: 60vw;
   gap: 10px;
