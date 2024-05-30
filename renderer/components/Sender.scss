@@ -8,6 +8,8 @@
   border-radius: var(--td-radius-medium);
   background-color: var(--bg);
   border: 1px solid var(--fg);
+
+  overflow: hidden;
   &__input {
     min-height: var(--icon-size);
     display: flex;

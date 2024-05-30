@@ -69,11 +69,15 @@ body {
 .spirit-configurer-panel {
   padding: 0;
   max-height: 0;
-  overflow: hidden;
+  background-color: var(--td-bg-color-container);
   transition: .3s;
   &--visible {
-    padding: 0 10px 10px;
+    padding: 10px;
     max-height: 40vh;
+  }
+  .t-tab-panel {
+    padding: 10px;
+    min-height: 50px;
   }
 }
 .messages {

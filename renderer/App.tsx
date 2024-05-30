@@ -4,7 +4,7 @@ import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
 import { useEffect, useRef, useState } from 'react'
-import { DialogPlugin, Input, Select } from 'tdesign-react'
+import { DialogPlugin, Input, Select, Tabs } from 'tdesign-react'
 
 import type { IMessage, IUser } from './components/Message'
 import { Message } from './components/Message'
@@ -76,7 +76,7 @@ export function App() {
       ctime: Date.now()
     },
     {
-      text: '# Hi, I am YiJie. I want to chat with you.\n'.repeat(10),
+      text: '# Hi, I am YiJie. I want to chat with you.\n'.repeat(16),
       user: currentUser,
       ctime: Date.now()
     }
@@ -125,7 +125,7 @@ export function App() {
     }
   }
 
-  const [configDrawerVisible, setConfigDrawerVisible] = useState(false)
+  const [configDrawerVisible, setConfigDrawerVisible] = useState(true)
   return <>
     <div className='spirit-main'>
       <Sender
@@ -143,32 +143,53 @@ export function App() {
         }}
         onIconClick={() => setConfigDrawerVisible(v => !v)}
         Footer={
-          <div
+          <Tabs
             className={classnames('spirit-configurer-panel', {
               'spirit-configurer-panel--visible': configDrawerVisible
             })}
+            defaultValue='base'
           >
-            <div className='spirit-field'>
-              <label>API Key</label>
-              <Input
-                value={config ? config.apiKey : ''}
-                onChange={v => setConfig({ ...config, apiKey: v })}
-              />
-            </div>
-            <div className='spirit-field'>
-              <label>Base URL</label>
-              <Select
-                filterable
-                creatable
-                options={[
-                  { label: 'OpenAI', value: 'https://api.openai.com/v1' },
-                  { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
-                ]}
-                value={config ? config.baseURL ?? '' : ''}
-                onChange={v => setConfig({ ...config, baseURL: v as string })}
-              />
-            </div>
-          </div>
+            <Tabs.TabPanel
+              value='base'
+              label={
+                <>
+                  <span className='s-icon'>settings</span>&nbsp; Base
+                </>
+              }
+            >
+            </Tabs.TabPanel>
+            <Tabs.TabPanel
+              value='ai'
+              label={
+                <>
+                  <span className='s-icon'>robot</span>&nbsp; AI
+                </>
+              }
+            >
+              <div className='spirit-field'>
+                <label>API Key</label>
+                <Input
+                  value={config ? config.apiKey : ''}
+                  onChange={v => setConfig({ ...config, apiKey: v })}
+                  // @ts-ignore
+                  spellCheck={false}
+                />
+              </div>
+              <div className='spirit-field'>
+                <label>Base URL</label>
+                <Select
+                  filterable
+                  creatable
+                  options={[
+                    { label: 'OpenAI', value: 'https://api.openai.com/v1' },
+                    { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
+                  ]}
+                  value={config ? config.baseURL ?? '' : ''}
+                  onChange={v => setConfig({ ...config, baseURL: v as string })}
+                />
+              </div>
+            </Tabs.TabPanel>
+          </Tabs>
         }
       />
       <div className='messages'>
