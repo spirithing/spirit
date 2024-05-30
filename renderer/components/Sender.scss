@@ -2,14 +2,19 @@
   --icon-size: 32px;
 
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px;
+  flex-direction: column;
 
   font-size: 16px;
   border-radius: var(--td-radius-medium);
   background-color: var(--bg);
   border: 1px solid var(--fg);
+  &__input {
+    min-height: var(--icon-size);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+  }
   &__prefix {
     width: var(--icon-size);
     height: var(--icon-size);

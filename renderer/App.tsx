@@ -4,12 +4,13 @@ import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
 import { useEffect, useRef, useState } from 'react'
-import { Card, DialogPlugin, Input, Select } from 'tdesign-react'
+import { DialogPlugin, Input, Select } from 'tdesign-react'
 
 import type { IMessage, IUser } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
 import { useElectronStore } from './store'
+import { classnames } from './utils/classnames'
 
 type MessageItem = IMessage & {
   hidden?: boolean
@@ -68,7 +69,18 @@ export function App() {
   }
   openaiRef.current === null && createOpenAI()
 
-  const [messages, setMessages] = useState<MessageItem[]>([])
+  const [messages, setMessages] = useState<MessageItem[]>([
+    {
+      text: 'Hello, I am Document Helper Bot. How can I help you?',
+      user: bots.documentHelper,
+      ctime: Date.now()
+    },
+    {
+      text: '# Hi, I am YiJie. I want to chat with you.\n'.repeat(10),
+      user: currentUser,
+      ctime: Date.now()
+    }
+  ])
   const sendMessage = async (message: string, dispatch: (text: string) => void) => {
     const newMessages = [
       {
@@ -113,62 +125,70 @@ export function App() {
     }
   }
 
+  const [configDrawerVisible, setConfigDrawerVisible] = useState(false)
   return <>
-    <Sender
-      onSend={sendMessage}
-      onClear={() => {
-        const ins = DialogPlugin.confirm({
-          header: 'Clear all messages',
-          body: 'Are you sure to clear all messages?',
-          onConfirm() {
-            setMessages([])
-            ins.hide()
-          },
-          onClose: () => ins.hide()
-        })
-      }}
-    />
-    <Card>
-      <div className='config'>
-        <div className='config-item'>
-          <label>API Key</label>
-          <Input
-            value={config ? config.apiKey : ''}
-            onChange={v => setConfig({ ...config, apiKey: v })}
-          />
-        </div>
-        <div className='config-item'>
-          <label>Base URL</label>
-          <Select
-            filterable
-            creatable
-            options={[
-              { label: 'OpenAI', value: 'https://api.openai.com/v1' },
-              { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
-            ]}
-            value={config ? config.baseURL ?? '' : ''}
-            onChange={v => setConfig({ ...config, baseURL: v as string })}
-          />
-        </div>
-      </div>
-    </Card>
-    <div className='messages'>
-      {messages.map((message, i) => (
-        <Message
-          key={i}
-          value={message}
-          textRender={text => (
-            <div className='message-text'>
-              <div
-                className='s-md'
-                dangerouslySetInnerHTML={{
-                  __html: mdRef.current?.render(text) ?? ''
-                }}
+    <div className='spirit-main'>
+      <Sender
+        onSend={sendMessage}
+        onClear={() => {
+          const ins = DialogPlugin.confirm({
+            header: 'Clear all messages',
+            body: 'Are you sure to clear all messages?',
+            onConfirm() {
+              setMessages([])
+              ins.hide()
+            },
+            onClose: () => ins.hide()
+          })
+        }}
+        onIconClick={() => setConfigDrawerVisible(v => !v)}
+        Footer={
+          <div
+            className={classnames('spirit-configurer-panel', {
+              'spirit-configurer-panel--visible': configDrawerVisible
+            })}
+          >
+            <div className='spirit-field'>
+              <label>API Key</label>
+              <Input
+                value={config ? config.apiKey : ''}
+                onChange={v => setConfig({ ...config, apiKey: v })}
               />
             </div>
-          )}
-        />
-      ))}
+            <div className='spirit-field'>
+              <label>Base URL</label>
+              <Select
+                filterable
+                creatable
+                options={[
+                  { label: 'OpenAI', value: 'https://api.openai.com/v1' },
+                  { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
+                ]}
+                value={config ? config.baseURL ?? '' : ''}
+                onChange={v => setConfig({ ...config, baseURL: v as string })}
+              />
+            </div>
+          </div>
+        }
+      />
+      <div className='messages'>
+        {messages.map((message, i) => (
+          <Message
+            key={i}
+            value={message}
+            textRender={text => (
+              <div className='message-text'>
+                <div
+                  className='s-md'
+                  dangerouslySetInnerHTML={{
+                    __html: mdRef.current?.render(text) ?? ''
+                  }}
+                />
+              </div>
+            )}
+          />
+        ))}
+      </div>
     </div>
   </>
 }

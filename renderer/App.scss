@@ -49,16 +49,32 @@ body {
   }
 }
 #root {
+  width: 100vw;
+  height: 100vh;
+  filter: drop-shadow(0 0 16px #0008);
+}
+.spirit-main {
   --td-radius-medium: 16px;
 
   display: flex;
   flex-direction: column;
+  gap: 10px;
+
   margin: 0 auto;
   padding: 10vh 15vw 0;
-  filter: drop-shadow(0 0 16px #0008);
+
   height: 90vh;
   width: 60vw;
-  gap: 10px;
+}
+.spirit-configurer-panel {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: .3s;
+  &--visible {
+    padding: 0 10px 10px;
+    max-height: 40vh;
+  }
 }
 .messages {
   display: flex;
@@ -67,6 +83,7 @@ body {
 
   flex-grow: 1;
   height: 0;
+  padding-bottom: 10px;
 
   overflow-y: auto;
 }
