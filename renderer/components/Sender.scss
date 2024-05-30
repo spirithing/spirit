@@ -55,6 +55,7 @@
 .spirit-sender .shikitor {
   --line-height: var(--icon-size);
 
+  min-height: 100% !important;
   flex-grow: 1;
   .shikitor-gutter-line-highlighted:before {
     display: none;
