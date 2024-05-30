@@ -1,9 +1,11 @@
 import * as fs from 'node:fs'
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import type { Store } from 'spirit'
 
-const appPath = app.getPath('userData')
+import { userDataPath } from './utils/system'
+
+const appPath = userDataPath
 if (!fs.existsSync(appPath)) {
   fs.mkdirSync(appPath)
 }

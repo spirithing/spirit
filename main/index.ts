@@ -7,6 +7,7 @@ import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
 import { lisStore, setStore } from './store'
+import { os, username } from './utils/system'
 
 function createWindow() {
   const displayStoreUUID = Math.random().toString(36).slice(2)
@@ -112,6 +113,11 @@ async function main() {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
+  const system = {
+    os,
+    username
+  }
+  setStore('system', system)
   createWindow()
   app.on('activate', function() {
     // On macOS, it's common to re-create a window in the app when the

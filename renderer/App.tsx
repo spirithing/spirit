@@ -5,9 +5,9 @@ import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Bot } from 'spirit'
-import { DialogPlugin, Input, Select, Tabs, Textarea } from 'tdesign-react'
+import { Button, DialogPlugin, Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
 
-import type { IMessage, IUser } from './components/Message'
+import type { IMessage } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
 import { useElectronStore } from './store'
@@ -17,9 +17,6 @@ type MessageItem = IMessage & {
   hidden?: boolean
 }
 
-const currentUser = {
-  name: 'YiJie'
-} as IUser
 const defaultBot = {
   name: '器灵',
   description:
@@ -46,6 +43,14 @@ export function App() {
     }).then(plugin => mdRef.current?.use(plugin))
   }
 
+  const [system] = useElectronStore('system')
+  const [user, setUser] = useElectronStore('user')
+  useEffect(() => {
+    if (!user) {
+      setUser({ name: system?.username || 'Guest' })
+    }
+  }, [user, setUser, system?.username])
+
   const [displaying] = useElectronStore('display')
   useEffect(() => {
     document.body.classList.toggle('displaying', !!displaying)
@@ -69,10 +74,14 @@ export function App() {
   const bot = useMemo(() => _bot ?? defaultBot, [_bot])
   const [messages, setMessages] = useState<MessageItem[]>([])
   const sendMessage = async (message: string, dispatch: (text: string) => void) => {
+    if (!user) {
+      MessagePlugin.error('User not initialized')
+      return
+    }
     const newMessages = [
       {
         text: message,
-        user: currentUser,
+        user,
         ctime: Date.now()
       },
       ...messages
@@ -147,6 +156,26 @@ export function App() {
                 </>
               }
             >
+              <div className='spirit-field'>
+                <label>Name</label>
+                <Input
+                  value={user?.name}
+                  onChange={v => setUser({ ...user, name: v })}
+                  suffix={
+                    <Button
+                      style={{ marginRight: -10 }}
+                      shape='square'
+                      variant='text'
+                      onClick={() =>
+                        setUser({
+                          name: system?.username || 'Guest'
+                        })}
+                    >
+                      <span className='s-icon'>history</span>
+                    </Button>
+                  }
+                />
+              </div>
             </Tabs.TabPanel>
             <Tabs.TabPanel
               value='ai'
