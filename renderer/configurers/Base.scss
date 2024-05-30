@@ -1,0 +1,55 @@
+.spirit-theme-switcher {
+  display: flex;
+  gap: 10px;
+  .t-card {
+    flex-grow: 1;
+    width: 0;
+    box-sizing: border-box;
+    border: 2px solid var(--td-border-level-1-color);
+    cursor: pointer;
+    overflow: hidden;
+    transition: .3s;
+    &:nth-child(1) {
+      .s-icon {
+        color: #e63a32;
+      }
+    }
+    &:nth-child(2) {
+      color: rgba(255, 255, 255, 90%);
+      background-color: #242424;
+      .s-icon {
+        color: #ffe67b;
+      }
+    }
+    &:nth-child(3) {
+      > .t-card__header {
+        color: rgba(255, 255, 255, 90%);
+      }
+      &::before {
+        content: ' ';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40%;
+        height: 100%;
+        color: rgba(255, 255, 255, 90%);
+        background-color: #242424;
+      }
+      &::after {
+        content: ' ';
+        position: absolute;
+        top: 0;
+        left: 40%;
+        border-left: 0 solid transparent;
+        border-right: 60px solid transparent;
+        border-top: 80px solid #242424;
+      }
+    }
+    > .t-card__body {
+      text-align: right;
+    }
+  }
+  .t-card#{&}--active {
+    border: 2px solid var(--td-brand-color);
+  }
+}

@@ -1,9 +1,61 @@
+import './Base.scss'
+
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Input, Select } from 'tdesign-react'
+import { Button, Card, Input, Select } from 'tdesign-react'
 
 import { bundledLocales } from '../providers/i18n'
 import { useElectronStore } from '../store'
+import { classnames } from '../utils/classnames'
+
+function ThemeSwitcher() {
+  const { t } = useTranslation()
+  const prefix = 'spirit-theme-switcher'
+  const [common, setCommon] = useElectronStore('common', {
+    theme: 'auto',
+    locale: 'system'
+  })
+  const theme = common!.theme ?? 'auto'
+  return <div
+    className={prefix}
+    onClick={e => {
+      const target = e.target as HTMLElement
+      const card = target.closest('.t-card')
+      if (!card) return
+      const theme = card.classList.contains('light')
+        ? 'light'
+        : card.classList.contains('dark')
+        ? 'dark'
+        : 'auto'
+      setCommon({ ...common!, theme })
+    }}
+  >
+    <Card
+      size='small'
+      hoverShadow
+      className={classnames('light', theme === 'light' ? `${prefix}--active` : '')}
+      header={<span className='s-icon'>light_mode</span>}
+    >
+      {t('themeLight')}
+    </Card>
+    <Card
+      size='small'
+      hoverShadow
+      className={classnames('dark', theme === 'dark' ? `${prefix}--active` : '')}
+      header={<span className='s-icon'>dark_mode</span>}
+    >
+      {t('themeDark')}
+    </Card>
+    <Card
+      size='small'
+      hoverShadow
+      className={classnames('auto', theme === 'auto' ? `${prefix}--active` : '')}
+      header={<span className='s-icon'>auto_awesome</span>}
+    >
+      {t('themeAuto')}
+    </Card>
+  </div>
+}
 
 export function Base() {
   const [system] = useElectronStore('system')
@@ -40,15 +92,7 @@ export function Base() {
     </div>
     <div className='spirit-field'>
       <label>{t('theme')}</label>
-      <Select
-        options={[
-          { label: t('themeLight'), value: 'light' },
-          { label: t('themeDark'), value: 'dark' },
-          { label: t('themeAuto'), value: 'auto' }
-        ]}
-        value={common?.theme}
-        onChange={v => setCommon({ ...common!, theme: v as string })}
-      />
+      <ThemeSwitcher />
     </div>
     <div className='spirit-field'>
       <label>{t('name')}</label>
