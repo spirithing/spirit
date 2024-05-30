@@ -8,7 +8,7 @@ import providePopup from '@shikitor/core/plugins/provide-popup'
 import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-toolbox'
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { DialogPlugin } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
@@ -24,6 +24,14 @@ export interface SenderProps {
   onSend(text: string, dispatch: (text: string) => void): void
   onClear?(): void
 }
+
+const yiyan = [
+  '人生没有彩排，每天都是现场直播。',
+  '人生不如意十之八九，剩下的一二分，也未必如意。',
+  '人生就是起起落落，落落又起起。',
+  '机器人的人生也不容易，每天充电，还要听人吹牛。',
+  '这是由 AI 生成的一句话。'
+]
 
 const plugins = [
   providePopup,
@@ -41,6 +49,16 @@ export function Sender(props: SenderProps) {
     onSend,
     onClear
   } = props
+
+  const [yiyanIndex, setYiyanIndex] = useState(0)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setYiyanIndex(i => (i + 1) % yiyan.length)
+    }, 30000)
+    return () => clearInterval(timer)
+  }, [])
+  const placeholder = useMemo(() => yiyan[yiyanIndex], [yiyanIndex])
+
   const [, setDisplay] = useElectronStore('display')
   const [text, setText] = useState('')
   const { setColor } = useColor(() => {}, [])
@@ -75,6 +93,9 @@ export function Sender(props: SenderProps) {
           theme: 'material-theme-darker',
           autoSize: { maxRows: 6 }
         }}
+        options={useMemo(() => ({
+          placeholder
+        }), [placeholder])}
         plugins={plugins}
         onColorChange={setColor}
         onMounted={shikitor => {
