@@ -67,22 +67,16 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
   mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
-  globalShortcut.register('command+space', () => {
-    if (mainWindow.isVisible()) {
-      setStore('display', false, displayStoreUUID)
-      mainWindow.hide()
-    } else {
-      showInMouseHoverDisplay()
-    }
-  })
-  lisStore('display', value => {
-    if (value) {
+  function toggleDisplay(b = !mainWindow.isVisible()) {
+    if (b) {
       showInMouseHoverDisplay()
     } else {
       setStore('display', false, displayStoreUUID)
       mainWindow.hide()
     }
-  }, displayStoreUUID)
+  }
+  globalShortcut.register('command+space', () => toggleDisplay())
+  lisStore('display', toggleDisplay, displayStoreUUID)
 }
 
 app.on('window-all-closed', () => {
