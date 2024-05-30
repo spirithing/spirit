@@ -95,7 +95,7 @@ export function App() {
             + 'Every message except yours has a corresponding username, in the format where the current message username appears at the beginning of each message.',
           role: 'system'
         },
-        ...newMessages.map(messageTransform.bind(null, bots.documentHelper))
+        ...newMessages.map(messageTransform.bind(null, bots.documentHelper)).reverse()
       ],
       stream: true
     })
