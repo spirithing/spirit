@@ -4,14 +4,13 @@ import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import type { Bot } from 'spirit'
-import { Button, DialogPlugin, Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
+import { DialogPlugin, Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
 
 import type { IMessage } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
-import { bundledLocales } from './providers/i18n'
+import { Base } from './configurers/Base'
 import { useElectronStore } from './store'
 import { classnames } from './utils/classnames'
 
@@ -45,26 +44,7 @@ export function App() {
     }).then(plugin => mdRef.current?.use(plugin))
   }
 
-  const [system] = useElectronStore('system')
-  const [common, setCommon] = useElectronStore('common', {
-    locale: 'system'
-  })
-  const { i18n } = useTranslation()
-  useEffect(() => {
-    if (common?.locale === 'system') {
-      // TODO
-      // i18n.changeLanguage(system?.locale ?? navigator.language)
-      i18n.changeLanguage(navigator.language)
-    } else {
-      i18n.changeLanguage(common?.locale)
-    }
-  }, [common?.locale, i18n])
-  const [user, setUser] = useElectronStore('user')
-  useEffect(() => {
-    if (!user) {
-      setUser({ name: system?.username || 'Guest' })
-    }
-  }, [user, setUser, system?.username])
+  const [user] = useElectronStore('user')
 
   const [displaying] = useElectronStore('display')
   useEffect(() => {
@@ -165,43 +145,9 @@ export function App() {
           >
             <Tabs.TabPanel
               value='base'
-              label={
-                <>
-                  <span className='s-icon'>settings</span>&nbsp;Base
-                </>
-              }
+              label={Base.Title}
             >
-              <div className='spirit-field'>
-                <label>Locale</label>
-                <Select
-                  options={[
-                    { label: 'System', value: 'system' },
-                    ...bundledLocales.map(locale => ({ label: locale, value: locale }))
-                  ]}
-                  value={common!.locale}
-                  onChange={v => setCommon({ locale: v as string })}
-                />
-              </div>
-              <div className='spirit-field'>
-                <label>Name</label>
-                <Input
-                  value={user?.name}
-                  onChange={v => setUser({ ...user, name: v })}
-                  suffix={
-                    <Button
-                      style={{ marginRight: -10 }}
-                      shape='square'
-                      variant='text'
-                      onClick={() =>
-                        setUser({
-                          name: system?.username || 'Guest'
-                        })}
-                    >
-                      <span className='s-icon'>history</span>
-                    </Button>
-                  }
-                />
-              </div>
+              <Base />
             </Tabs.TabPanel>
             <Tabs.TabPanel
               value='ai'
