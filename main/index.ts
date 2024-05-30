@@ -46,12 +46,19 @@ function createWindow() {
       return x <= mousePoint.x && mousePoint.x <= x + width && y <= mousePoint.y && mousePoint.y <= y + height
     })
     if (!display) return
-    mainWindow.setBounds(display.bounds)
+    mainWindow.setBounds({
+      ...display.bounds,
+      height: display.workAreaSize.height
+    })
     mainWindow.show()
     setStore('display', true, displayStoreUUID)
   }
   setStore('display', true, displayStoreUUID)
-  mainWindow.setBounds(screen.getPrimaryDisplay().bounds)
+  const display = screen.getPrimaryDisplay()
+  mainWindow.setBounds({
+    ...display.bounds,
+    height: display.workAreaSize.height
+  })
 
   mainWindow.on('ready-to-show', () => mainWindow.show())
 
