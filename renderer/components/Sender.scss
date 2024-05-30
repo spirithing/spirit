@@ -22,6 +22,7 @@
     height: var(--icon-size);
     border-radius: 6px;
     cursor: pointer;
+    user-select: none;
     transition: .2s;
     &:hover {
       background-color: color-mix(in srgb, var(--fg), var(--bg) 50%);
