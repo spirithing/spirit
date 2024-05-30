@@ -116,6 +116,12 @@
   border-radius: var(--td-radius-medium);
   border: 1px solid var(--td-border-level-1-color);
   font-size: 14px;
+  &-header {
+    padding-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 1px solid var(--td-border-level-1-color);
+  }
   &-content {
     display: flex;
     flex-direction: column;
