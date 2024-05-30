@@ -19,7 +19,7 @@ const useKeyAtom = <K extends keyof Store>(key: K):
     : defaultAtom
 }
 
-export const useElectronStore = <K extends keyof Store>(key: K) => {
+export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: Store[K]) => {
   const keyAtom = useKeyAtom(key)
   const [value, setValue] = useAtom(keyAtom, { store: electronStore })
   const updateValue = useCallback((value: Store[K]) => {
@@ -32,5 +32,6 @@ export const useElectronStore = <K extends keyof Store>(key: K) => {
       ipcRenderer.sendSync('setStore', uuid, key, value)
     }
   }, [key, keyAtom, setValue])
-  return [value, updateValue] as const
+  const memoValue = useMemo(() => value ?? defaultValue, [value, defaultValue])
+  return [memoValue, updateValue] as const
 }
