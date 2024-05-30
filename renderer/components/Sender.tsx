@@ -9,7 +9,8 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
-import { DialogPlugin } from 'tdesign-react'
+import { useTranslation } from 'react-i18next'
+import { DialogPlugin, Tooltip } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
 import { useColor } from '../hooks/useColor'
@@ -49,6 +50,7 @@ export function Sender(props: SenderProps) {
     onSend,
     onClear
   } = props
+  const { t } = useTranslation()
 
   const [yiyanIndex, setYiyanIndex] = useState(0)
   useEffect(() => {
@@ -81,9 +83,23 @@ export function Sender(props: SenderProps) {
   return <div className={`${prefix} ${className}`}>
     {props.Header}
     <div className={`${prefix}__input`}>
-      <div className={`${prefix}__prefix`}>
-        <IconComp />
-      </div>
+      <Tooltip
+        content={
+          <>
+            {t('Display configure panel')}
+            <br />
+            ⌘ + /
+          </>
+        }
+        placement='bottom'
+        popperOptions={{
+          modifiers: [{ name: 'offset', options: { offset: [0, -10] } }]
+        }}
+      >
+        <div className={`${prefix}__prefix`}>
+          <IconComp />
+        </div>
+      </Tooltip>
       <Editor
         value={text}
         onChange={setText}
@@ -119,6 +135,10 @@ export function Sender(props: SenderProps) {
           }
           if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
             onClear?.()
+          }
+          if (e.key === '/' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+            e.preventDefault()
+            onIconClick()
           }
           if (e.key === 'Enter' && e.metaKey) {
             e.preventDefault()
