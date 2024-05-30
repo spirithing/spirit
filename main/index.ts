@@ -113,11 +113,10 @@ async function main() {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
-  const system = {
+  setStore('system', {
     os,
     username
-  }
-  setStore('system', system)
+  })
   createWindow()
   app.on('activate', function() {
     // On macOS, it's common to re-create a window in the app when the
