@@ -125,7 +125,7 @@ export function App() {
     }
   }
 
-  const [configDrawerVisible, setConfigDrawerVisible] = useState(true)
+  const [configDrawerVisible, setConfigDrawerVisible] = useState(false)
   return <>
     <div className='spirit-main'>
       <Sender
