@@ -25,6 +25,7 @@
     "get-windows": "^9.1.1",
     "markdown-it": "^14.1.0",
     "openai": "^4.47.1",
+    "react-i18next": "^14.1.2",
     "tdesign-react": "^1.7.3"
   },
   "devDependencies": {
