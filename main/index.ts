@@ -73,7 +73,9 @@ function createWindow() {
       showInMouseHoverDisplay()
     } else {
       setStore('display', false, displayStoreUUID)
-      mainWindow.hide()
+      setTimeout(() => {
+        mainWindow.hide()
+      }, 200)
     }
   }
   globalShortcut.register('command+space', () => toggleDisplay())

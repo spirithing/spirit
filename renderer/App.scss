@@ -2,28 +2,49 @@
   0% {
     opacity: 0;
   }
+  50% {
+    opacity: 0;
+  }
   100% {
     opacity: 1;
   }
 }
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 @keyframes move-in {
   0% {
-    opacity: 0;
     transform: translateY(50px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
+  }
+}
+@keyframes move-out {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50px);
   }
 }
 body {
   height: 100vh;
   opacity: 0;
-  box-shadow: inset 0 0 320px 80px var(--bg);
+  box-shadow: inset 0 0 320px 80px #0006;
+  animation: fade-out .1s forwards;
+  #root {
+    animation: move-out .1s forwards;
+  }
   &.displaying {
-    animation: fade-in .5s forwards;
+    animation: fade-in .2s forwards;
     #root {
-      animation: move-in .5s forwards;
+      animation: move-in .2s forwards;
     }
   }
 }
