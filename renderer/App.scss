@@ -33,9 +33,9 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  padding: 10vh 15vw;
-  filter: drop-shadow(0 0 6px var(--bg));
-  height: 80vh;
+  padding: 10vh 15vw 0;
+  filter: drop-shadow(0 0 16px #0008);
+  height: 90vh;
   width: 60vw;
   gap: 10px;
 }
