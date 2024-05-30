@@ -28,7 +28,7 @@ const tdI18n: Record<string, unknown> = {
   'zh-TW': zhTW
 }
 
-export const bundledLanguages = Object.keys(tdI18n)
+export const bundledLocales = Object.keys(tdI18n)
 
 const resources = {
   'en-US': {

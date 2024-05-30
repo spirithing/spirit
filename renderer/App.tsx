@@ -10,6 +10,7 @@ import { Button, DialogPlugin, Input, MessagePlugin, Select, Tabs, Textarea } fr
 import type { IMessage } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
+import { bundledLocales } from './providers/i18n'
 import { useElectronStore } from './store'
 import { classnames } from './utils/classnames'
 
@@ -44,6 +45,9 @@ export function App() {
   }
 
   const [system] = useElectronStore('system')
+  const [common, setCommon] = useElectronStore('common', {
+    locale: 'system'
+  })
   const [user, setUser] = useElectronStore('user')
   useEffect(() => {
     if (!user) {
@@ -156,6 +160,17 @@ export function App() {
                 </>
               }
             >
+              <div className='spirit-field'>
+                <label>Locale</label>
+                <Select
+                  options={[
+                    { label: 'System', value: 'system' },
+                    ...bundledLocales.map(locale => ({ label: locale, value: locale }))
+                  ]}
+                  value={common!.locale}
+                  onChange={v => setCommon({ locale: v as string })}
+                />
+              </div>
               <div className='spirit-field'>
                 <label>Name</label>
                 <Input
