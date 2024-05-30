@@ -11,10 +11,7 @@ import { classnames } from '../utils/classnames'
 function ThemeSwitcher() {
   const { t } = useTranslation()
   const prefix = 'spirit-theme-switcher'
-  const [common, setCommon] = useElectronStore('common', {
-    theme: 'auto',
-    locale: 'system'
-  })
+  const [common, setCommon] = useElectronStore('common')
   const theme = common!.theme ?? 'auto'
   return <div
     className={prefix}
