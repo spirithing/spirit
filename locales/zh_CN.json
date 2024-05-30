@@ -1,2 +1,9 @@
 {
+  "locale": "语言",
+  "name": "名称",
+  "theme": "主题",
+  "themeLight": "亮色",
+  "themeDark": "暗色",
+  "themeAuto": "自动",
+  "highlightTheme": "高亮主题"
 }

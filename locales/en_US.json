@@ -1,2 +1,9 @@
 {
+  "locale": "Locale",
+  "name": "Name",
+  "theme": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeAuto": "Auto",
+  "highlightTheme": "Highlight Theme"
 }

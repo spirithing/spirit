@@ -10,7 +10,7 @@ export function Base() {
   const [common, setCommon] = useElectronStore('common', {
     locale: 'system'
   })
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   useEffect(() => {
     if (common?.locale === 'system') {
       // TODO
@@ -28,7 +28,7 @@ export function Base() {
   }, [user, setUser, system?.username])
   return <>
     <div className='spirit-field'>
-      <label>Locale</label>
+      <label>{t('locale')}</label>
       <Select
         options={[
           { label: 'System', value: 'system' },
@@ -39,7 +39,19 @@ export function Base() {
       />
     </div>
     <div className='spirit-field'>
-      <label>Name</label>
+      <label>{t('theme')}</label>
+      <Select
+        options={[
+          { label: t('themeLight'), value: 'light' },
+          { label: t('themeDark'), value: 'dark' },
+          { label: t('themeAuto'), value: 'auto' }
+        ]}
+        value={common?.theme}
+        onChange={v => setCommon({ ...common!, theme: v as string })}
+      />
+    </div>
+    <div className='spirit-field'>
+      <label>{t('name')}</label>
       <Input
         value={user?.name}
         onChange={v => setUser({ ...user, name: v })}
