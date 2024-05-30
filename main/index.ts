@@ -1,5 +1,6 @@
 import './store'
 
+// TODO listen language change by os-locale
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, type Display, globalShortcut, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'

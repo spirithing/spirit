@@ -4,6 +4,7 @@ import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Bot } from 'spirit'
 import { Button, DialogPlugin, Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
 
@@ -48,6 +49,16 @@ export function App() {
   const [common, setCommon] = useElectronStore('common', {
     locale: 'system'
   })
+  const { i18n } = useTranslation()
+  useEffect(() => {
+    if (common?.locale === 'system') {
+      // TODO
+      // i18n.changeLanguage(system?.locale ?? navigator.language)
+      i18n.changeLanguage(navigator.language)
+    } else {
+      i18n.changeLanguage(common?.locale)
+    }
+  }, [common?.locale, i18n])
   const [user, setUser] = useElectronStore('user')
   useEffect(() => {
     if (!user) {
