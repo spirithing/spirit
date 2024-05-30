@@ -1,7 +1,7 @@
 import './store'
 
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, globalShortcut, screen, shell } from 'electron'
+import { app, BrowserWindow, type Display, globalShortcut, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'
 import { join } from 'path'
 
@@ -36,6 +36,12 @@ function createWindow() {
       contextIsolation: false
     }
   })
+  function calcBounds(display: Display) {
+    return {
+      ...display.bounds,
+      height: display.workAreaSize.height
+    }
+  }
   function showInMouseHoverDisplay() {
     // noinspection JSIgnoredPromiseFromCall
     storeActiveWindowMessage()
@@ -46,19 +52,13 @@ function createWindow() {
       return x <= mousePoint.x && mousePoint.x <= x + width && y <= mousePoint.y && mousePoint.y <= y + height
     })
     if (!display) return
-    mainWindow.setBounds({
-      ...display.bounds,
-      height: display.workAreaSize.height
-    })
+    mainWindow.setBounds(calcBounds(display))
     mainWindow.show()
     setStore('display', true, displayStoreUUID)
   }
   setStore('display', true, displayStoreUUID)
   const display = screen.getPrimaryDisplay()
-  mainWindow.setBounds({
-    ...display.bounds,
-    height: display.workAreaSize.height
-  })
+  mainWindow.setBounds(calcBounds(display))
 
   mainWindow.on('ready-to-show', () => mainWindow.show())
 
