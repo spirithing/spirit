@@ -30,7 +30,6 @@ export const useElectronStore = <K extends keyof Store>(key: K) => {
   const keyAtom = useKeyAtom(key)
   const [value, setValue] = useAtom(keyAtom, { store: electronStore })
   const updateValue = useCallback((value: Store[K]) => {
-    console.log(key, value, keyAtom === defaultAtom)
     if (keyAtom !== defaultAtom) {
       // @ts-ignore
       setValue(value)
@@ -64,7 +63,6 @@ let keys: string[] = await ipcRenderer.invoke('getStores')
 keys.forEach(createKeyAtom)
 electronStore.set(keysAtom, keys)
 ipcRenderer.on('addKey', async (_, key: string) => {
-  console.log('addKey', key)
   await createKeyAtom(key)
   keys = [...keys, key]
   electronStore.set(keysAtom, keys)
