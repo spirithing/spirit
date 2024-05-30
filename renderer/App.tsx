@@ -3,8 +3,9 @@ import './App.scss'
 import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
-import { useEffect, useRef, useState } from 'react'
-import { DialogPlugin, Input, Select, Tabs } from 'tdesign-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { Bot } from 'spirit'
+import { DialogPlugin, Input, Select, Tabs, Textarea } from 'tdesign-react'
 
 import type { IMessage, IUser } from './components/Message'
 import { Message } from './components/Message'
@@ -19,18 +20,12 @@ type MessageItem = IMessage & {
 const currentUser = {
   name: 'YiJie'
 } as IUser
-type Bot = IUser & {
-  description: string
-}
-const bots = {
-  documentHelper: {
-    name: '器灵',
-    avatar: `${import.meta.env.BASE_URL}public/favicon.svg`,
-    description:
-      '一个 AI 助手，中文环境下的分类为器灵，英文环境下的分类为 Spirit。通过快捷入口触发，帮助用户解决问题，也可以陪用户聊天。\n'
-      + '器灵的中文意义是「器物的灵魂」，万物皆有灵，那么电脑的灵便是 AI 了。'
-  }
-} satisfies Record<string, Bot>
+const defaultBot = {
+  name: '器灵',
+  description:
+    '一个 AI 助手，中文环境下的分类为器灵，英文环境下的分类为 Spirit。通过快捷入口触发，帮助用户解决问题，也可以陪用户聊天。\n'
+    + '器灵的中文意义是「器物的灵魂」，万物皆有灵，那么电脑的灵便是 AI 了。'
+} satisfies Bot
 
 function messageTransform(bot: Bot, m: MessageItem): OpenAI.ChatCompletionMessageParam {
   const isBot = m.user?.name === bot.name
@@ -58,6 +53,7 @@ export function App() {
       document.body.classList.remove('displaying')
     }
   }, [displaying])
+
   const [config, setConfig] = useElectronStore('openaiConfig')
   const openaiRef = useRef<OpenAI | null>(null)
   function createOpenAI() {
@@ -69,18 +65,9 @@ export function App() {
   }
   openaiRef.current === null && createOpenAI()
 
-  const [messages, setMessages] = useState<MessageItem[]>([
-    {
-      text: 'Hello, I am Document Helper Bot. How can I help you?',
-      user: bots.documentHelper,
-      ctime: Date.now()
-    },
-    {
-      text: '# Hi, I am YiJie. I want to chat with you.\n'.repeat(16),
-      user: currentUser,
-      ctime: Date.now()
-    }
-  ])
+  const [_bot, setBot] = useElectronStore('bot')
+  const bot = useMemo(() => _bot ?? defaultBot, [_bot])
+  const [messages, setMessages] = useState<MessageItem[]>([])
   const sendMessage = async (message: string, dispatch: (text: string) => void) => {
     const newMessages = [
       {
@@ -96,7 +83,10 @@ export function App() {
       alert('OpenAI not initialized')
       return
     }
-    const bot = bots.documentHelper
+    if (!bot) {
+      alert('Bot not initialized')
+      return
+    }
     const completions = await openaiRef.current.chat.completions.create({
       model: 'gpt-4o',
       // eslint-disable-next-line camelcase
@@ -107,13 +97,13 @@ export function App() {
             + 'Every message except yours has a corresponding username, in the format where the current message username appears at the beginning of each message.',
           role: 'system'
         },
-        ...newMessages.map(messageTransform.bind(null, bots.documentHelper)).reverse()
+        ...newMessages.map(messageTransform.bind(null, bot)).reverse()
       ],
       stream: true
     })
     newMessages.unshift({
       text: '',
-      user: bots.documentHelper,
+      user: bot,
       ctime: Date.now()
     })
     const latestMessage = newMessages[0]
@@ -153,7 +143,7 @@ export function App() {
               value='base'
               label={
                 <>
-                  <span className='s-icon'>settings</span>&nbsp; Base
+                  <span className='s-icon'>settings</span>&nbsp;Base
                 </>
               }
             >
@@ -162,7 +152,7 @@ export function App() {
               value='ai'
               label={
                 <>
-                  <span className='s-icon'>robot</span>&nbsp; AI
+                  <span className='s-icon'>robot</span>&nbsp;AI
                 </>
               }
             >
@@ -171,6 +161,7 @@ export function App() {
                 <Input
                   value={config ? config.apiKey : ''}
                   onChange={v => setConfig({ ...config, apiKey: v })}
+                  type='password'
                   // @ts-ignore
                   spellCheck={false}
                 />
@@ -186,6 +177,33 @@ export function App() {
                   ]}
                   value={config ? config.baseURL ?? '' : ''}
                   onChange={v => setConfig({ ...config, baseURL: v as string })}
+                />
+              </div>
+            </Tabs.TabPanel>
+            <Tabs.TabPanel
+              value='bot'
+              label={
+                <>
+                  <span className='s-icon'>smart_toy</span>&nbsp;Bot
+                </>
+              }
+            >
+              <div className='spirit-field'>
+                <label>Name</label>
+                <Input
+                  value={bot?.name}
+                  onChange={v => setBot({ ...bot!, name: v })}
+                />
+              </div>
+              <div className='spirit-field'>
+                <label>Bot</label>
+                <Textarea
+                  value={bot?.description}
+                  onChange={v => setBot({ ...bot!, description: v })}
+                  autosize={{
+                    maxRows: 6,
+                    minRows: 2
+                  }}
                 />
               </div>
             </Tabs.TabPanel>
