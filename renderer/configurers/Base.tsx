@@ -86,7 +86,7 @@ export function Base() {
               ...bundledLocales.map(locale => ({ label: locale, value: locale }))
             ]}
             value={common!.locale}
-            onChange={v => setCommon({ locale: v as string })}
+            onChange={v => setCommon({ ...common!, locale: v as string })}
           />
         </div>
       </Col>
