@@ -76,8 +76,21 @@ body {
     max-height: 40vh;
   }
   .t-tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
     padding: 10px;
     min-height: 50px;
+  }
+  .spirit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    > label {
+      font-size: 14px;
+      font-weight: bold;
+    }
   }
 }
 .messages {
