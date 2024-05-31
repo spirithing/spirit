@@ -44,7 +44,7 @@ export function App() {
     }).then(plugin => mdRef.current?.use(plugin))
   }
 
-  const [user] = useElectronStore('user')
+  const [user] = useUser()
 
   const [displaying] = useElectronStore('display')
   useEffect(() => {
