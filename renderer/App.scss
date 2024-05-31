@@ -55,16 +55,16 @@ body {
 }
 .spirit-main {
   --td-radius-medium: 16px;
+  --sender-width: 60vw;
 
   display: flex;
   flex-direction: column;
   gap: 10px;
 
-  margin: 0 auto;
-  padding: 10vh 15vw 0;
+  padding-top: 10vh;
 
   height: 90vh;
-  width: 60vw;
+  width: 100vw;
 }
 .spirit-configurer-panel {
   padding: 0;
@@ -99,8 +99,7 @@ body {
 
   flex-grow: 1;
   height: 0;
-  padding-bottom: 10px;
+  padding: 0 calc((100vw - var(--sender-width)) / 2) 10px;
 
   overflow-y: auto;
-  border-radius: var(--td-radius-medium);
 }

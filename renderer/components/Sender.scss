@@ -4,6 +4,9 @@
   display: flex;
   flex-direction: column;
 
+  margin: 0 auto;
+  width: var(--sender-width);
+
   font-size: 16px;
   border-radius: var(--td-radius-medium);
   background-color: var(--bg);
