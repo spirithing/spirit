@@ -1,7 +1,5 @@
 import './App.scss'
 
-import MarkdownItPluginShiki from '@shikijs/markdown-it'
-import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
 import { useEffect, useRef, useState } from 'react'
 import type { Bot } from 'spirit'
@@ -11,6 +9,8 @@ import type { IMessage } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
 import { Base } from './configurers/Base'
+import { useMDRender } from './hooks/useMDRender'
+import { useUser } from './hooks/useUser'
 import { useElectronStore } from './store'
 import { classnames } from './utils/classnames'
 
@@ -34,15 +34,7 @@ function messageTransform(bot: Bot, m: MessageItem): OpenAI.ChatCompletionMessag
 }
 
 export function App() {
-  const mdRef = useRef<MarkdownIt>()
-  if (!mdRef.current) {
-    mdRef.current = MarkdownIt()
-    MarkdownItPluginShiki({
-      themes: {
-        light: 'github-light'
-      }
-    }).then(plugin => mdRef.current?.use(plugin))
-  }
+  const mdRef = useMDRender()
 
   const [user] = useUser()
 
