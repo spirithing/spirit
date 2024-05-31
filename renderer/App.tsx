@@ -2,10 +2,9 @@ import './App.scss'
 
 import OpenAI from 'openai'
 import { useEffect, useRef, useState } from 'react'
-import type { Bot } from 'spirit'
-import { DialogPlugin, Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
+import type { Bot, IMessage } from 'spirit'
+import { Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
 
-import type { IMessage } from './components/Message'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
 import { Base } from './configurers/Base'
@@ -33,21 +32,13 @@ function messageTransform(bot: Bot, m: MessageItem): OpenAI.ChatCompletionMessag
   }
 }
 
-export function App() {
+function Messages() {
+  const [user] = useUser()
   const mdRef = useMDRender()
 
-  const [user] = useUser()
-
-  const [displaying] = useElectronStore('display')
-  useEffect(() => {
-    document.body.classList.toggle('displaying', !!displaying)
-    return () => {
-      document.body.classList.remove('displaying')
-    }
-  }, [displaying])
-
-  const [config, setConfig] = useElectronStore('openaiConfig')
+  const [config] = useElectronStore('openaiConfig')
   const openaiRef = useRef<OpenAI | null>(null)
+
   function createOpenAI() {
     if (!config || !config.apiKey || !config.baseURL) return
     openaiRef.current = new OpenAI({
@@ -55,10 +46,24 @@ export function App() {
       dangerouslyAllowBrowser: true
     })
   }
+
   openaiRef.current === null && createOpenAI()
 
-  const [bot, setBot] = useElectronStore('bot', defaultBot)
-  const [messages, setMessages] = useState<MessageItem[]>([])
+  const [bot] = useElectronStore('bot', defaultBot)
+  const [messages, setMessages] = useState<MessageItem[]>([
+    { ctime: Date.now(), text: '你好', user: { name: '用户' } },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot },
+    { ctime: Date.now(), text: '你好', user: bot }
+  ])
   const sendMessage = async (message: string, dispatch: (text: string) => void) => {
     if (!user) {
       MessagePlugin.error('User not initialized')
@@ -110,22 +115,42 @@ export function App() {
     }
   }
 
+  return <div className='messages'>
+    {messages.map((message, i) => (
+      <Message
+        key={i}
+        value={message}
+        textRender={text => (
+          <div className='message-text'>
+            <div
+              className='s-md'
+              dangerouslySetInnerHTML={{
+                __html: mdRef.current?.render(text) ?? ''
+              }}
+            />
+          </div>
+        )}
+      />
+    ))}
+  </div>
+}
+
+export function App() {
+  const [displaying] = useElectronStore('display')
+  useEffect(() => {
+    document.body.classList.toggle('displaying', !!displaying)
+    return () => {
+      document.body.classList.remove('displaying')
+    }
+  }, [displaying])
+
+  const [bot, setBot] = useElectronStore('bot', defaultBot)
+  const [config, setConfig] = useElectronStore('openaiConfig')
+
   const [configDrawerVisible, setConfigDrawerVisible] = useState(false)
   return <>
     <div className='spirit-main'>
       <Sender
-        onSend={sendMessage}
-        onClear={() => {
-          const ins = DialogPlugin.confirm({
-            header: 'Clear all messages',
-            body: 'Are you sure to clear all messages?',
-            onConfirm() {
-              setMessages([])
-              ins.hide()
-            },
-            onClose: () => ins.hide()
-          })
-        }}
         onIconClick={() => setConfigDrawerVisible(v => !v)}
         Footer={
           <Tabs
@@ -202,24 +227,7 @@ export function App() {
           </Tabs>
         }
       />
-      <div className='messages'>
-        {messages.map((message, i) => (
-          <Message
-            key={i}
-            value={message}
-            textRender={text => (
-              <div className='message-text'>
-                <div
-                  className='s-md'
-                  dangerouslySetInnerHTML={{
-                    __html: mdRef.current?.render(text) ?? ''
-                  }}
-                />
-              </div>
-            )}
-          />
-        ))}
-      </div>
+      <Messages />
     </div>
   </>
 }

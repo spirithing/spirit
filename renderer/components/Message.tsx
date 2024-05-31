@@ -1,21 +1,11 @@
 import './Message.scss'
 
 import React from 'react'
+import type { IMessage, IUser } from 'spirit'
 import { Button } from 'tdesign-react'
 
 type NestedPropsGenerator<Prefix extends string, T> = {
   [K in keyof T as `${Prefix}:${K & string}`]?: T[K]
-}
-
-export interface IUser {
-  name: string
-  avatar?: string
-}
-export type IMessage = {
-  text: string
-  user?: IUser
-  ctime: Date | number | string
-  mtime?: Date | number | string
 }
 
 interface OnClicks {
@@ -48,6 +38,13 @@ export function Message(props: MessageProps) {
           {user.name}
         </div>}
         <div className='message-actions'>
+          <Button
+            variant='text'
+            shape='square'
+            size='small'
+          >
+            <span className='s-icon'>fork_right</span>
+          </Button>
           <Button
             variant='text'
             shape='square'

@@ -22,8 +22,6 @@ export interface SenderProps {
   Header?: ReactNode
   Footer?: ReactNode
   onIconClick(): void
-  onSend(text: string, dispatch: (text: string) => void): void
-  onClear?(): void
 }
 
 const yiyan = [
@@ -46,9 +44,7 @@ export function Sender(props: SenderProps) {
   const {
     className,
     Icon,
-    onIconClick,
-    onSend,
-    onClear
+    onIconClick
   } = props
   const { t } = useTranslation()
 
@@ -133,18 +129,18 @@ export function Sender(props: SenderProps) {
               setDisplay(false)
             }
           }
-          if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-            onClear?.()
-          }
+          // if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+          //   onClear?.()
+          // }
           if (e.key === '/' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
             e.preventDefault()
             onIconClick()
           }
-          if (e.key === 'Enter' && e.metaKey) {
-            e.preventDefault()
-            onSend(text, setText)
-            return
-          }
+          // if (e.key === 'Enter' && e.metaKey) {
+          //   e.preventDefault()
+          //   onSend(text, setText)
+          //   return
+          // }
         }}
       />
     </div>
