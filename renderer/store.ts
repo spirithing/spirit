@@ -22,16 +22,20 @@ const useKeyAtom = <K extends keyof Store>(key: K):
 export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: Store[K]) => {
   const keyAtom = useKeyAtom(key)
   const [value, setValue] = useAtom(keyAtom, { store: electronStore })
-  const updateValue = useCallback((value: Store[K]) => {
+  const memoValue = useMemo(() => value ?? defaultValue, [value, defaultValue])
+  const updateValue = useCallback((value: Store[K] | ((prev?: Store[K]) => Store[K])) => {
+    let v = value
+    if (typeof value === 'function') {
+      v = value(memoValue)
+    }
     if (keyAtom !== defaultAtom) {
       // @ts-ignore
-      setValue(value)
+      setValue(v)
     } else {
       const uuid = uuids.get(key) ?? Math.random().toString(36).slice(2)
       uuids.set(key, uuid)
-      ipcRenderer.sendSync('setStore', uuid, key, value)
+      ipcRenderer.sendSync('setStore', uuid, key, v)
     }
-  }, [key, keyAtom, setValue])
-  const memoValue = useMemo(() => value ?? defaultValue, [value, defaultValue])
+  }, [key, keyAtom, memoValue, setValue])
   return [memoValue, updateValue] as const
 }
