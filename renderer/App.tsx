@@ -66,7 +66,18 @@ export function App() {
   openaiRef.current === null && createOpenAI()
 
   const [bot, setBot] = useElectronStore('bot', defaultBot)
-  const [messages, setMessages] = useState<MessageItem[]>([])
+  const [messages, setMessages] = useState<MessageItem[]>([
+    {
+      text: '你好',
+      user: { name: '用户' },
+      ctime: Date.now()
+    },
+    {
+      text: '# 你好\n'.repeat(100),
+      user: bot,
+      ctime: Date.now()
+    }
+  ])
   const sendMessage = async (message: string, dispatch: (text: string) => void) => {
     if (!user) {
       MessagePlugin.error('User not initialized')

@@ -42,43 +42,33 @@ export function Message(props: MessageProps) {
   }
   const { user } = value
   return (
-    <div className='message'>
-      {user
-        ? (
-          <>
-            <div className='message-content'>
-              <div className='message-header'>
-                <div className='message-name' onClick={() => callFunc('onClick:name', user)}>
-                  {user.name}
-                </div>
-              </div>
-              {textRender?.(value.text) ?? value.text}
-            </div>
-            <div className='message-actions'>
-              <Button
-                variant='text'
-                shape='square'
-                size='small'
-              >
-                <span className='s-icon'>edit</span>
-              </Button>
-              <Button
-                variant='text'
-                shape='square'
-                size='small'
-                theme='danger'
-              >
-                <span className='s-icon'>delete</span>
-              </Button>
-            </div>
-            <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
-          </>
-        )
-        : (
-          <>
-            Not supported message type
-          </>
-        )}
-    </div>
+    <>
+      <div className='message-header'>
+        {user && <div className='message-name' onClick={() => callFunc('onClick:name', user)}>
+          {user.name}
+        </div>}
+        <div className='message-actions'>
+          <Button
+            variant='text'
+            shape='square'
+            size='small'
+          >
+            <span className='s-icon'>edit</span>
+          </Button>
+          <Button
+            variant='text'
+            shape='square'
+            size='small'
+            theme='danger'
+          >
+            <span className='s-icon'>delete</span>
+          </Button>
+        </div>
+      </div>
+      <div className='message-content'>
+        {textRender?.(value.text) ?? value.text}
+        <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
+      </div>
+    </>
   )
 }
