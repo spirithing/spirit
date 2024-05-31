@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Card, Col, Input, Row, Select } from 'tdesign-react'
 
+import { useUser } from '../hooks/useUser'
 import { bundledLocales } from '../providers/i18n'
 import { useElectronStore } from '../store'
 import { classnames } from '../utils/classnames'
@@ -69,12 +70,7 @@ export function Base() {
       i18n.changeLanguage(common?.locale)
     }
   }, [common?.locale, i18n])
-  const [user, setUser] = useElectronStore('user')
-  useEffect(() => {
-    if (!user) {
-      setUser({ name: system?.username || 'Guest' })
-    }
-  }, [user, setUser, system?.username])
+  const [user, setUser] = useUser()
   return <>
     <Row gutter={12}>
       <Col span={6}>
