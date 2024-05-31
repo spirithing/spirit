@@ -3,7 +3,7 @@ import './App.scss'
 import MarkdownItPluginShiki from '@shikijs/markdown-it'
 import MarkdownIt from 'markdown-it'
 import OpenAI from 'openai'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Bot } from 'spirit'
 import { DialogPlugin, Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
 
@@ -65,8 +65,7 @@ export function App() {
   }
   openaiRef.current === null && createOpenAI()
 
-  const [_bot, setBot] = useElectronStore('bot')
-  const bot = useMemo(() => _bot ?? defaultBot, [_bot])
+  const [bot, setBot] = useElectronStore('bot', defaultBot)
   const [messages, setMessages] = useState<MessageItem[]>([])
   const sendMessage = async (message: string, dispatch: (text: string) => void) => {
     if (!user) {
