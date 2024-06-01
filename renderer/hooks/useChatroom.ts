@@ -30,15 +30,15 @@ export const useChatroom = () => {
   const eCR = chatroom!
   const sendMessage = useCallback((text: string, user: IUser = defaultU) => {
     setChatroom(prev =>
-      prev
-        ? ({
+      !prev
+        ? defaultChatroom
+        : ({
           ...prev,
           messages: [
             { ctime: Date.now(), text, user },
             ...prev.messages
           ]
         })
-        : defaultChatroom
     )
   }, [defaultChatroom, defaultU, setChatroom])
   const editMessage = useCallback((index: number, text: string) => {
@@ -50,9 +50,9 @@ export const useChatroom = () => {
   }, [defaultChatroom, setChatroom])
   const clearMessages = useCallback(() => {
     setChatroom(prev =>
-      prev
-        ? ({ ...prev, messages: [] })
-        : defaultChatroom
+      !prev
+        ? defaultChatroom
+        : ({ ...prev, messages: [] })
     )
   }, [defaultChatroom, setChatroom])
 
