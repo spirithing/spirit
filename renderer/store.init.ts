@@ -34,7 +34,10 @@ async function createKeyAtom(key: string) {
 }
 
 let keys: string[] = await ipcRenderer.invoke('getStores')
-keys.forEach(createKeyAtom)
+await Promise.all(
+  keys
+    .map(createKeyAtom)
+)
 electronStore.set(keysAtom, keys)
 ipcRenderer.on('addKey', async (_, key: string) => {
   await createKeyAtom(key)
