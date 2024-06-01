@@ -7,5 +7,9 @@
   "themeDark": "暗色",
   "themeAuto": "自动",
   "highlightTheme": "高亮主题",
-  "Display configure panel": "显示配置面板"
+  "Display configure panel": "显示配置面板",
+  "errorFallback": {
+    "title": "发生了一些错误",
+    "tooltip": "选择以下方式之一将上面的信息提供给开发者："
+  }
 }

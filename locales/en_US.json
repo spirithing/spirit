@@ -7,5 +7,9 @@
   "themeDark": "Dark",
   "themeAuto": "Auto",
   "highlightTheme": "Highlight Theme",
-  "Display configure panel": "Display configure panel"
+  "Display configure panel": "Display configure panel",
+  "errorFallback": {
+    "title": "Something went wrong.",
+    "tooltip": "Provide this information to the developer, select one of the following ways:"
+  }
 }

@@ -1,60 +1,9 @@
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes move-in {
-  0% {
-    transform: translateY(50px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-@keyframes move-out {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(50px);
-  }
-}
-body {
-  height: 100vh;
-  opacity: 0;
-  box-shadow: inset 0 0 320px 80px #0006;
-  animation: fade-out .1s forwards;
-  #root {
-    animation: move-out .1s forwards;
-  }
-  &.displaying {
-    animation: fade-in .2s forwards;
-    #root {
-      animation: move-in .2s forwards;
-    }
-  }
-}
 #root {
   width: 100vw;
   height: 100vh;
   filter: drop-shadow(0 0 16px #0008);
 }
 .spirit-main {
-  --td-radius-medium: 16px;
   --sender-width: 60vw;
 
   display: flex;
