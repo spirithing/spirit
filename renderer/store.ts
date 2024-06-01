@@ -1,16 +1,13 @@
 import { atom, createStore } from 'jotai'
 import type { PrimitiveAtom } from 'jotai/vanilla/atom'
-import type { Events, Store } from 'spirit'
+import type { Store } from 'spirit'
 
 import { ipcRenderer } from './electron'
-import { EventEmitter } from './utils/EventEmitter'
 import { keyUUID } from './utils/keyUUIDs'
 
 export type WithInitialValue<T> = { init: T }
 
 export const electronStore = createStore()
-
-export const ee = new EventEmitter<Events>()
 
 export const keyAtom = <K extends keyof Store>(key: K):
   | Atoms[K]

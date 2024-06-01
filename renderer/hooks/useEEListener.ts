@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import type { Events } from 'spirit'
 
-import { ee } from '../store'
+import { ee } from '../instances/ee'
 import { useEventCallback } from './useEventCallback'
 
 export const useEEListener = <K extends keyof Events>(k: K, lis: Events[K]) => {
