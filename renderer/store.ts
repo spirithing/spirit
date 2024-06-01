@@ -23,6 +23,26 @@ export type Atoms = typeof atoms
 export const uuids = new Map<string, string>()
 export const keysAtom = atom(Object.keys(atoms))
 
+export function subAtomByKey<
+  K extends keyof Store,
+>(
+  id: K,
+  callback: () => void,
+  dispose = () => {}
+) {
+  const atom = keyAtom(id)
+  let disposeSub: () => void
+  if (atom) {
+    disposeSub = electronStore.sub(atom, callback)
+    dispose()
+  } else {
+    const dispose = electronStore.sub(keysAtom, () => {
+      disposeSub = subAtomByKey(id, callback, dispose)
+    })
+  }
+  return () => disposeSub?.()
+}
+
 async function createKeyAtom(key: string) {
   const value = await ipcRenderer.invoke('getStore', key)
   const keyAtom = atom(value)

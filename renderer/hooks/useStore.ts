@@ -19,26 +19,6 @@ const useKeyAtom = <K extends keyof Store>(key: K):
     : defaultAtom
 }
 
-export function subAtomByKey<
-  K extends keyof Store,
->(
-  id: K,
-  callback: () => void,
-  dispose = () => {}
-) {
-  const atom = keyAtom(id)
-  let disposeSub: () => void
-  if (atom) {
-    disposeSub = electronStore.sub(atom, callback)
-    dispose()
-  } else {
-    const dispose = electronStore.sub(keysAtom, () => {
-      disposeSub = subAtomByKey(id, callback, dispose)
-    })
-  }
-  return () => disposeSub?.()
-}
-
 export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: Store[K]) => {
   const keyAtom = useKeyAtom(key)
   const [value, setValue] = useAtom(keyAtom, { store: electronStore })

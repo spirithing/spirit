@@ -1,8 +1,7 @@
 import { atom, useAtom } from 'jotai'
 import OpenAI from 'openai'
 
-import { subAtomByKey } from '../hooks/useStore'
-import { electronStore, keyAtom } from '../store'
+import { electronStore, keyAtom, subAtomByKey } from '../store'
 
 const configAtom = keyAtom('openaiConfig')
 
