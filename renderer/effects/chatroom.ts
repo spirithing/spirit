@@ -1,5 +1,6 @@
 import { getActiveChatroom, getChatroom } from '../hooks/useChatroom'
-import { ee, subAtomByKey } from '../store'
+import { subAtomByKey } from '../hooks/useStore'
+import { ee } from '../store'
 
 function diff<T>(a: T[], b: T[]): {
   adds: T[]

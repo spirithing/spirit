@@ -9,7 +9,7 @@ import { Base } from './configurers/Base'
 import { useBot } from './hooks/useBot'
 import { useChatroom } from './hooks/useChatroom'
 import { useMDRender } from './hooks/useMDRender'
-import { useElectronStore } from './store'
+import { useElectronStore } from './hooks/useStore'
 import { classnames } from './utils/classnames'
 
 function Messages() {

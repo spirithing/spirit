@@ -4,9 +4,9 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Card, Col, Input, Row, Select } from 'tdesign-react'
 
+import { useElectronStore } from '../hooks/useStore'
 import { useUser } from '../hooks/useUser'
 import { bundledLocales } from '../providers/i18n'
-import { useElectronStore } from '../store'
 import { classnames } from '../utils/classnames'
 
 function ThemeSwitcher() {

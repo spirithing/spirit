@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
-import { useElectronStore } from '../store'
+import { useElectronStore } from '../hooks/useStore'
 
 type Theme = 'light' | 'dark' | (string & {})
 

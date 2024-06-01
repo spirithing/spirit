@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
 import type { IUser } from 'spirit'
 
-import { keyAtom, useElectronStore } from '../store'
-import { electronStore } from '../store.init'
+import { useElectronStore } from '../hooks/useStore'
+import { electronStore, keyAtom } from '../store'
 import { useUser } from './useUser'
 
 export const activeChatroomAtom = () => keyAtom('activeChatroom')

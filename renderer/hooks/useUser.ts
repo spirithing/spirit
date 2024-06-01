@@ -1,4 +1,4 @@
-import { useElectronStore } from '../store'
+import { useElectronStore } from '../hooks/useStore'
 
 export const useUser = () => {
   const [system] = useElectronStore('system')

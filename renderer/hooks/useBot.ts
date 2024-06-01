@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useElectronStore } from '../store'
+import { useElectronStore } from '../hooks/useStore'
 
 export const useBot = () => {
   const { t } = useTranslation()

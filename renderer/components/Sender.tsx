@@ -21,7 +21,7 @@ import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
 import { useEEListener } from '../hooks/useEEListener'
 import { useOpenAI } from '../hooks/useOpenAI'
-import { useElectronStore } from '../store'
+import { useElectronStore } from '../hooks/useStore'
 
 export interface SenderProps {
   className?: string
