@@ -2,7 +2,7 @@ import './store'
 
 // TODO listen language change by os-locale
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, type Display, globalShortcut, screen, shell } from 'electron'
+import { app, BrowserWindow, type Display, globalShortcut, protocol, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'
 import { join } from 'path'
 
@@ -111,6 +111,12 @@ async function main() {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   await app.whenReady()
+  // open external link in default browser
+  const schema = 'spirit-oe'
+  protocol.registerHttpProtocol(schema, request => {
+    const url = request.url.substr(schema.length)
+    shell.openExternal(`https${url}`)
+  })
   app.dock.hide()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
