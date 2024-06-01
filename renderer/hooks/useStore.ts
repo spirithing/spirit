@@ -6,7 +6,7 @@ import type { Store } from 'spirit'
 import { ipcRenderer } from '../electron'
 import type { Atoms, WithInitialValue } from '../store'
 import { electronStore, keyAtom, keysAtom } from '../store'
-import { uuids } from '../utils/keyUUIDs'
+import { keyUUID } from '../utils/keyUUIDs'
 
 const defaultAtom = atom(null)
 
@@ -33,8 +33,7 @@ export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: S
       // @ts-ignore
       setValue(v)
     } else {
-      const uuid = uuids.get(key) ?? Math.random().toString(36).slice(2)
-      uuids.set(key, uuid)
+      const uuid = keyUUID(key)
       ipcRenderer.sendSync('setStore', uuid, key, v)
     }
   }, [key, keyAtom, setValue])

@@ -4,7 +4,7 @@ import type { Events, Store } from 'spirit'
 
 import { ipcRenderer } from './electron'
 import { EventEmitter } from './utils/EventEmitter'
-import { uuids } from './utils/keyUUIDs'
+import { keyUUID } from './utils/keyUUIDs'
 
 export type WithInitialValue<T> = { init: T }
 
@@ -47,8 +47,7 @@ async function createKeyAtom(key: string) {
   const value = await ipcRenderer.invoke('getStore', key)
   const keyAtom = atom(value)
   atoms[key] = keyAtom
-  const uuid = uuids.get(key) ?? Math.random().toString(36).slice(2)
-  uuids.set(key, uuid)
+  const uuid = keyUUID(key as keyof Store, true)
   ipcRenderer.sendSync('listenStore', key, uuid)
   ipcRenderer.on(`storeChange:${uuid}`, (_, value: unknown) => {
     electronStore.set(keyAtom, value)
