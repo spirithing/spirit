@@ -10,6 +10,9 @@
   "Display configure panel": "Display configure panel",
   "errorFallback": {
     "title": "Something went wrong.",
-    "tooltip": "Provide this information to the developer, select one of the following ways:"
+    "tooltip": "Provide this information to the developer, select one of the following ways:",
+    "quickFix": "Quick fix: ",
+    "refresh": "Refresh",
+    "reload": "Reload Application"
   }
 }

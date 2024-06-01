@@ -10,6 +10,9 @@
   "Display configure panel": "显示配置面板",
   "errorFallback": {
     "title": "发生了一些错误",
-    "tooltip": "选择以下方式之一将上面的信息提供给开发者："
+    "tooltip": "选择以下方式之一将上面的信息提供给开发者：",
+    "quickFix": "自助快速修复：",
+    "refresh": "刷新页面",
+    "reload": "重载应用"
   }
 }

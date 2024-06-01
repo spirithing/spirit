@@ -32,6 +32,9 @@ function ErrorFallback({ error, errorInfo }: { error: Error; errorInfo: ErrorInf
         </a>
       </li>
     </ul>
+    {t('errorFallback.quickFix')}
+    <a href='' onClick={() => location.reload()}>{t('errorFallback.refresh')}</a>,&nbsp;
+    <a href='' onClick={() => /* TODO */ void 0}>{t('errorFallback.reload')}</a>
   </>
 }
 
