@@ -6,7 +6,6 @@ import { ipcRenderer } from '../electron'
 import { atoms, electronStore } from '../store'
 import { keyUUID } from '../utils/keyUUIDs'
 
-
 async function createKeyAtom(key: string) {
   const value = await ipcRenderer.invoke('getStore', key)
   const keyAtom = atom(value)
