@@ -70,6 +70,10 @@ export function Sender(props: SenderProps) {
 
   useEEListener('addMessage', async (m, { messages }) => {
     if (m.user === bot) return
+    if (import.meta.env.DEV && m.text === 'd') {
+      sendMessage('pong', bot)
+      return
+    }
 
     if (!bot) {
       MessagePlugin.error('Bot not initialized')
