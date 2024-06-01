@@ -3,9 +3,10 @@ import type { PrimitiveAtom } from 'jotai/vanilla/atom'
 import { useCallback, useMemo } from 'react'
 import type { Store } from 'spirit'
 
+import { keysAtom } from '../atoms/keys'
 import { ipcRenderer } from '../electron'
 import type { Atoms, WithInitialValue } from '../store'
-import { electronStore, keyAtom, keysAtom } from '../store'
+import { electronStore, keyAtom } from '../store'
 import { keyUUID } from '../utils/keyUUIDs'
 
 const defaultAtom = atom(null)

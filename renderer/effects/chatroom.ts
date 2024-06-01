@@ -1,6 +1,6 @@
 import { getActiveChatroom, getChatroom } from '../atoms/chatroom'
+import { subAtomByKey } from '../atoms/keys'
 import { ee } from '../instances/ee'
-import { subAtomByKey } from '../store'
 import { diff } from '../utils/diff'
 
 let unSub: () => void
