@@ -1,5 +1,11 @@
 import type { ClientOptions } from 'openai'
 
+import type { EventMap } from './utils/EventEmitter'
+
+declare module 'spirit' {
+  export interface Events extends EventMap {
+  }
+}
 declare module 'spirit' {
   export interface IUser {
     name: string
@@ -22,8 +28,9 @@ declare module 'spirit' {
     description?: string
   }
   export interface Store {
+    activeChatroom: string
     chatrooms: string[]
-    [`chatroom:${string}`]: ChatRoom
+    [k: `chatroom:${string}`]: ChatRoom
     bot: Bot
     openaiConfig: ClientOptions
   }

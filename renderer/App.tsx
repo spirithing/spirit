@@ -1,119 +1,20 @@
 import './App.scss'
 
-import OpenAI from 'openai'
-import { useEffect, useRef, useState } from 'react'
-import type { Bot, IMessage } from 'spirit'
-import { Input, MessagePlugin, Select, Tabs, Textarea } from 'tdesign-react'
+import { useEffect, useState } from 'react'
+import { Input, Select, Tabs, Textarea } from 'tdesign-react'
 
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
 import { Base } from './configurers/Base'
+import { useBot } from './hooks/useBot'
+import { useChatroom } from './hooks/useChatroom'
 import { useMDRender } from './hooks/useMDRender'
-import { useUser } from './hooks/useUser'
 import { useElectronStore } from './store'
 import { classnames } from './utils/classnames'
 
-type MessageItem = IMessage & {
-  hidden?: boolean
-}
-
-const defaultBot = {
-  name: '器灵',
-  description:
-    '一个 AI 助手，中文环境下的分类为器灵，英文环境下的分类为 Spirit。通过快捷入口触发，帮助用户解决问题，也可以陪用户聊天。\n'
-    + '器灵的中文意义是「器物的灵魂」，万物皆有灵，那么电脑的灵便是 AI 了。'
-} satisfies Bot
-
-function messageTransform(bot: Bot, m: MessageItem): OpenAI.ChatCompletionMessageParam {
-  const isBot = m.user?.name === bot.name
-  return {
-    role: isBot ? 'assistant' : 'user',
-    content: `${isBot ? '' : `${m.user?.name}:\n`}${m.text}`
-  }
-}
-
 function Messages() {
-  const [user] = useUser()
   const mdRef = useMDRender()
-
-  const [config] = useElectronStore('openaiConfig')
-  const openaiRef = useRef<OpenAI | null>(null)
-
-  function createOpenAI() {
-    if (!config || !config.apiKey || !config.baseURL) return
-    openaiRef.current = new OpenAI({
-      ...config,
-      dangerouslyAllowBrowser: true
-    })
-  }
-
-  openaiRef.current === null && createOpenAI()
-
-  const [bot] = useElectronStore('bot', defaultBot)
-  const [messages, setMessages] = useState<MessageItem[]>([
-    { ctime: Date.now(), text: '你好', user: { name: '用户' } },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot },
-    { ctime: Date.now(), text: '你好', user: bot }
-  ])
-  const sendMessage = async (message: string, dispatch: (text: string) => void) => {
-    if (!user) {
-      MessagePlugin.error('User not initialized')
-      return
-    }
-    const newMessages = [
-      {
-        text: message,
-        user,
-        ctime: Date.now()
-      },
-      ...messages
-    ] satisfies MessageItem[]
-    setMessages(newMessages)
-    dispatch('')
-    if (!openaiRef.current) {
-      alert('OpenAI not initialized')
-      return
-    }
-    if (!bot) {
-      alert('Bot not initialized')
-      return
-    }
-    const completions = await openaiRef.current.chat.completions.create({
-      model: 'gpt-4o',
-      // eslint-disable-next-line camelcase
-      max_tokens: 4096,
-      messages: [
-        {
-          content: `Your name is "${bot.name}" and your description is "${bot.description}".\n`
-            + 'Every message except yours has a corresponding username, in the format where the current message username appears at the beginning of each message.',
-          role: 'system'
-        },
-        ...newMessages.map(messageTransform.bind(null, bot)).reverse()
-      ],
-      stream: true
-    })
-    newMessages.unshift({
-      text: '',
-      user: bot,
-      ctime: Date.now()
-    })
-    const latestMessage = newMessages[0]
-    let streamMessage = ''
-    for await (const { choices: [{ delta }] } of completions) {
-      streamMessage += delta.content ?? ''
-      latestMessage.text = streamMessage
-      setMessages([...newMessages])
-    }
-  }
+  const [{ messages }] = useChatroom()
 
   return <div className='messages'>
     {messages.map((message, i) => (
@@ -144,7 +45,7 @@ export function App() {
     }
   }, [displaying])
 
-  const [bot, setBot] = useElectronStore('bot', defaultBot)
+  const [bot, setBot] = useBot()
   const [config, setConfig] = useElectronStore('openaiConfig')
 
   const [configDrawerVisible, setConfigDrawerVisible] = useState(false)

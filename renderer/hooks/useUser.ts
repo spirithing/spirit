@@ -2,7 +2,8 @@ import { useElectronStore } from '../store'
 
 export const useUser = () => {
   const [system] = useElectronStore('system')
-  return useElectronStore('user', {
+  const [user, setUser] = useElectronStore('user', {
     name: system?.username || 'Guest'
   })
+  return [user!, setUser] as const
 }

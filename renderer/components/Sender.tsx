@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-semi */
 import './Sender.scss'
 import '@shikitor/core/plugins/provide-completions.css'
 import '@shikitor/core/plugins/provide-popup.css'
@@ -8,12 +9,18 @@ import providePopup from '@shikitor/core/plugins/provide-popup'
 import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-toolbox'
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import type OpenAI from 'openai'
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DialogPlugin, Tooltip } from 'tdesign-react'
+import type { Bot, IMessage } from 'spirit'
+import { DialogPlugin, MessagePlugin, Tooltip } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
+import { useBot } from '../hooks/useBot'
+import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
+import { useEEListener } from '../hooks/useEEListener'
+import { useOpenAI } from '../hooks/useOpenAI'
 import { useElectronStore } from '../store'
 
 export interface SenderProps {
@@ -39,6 +46,14 @@ const plugins = [
   selectionToolboxForMd
 ]
 
+function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
+  const isBot = m.user?.name === bot.name
+  return {
+    role: isBot ? 'assistant' : 'user',
+    content: `${isBot ? '' : `${m.user?.name}:\n`}${m.text}`
+  }
+}
+
 export function Sender(props: SenderProps) {
   const prefix = 'spirit-sender'
   const {
@@ -47,6 +62,56 @@ export function Sender(props: SenderProps) {
     onIconClick
   } = props
   const { t } = useTranslation()
+
+  const [, { sendMessage, editMessage, clearMessages }] = useChatroom()
+  const openai = useOpenAI()
+  const [bot] = useBot()
+  const messageTransformWithBot = useCallback((m: IMessage) => messageTransform(bot!, m), [bot])
+
+  useEEListener('addMessage', async (m, { messages }) => {
+    if (m.user === bot) return
+
+    if (!bot) {
+      MessagePlugin.error('Bot not initialized')
+      return
+    }
+    if (!openai) {
+      MessagePlugin.error('OpenAI not initialized')
+      return
+    }
+    // const completions = [
+    //   {
+    //     choices: [
+    //       {
+    //         delta: {
+    //           content: '1'
+    //         }
+    //       },
+    //       ...messages.map(messageTransformWithBot).reverse()
+    //     ]
+    //   }
+    // ]
+    const completions = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      // eslint-disable-next-line camelcase
+      max_tokens: 4096,
+      messages: [
+        {
+          content: `Your name is "${bot.name}" and your description is "${bot.description}".\n`
+            + 'Every message except yours has a corresponding username, in the format where the current message username appears at the beginning of each message.',
+          role: 'system'
+        },
+        ...messages.map(messageTransformWithBot).reverse()
+      ],
+      stream: true
+    })
+    sendMessage('', bot)
+    let streamMessage = ''
+    for await (const { choices: [{ delta }] } of completions) {
+      streamMessage += delta.content ?? ''
+      editMessage(0, streamMessage)
+    }
+  })
 
   const [yiyanIndex, setYiyanIndex] = useState(0)
   useEffect(() => {
@@ -129,18 +194,20 @@ export function Sender(props: SenderProps) {
               setDisplay(false)
             }
           }
-          // if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-          //   onClear?.()
-          // }
+          if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+            clearMessages()
+            return
+          }
           if (e.key === '/' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
             e.preventDefault()
             onIconClick()
           }
-          // if (e.key === 'Enter' && e.metaKey) {
-          //   e.preventDefault()
-          //   onSend(text, setText)
-          //   return
-          // }
+          if (e.key === 'Enter' && e.metaKey) {
+            e.preventDefault()
+            sendMessage(text)
+            setText('')
+            return
+          }
         }}
       />
     </div>

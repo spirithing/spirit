@@ -41,6 +41,7 @@ function createWindow() {
   function calcBounds(display: Display) {
     return {
       ...display.bounds,
+      y: -10,
       height: display.workAreaSize.height
     }
   }

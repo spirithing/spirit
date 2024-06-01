@@ -1,13 +1,20 @@
 import { atom, useAtom } from 'jotai'
 import type { PrimitiveAtom } from 'jotai/vanilla/atom'
 import { useCallback, useMemo } from 'react'
-import type { Store } from 'spirit'
+import type { Events, Store } from 'spirit'
 
 import { ipcRenderer } from './electron'
 import type { Atoms, WithInitialValue } from './store.init'
 import { atoms, electronStore, keysAtom, uuids } from './store.init'
+import { EventEmitter } from './utils/EventEmitter'
 
 const defaultAtom = atom(null)
+
+export const ee = new EventEmitter<Events>()
+
+export const keyAtom = <K extends keyof Store>(key: K):
+  | Atoms[K]
+  | PrimitiveAtom<null> & WithInitialValue<null> => atoms[key] as Atoms[K]
 
 const useKeyAtom = <K extends keyof Store>(key: K):
   | Atoms[K]
@@ -15,18 +22,38 @@ const useKeyAtom = <K extends keyof Store>(key: K):
 {
   const [keys] = useAtom(keysAtom, { store: electronStore })
   return useMemo(() => keys.includes(key), [keys, key])
-    ? atoms[key] as Atoms[K] ?? defaultAtom
+    ? keyAtom(key) ?? defaultAtom
     : defaultAtom
+}
+
+export function subAtomByKey<
+  K extends keyof Store,
+>(
+  id: K,
+  callback: () => void,
+  dispose = () => {}
+) {
+  const atom = keyAtom(id)
+  let disposeSub: () => void
+  if (atom) {
+    disposeSub = electronStore.sub(atom, callback)
+    dispose()
+  } else {
+    const dispose = electronStore.sub(keysAtom, () => {
+      disposeSub = subAtomByKey(id, callback, dispose)
+    })
+  }
+  return () => disposeSub?.()
 }
 
 export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: Store[K]) => {
   const keyAtom = useKeyAtom(key)
   const [value, setValue] = useAtom(keyAtom, { store: electronStore })
   const memoValue = useMemo(() => value ?? defaultValue, [value, defaultValue])
-  const updateValue = useCallback((value: Store[K] | ((prev?: Store[K]) => Store[K])) => {
+  const updateValue = useCallback((value: Store[K] | ((prev?: Store[K] | null) => Store[K])) => {
     let v = value
     if (typeof value === 'function') {
-      v = value(memoValue)
+      v = value(electronStore.get(keyAtom))
     }
     if (keyAtom !== defaultAtom) {
       // @ts-ignore
@@ -36,6 +63,6 @@ export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: S
       uuids.set(key, uuid)
       ipcRenderer.sendSync('setStore', uuid, key, v)
     }
-  }, [key, keyAtom, memoValue, setValue])
+  }, [key, keyAtom, setValue])
   return [memoValue, updateValue] as const
 }
