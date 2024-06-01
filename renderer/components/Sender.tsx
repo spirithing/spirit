@@ -79,18 +79,6 @@ export function Sender(props: SenderProps) {
       MessagePlugin.error('OpenAI not initialized')
       return
     }
-    // const completions = [
-    //   {
-    //     choices: [
-    //       {
-    //         delta: {
-    //           content: '1'
-    //         }
-    //       },
-    //       ...messages.map(messageTransformWithBot).reverse()
-    //     ]
-    //   }
-    // ]
     const completions = await openai.chat.completions.create({
       model: 'gpt-4o',
       // eslint-disable-next-line camelcase
