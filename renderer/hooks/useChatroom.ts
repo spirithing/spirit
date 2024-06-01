@@ -2,22 +2,7 @@ import { useCallback, useMemo } from 'react'
 import type { IUser } from 'spirit'
 
 import { useElectronStore } from '../hooks/useStore'
-import { electronStore, keyAtom } from '../store'
 import { useUser } from './useUser'
-
-export const activeChatroomAtom = () => keyAtom('activeChatroom')
-export const getActiveChatroom = () =>
-  activeChatroomAtom()
-    ? electronStore.get(activeChatroomAtom()) ?? 'default'
-    : 'default'
-export const getChatroomAtom = (
-  id = getActiveChatroom()
-) => keyAtom(`chatroom:${id}`)
-export const getChatroom = (
-  id = getActiveChatroom()
-) => (
-  electronStore.get(getChatroomAtom(id)) ?? { id, messages: [] }
-)
 
 export const useChatroom = () => {
   const [defaultU] = useUser()
