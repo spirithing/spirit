@@ -4,6 +4,7 @@ import type { Events, Store } from 'spirit'
 
 import { ipcRenderer } from './electron'
 import { EventEmitter } from './utils/EventEmitter'
+import { uuids } from './utils/keyUUIDs'
 
 export type WithInitialValue<T> = { init: T }
 
@@ -20,7 +21,6 @@ export const atoms = {} as {
 }
 export type Atoms = typeof atoms
 
-export const uuids = new Map<string, string>()
 export const keysAtom = atom(Object.keys(atoms))
 
 export function subAtomByKey<

@@ -5,7 +5,8 @@ import type { Store } from 'spirit'
 
 import { ipcRenderer } from '../electron'
 import type { Atoms, WithInitialValue } from '../store'
-import { electronStore, keyAtom, keysAtom, uuids } from '../store'
+import { electronStore, keyAtom, keysAtom } from '../store'
+import { uuids } from '../utils/keyUUIDs'
 
 const defaultAtom = atom(null)
 
