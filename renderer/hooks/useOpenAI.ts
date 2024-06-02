@@ -19,4 +19,4 @@ function createOpenAI() {
 const openAIAtom = atom(createOpenAI())
 subAtomByKey('openaiConfig', () => electronStore.set(openAIAtom, createOpenAI()))
 
-export const useOpenAI = () => useAtom(openAIAtom)[0]
+export const useOpenAI = () => useAtom(openAIAtom, { store: electronStore })[0]
