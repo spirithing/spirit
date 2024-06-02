@@ -1,6 +1,6 @@
 // noinspection TypeScriptUnresolvedReference
 
-const MAX_IPC_CALLS = 50
+const MAX_IPC_CALLS = 30
 
 let count = 0
 const i = setInterval(() => count = 0, 100)
