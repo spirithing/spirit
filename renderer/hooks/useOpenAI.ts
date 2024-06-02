@@ -4,12 +4,11 @@ import OpenAI from 'openai'
 import { subAtomByKey } from '../atoms/keys'
 import { electronStore, keyAtom } from '../store'
 
-const configAtom = keyAtom('openaiConfig')
-
 function createOpenAI() {
-  if (!configAtom) return
+  const configAtom = keyAtom('openaiConfig')
+  if (!configAtom) return null
   const config = electronStore.get(configAtom)
-  if (!config || !config.apiKey || !config.baseURL) return
+  if (!config || !config.apiKey || !config.baseURL) return null
   return new OpenAI({
     ...config,
     dangerouslyAllowBrowser: true
@@ -17,6 +16,11 @@ function createOpenAI() {
 }
 
 const openAIAtom = atom(createOpenAI())
-subAtomByKey('openaiConfig', () => electronStore.set(openAIAtom, createOpenAI()))
+subAtomByKey('openaiConfig', () => {
+  const current = createOpenAI()
+  if (current) {
+    electronStore.set(openAIAtom, current)
+  }
+})
 
 export const useOpenAI = () => useAtom(openAIAtom, { store: electronStore })[0]
