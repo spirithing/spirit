@@ -35,6 +35,7 @@
     width: 15vw;
     height: calc(var(--h) - var(--pad) * 2);
 
+    user-select: none;
     cursor: pointer;
     border: 2px solid var(--td-text-color-placeholder);
     transition: .3s;

@@ -15,7 +15,7 @@ import { classnames } from './utils/classnames'
 import { uuid } from './utils/uuid'
 
 function Chatrooms() {
-  const [activeChatroom] = useChatroom()
+  const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
   const [model, setModel] = useState<string>('gpt-4o')
   return <div className={`${'spirit'}-chatrooms`}>
@@ -26,34 +26,35 @@ function Chatrooms() {
       </Card>
     </div>
     {chatrooms?.map(chatroom => (
-      <Card
-        key={chatroom}
-        className={classnames(
-          `${'spirit'}-chatroom`,
-          {
-            [`${'spirit'}-chatroom--active`]: chatroom === activeChatroom.id
+      <div key={chatroom} onClick={() => setActiveChatroom(chatroom)}>
+        <Card
+          className={classnames(
+            `${'spirit'}-chatroom`,
+            {
+              [`${'spirit'}-chatroom--active`]: chatroom === activeChatroom.id
+            }
+          )}
+          header={
+            <>
+              <span className='s-icon'>chat</span>
+              {chatroom}
+            </>
           }
-        )}
-        header={
-          <>
-            <span className='s-icon'>chat</span>
-            {chatroom}
-          </>
-        }
-      >
-        No Description
-        <div
-          className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__download`}
         >
-          download
-        </div>
-        <div
-          className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__del`}
-          onClick={() => delChatroom(chatroom)}
-        >
-          delete
-        </div>
-      </Card>
+          No Description
+          <div
+            className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__download`}
+          >
+            download
+          </div>
+          <div
+            className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__del`}
+            onClick={() => delChatroom(chatroom)}
+          >
+            delete
+          </div>
+        </Card>
+      </div>
     ))}
   </div>
 }
