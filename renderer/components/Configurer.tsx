@@ -79,7 +79,7 @@ const tabs = [
   {
     icon: 'robot',
     value: 'openAI',
-    title: 'openAI',
+    title: 'OpenAI',
     Configurer: OpenAI
   },
   {
