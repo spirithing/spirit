@@ -76,10 +76,12 @@ export function Sender(props: SenderProps) {
     }
 
     if (!bot) {
+      // TODO check name and description is empty, and prompt user to configure it
       MessagePlugin.error('Bot not initialized')
       return
     }
     if (!openai) {
+      // TODO prompt user to configure it
       MessagePlugin.error('OpenAI not initialized')
       return
     }
