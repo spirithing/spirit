@@ -126,7 +126,7 @@ export function Sender(props: SenderProps) {
       MessagePlugin.error('OpenAI not initialized')
       return
     }
-    sendMessage('Inputting', bot)
+    const { uuid } = sendMessage('Inputting', bot)
     let count = 0
     const t = setInterval(() => {
       editMessage(0, 'Inputting' + '.'.repeat(count))
@@ -146,7 +146,7 @@ export function Sender(props: SenderProps) {
       ],
       stream: true
     }).finally(() => clearInterval(t))
-    editMessage(0, '')
+    editMessage(uuid, '')
     let streamMessage = ''
     for await (const { choices: [{ delta }] } of completions) {
       streamMessage += delta.content ?? ''

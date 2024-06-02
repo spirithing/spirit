@@ -3,6 +3,7 @@ declare module 'spirit' {
   import ChatModel = OpenAI.ChatModel
 
   export type IMessage = {
+    uuid: string
     text: string
     user?: IUser
     hidden?: boolean

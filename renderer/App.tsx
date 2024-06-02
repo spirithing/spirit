@@ -14,9 +14,9 @@ function Messages() {
   const [{ messages }] = useChatroom()
 
   return <div className='messages'>
-    {messages?.map((message, i) => (
+    {messages?.map(message => (
       <Message
-        key={i}
+        key={message.uuid}
         value={message}
         textRender={text => (
           <div className='message-text'>
