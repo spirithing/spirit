@@ -42,21 +42,21 @@ export function Message(props: MessageProps) {
         </div>}
         <div className='message-actions'>
           <Button
-            variant='text'
+            variant='outline'
             shape='square'
             size='small'
           >
             <span className='s-icon'>fork_right</span>
           </Button>
           <Button
-            variant='text'
+            variant='outline'
             shape='square'
             size='small'
           >
             <span className='s-icon'>edit</span>
           </Button>
           <Button
-            variant='text'
+            variant='outline'
             shape='square'
             size='small'
             theme='danger'

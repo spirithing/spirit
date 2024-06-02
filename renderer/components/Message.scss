@@ -959,12 +959,16 @@
     display: flex;
     gap: 10px;
     position: absolute;
-    top: var(--td-radius-medium);
-    right: var(--td-radius-medium);
+    top: 0;
+    right: 0;
+    transform: translateY(-50%);
     opacity: 0;
     transition: .3s;
+    .t-button {
+      background-color: var(--td-bg-color-container);
+    }
     .s-icon {
-      font-size: 14px;
+      font-size: 16px;
     }
   }
   &-time {
