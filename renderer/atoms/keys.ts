@@ -9,17 +9,19 @@ export function subAtomByKey<
   K extends keyof Store,
 >(
   id: K,
-  callback: () => void,
-  dispose = () => {}
+  callback: () => void
 ) {
   const atom = keyAtom(id)
   let disposeSub: () => void
   if (atom) {
     disposeSub = electronStore.sub(atom, callback)
-    dispose()
   } else {
-    const dispose = electronStore.sub(keysAtom, () => {
-      disposeSub = subAtomByKey(id, callback, dispose)
+    disposeSub = electronStore.sub(keysAtom, () => {
+      const atom = keyAtom(id)
+      disposeSub()
+      if (atom) {
+        disposeSub = electronStore.sub(atom, callback)
+      }
     })
   }
   return () => disposeSub?.()
