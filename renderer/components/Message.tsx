@@ -1,6 +1,6 @@
 import './Message.scss'
 
-import React from 'react'
+import type { ReactNode } from 'react'
 import type { IMessage, IUser } from 'spirit'
 import { Button } from 'tdesign-react'
 
@@ -20,7 +20,7 @@ export type MessageProps = NestedPropsGenerator<'onClick', OnClicks> & {
   value: IMessage
   onChange?(value: IMessage): void
   onDelete?(): void
-  textRender?(text: string): React.ReactNode
+  textRender?(text: string): ReactNode
 }
 
 export function Message(props: MessageProps) {
