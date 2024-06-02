@@ -1,6 +1,6 @@
 import './Base.scss'
 
-import { useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Card, Col, Collapse, Input, Link, Row, Select } from 'tdesign-react'
 
@@ -152,10 +152,10 @@ export function Base() {
                 ['spirit-oe://github.com/tencent/tdesign-react', 'TDesign'],
                 ['spirit-oe://github.com/i18next/react-i18next', 'react-i18next']
               ].map(([u, t], i, a) =>
-                <>
-                  <Link theme='primary' key={u} href={u}>{t}</Link>
+                <Fragment key={u}>
+                  <Link theme='primary' href={u}>{t}</Link>
                   {i < a.length - 1 && ', '}
-                </>
+                </Fragment>
               )}
             </div>
             <div>
