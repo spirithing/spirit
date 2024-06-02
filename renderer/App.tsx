@@ -10,6 +10,7 @@ import { Sender } from './components/Sender'
 import { useChatroom, useChatrooms } from './hooks/useChatroom'
 import { useMDRender } from './hooks/useMDRender'
 import { useElectronStore } from './hooks/useStore'
+import { useUser } from './hooks/useUser'
 import { classnames } from './utils/classnames'
 import { uuid } from './utils/uuid'
 
@@ -59,12 +60,14 @@ function Chatrooms() {
 
 function Messages() {
   const mdRef = useMDRender()
+  const [user] = useUser()
   const [{ messages }] = useChatroom()
 
   return <div className={`${'spirit'}-messages`}>
     {messages?.map(message => (
       <Message
         key={message.uuid}
+        className={message.user?.name === user.name ? 'self' : 'other'}
         value={message}
         textRender={text => (
           <div className='message-text'>

@@ -4,6 +4,8 @@ import React from 'react'
 import type { IMessage, IUser } from 'spirit'
 import { Button } from 'tdesign-react'
 
+import { classnames } from '../utils/classnames'
+
 type NestedPropsGenerator<Prefix extends string, T> = {
   [K in keyof T as `${Prefix}:${K & string}`]?: T[K]
 }
@@ -14,6 +16,7 @@ interface OnClicks {
 }
 
 export type MessageProps = NestedPropsGenerator<'onClick', OnClicks> & {
+  className?: string
   value: IMessage
   onChange?(value: IMessage): void
   onDelete?(): void
@@ -21,7 +24,7 @@ export type MessageProps = NestedPropsGenerator<'onClick', OnClicks> & {
 }
 
 export function Message(props: MessageProps) {
-  const { value, textRender } = props
+  const { className, value, textRender } = props
   const callFunc = <P extends keyof MessageProps & (`onClick:${string}`)>(
     key: P,
     ...args: Parameters<NonNullable<MessageProps[P]>>
@@ -33,7 +36,7 @@ export function Message(props: MessageProps) {
   const { user } = value
   return (
     <>
-      <div className='message-header'>
+      <div className={classnames('message-header', className)}>
         {user && <div className='message-name' onClick={() => callFunc('onClick:name', user)}>
           {user.name}
         </div>}
@@ -62,7 +65,7 @@ export function Message(props: MessageProps) {
           </Button>
         </div>
       </div>
-      <div className='message-content'>
+      <div className={classnames('message-content', className)}>
         {textRender?.(value.text) ?? value.text}
         <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
       </div>
