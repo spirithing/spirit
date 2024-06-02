@@ -36,18 +36,20 @@ function Messages() {
   </div>
 }
 
-export function App() {
-  const [displaying] = useElectronStore('display')
+function useDisplay() {
+  const [display] = useElectronStore('display')
   useEffect(() => {
-    document.body.classList.toggle('displaying', !!displaying)
+    document.body.classList.toggle('displaying', !!display)
     return () => {
       document.body.classList.remove('displaying')
     }
-  }, [displaying])
+  }, [display])
+}
 
+export function App() {
+  useDisplay()
   const [bot, setBot] = useBot()
   const [config, setConfig] = useElectronStore('openaiConfig')
-
   const [configDrawerVisible, setConfigDrawerVisible] = useState(false)
   return <>
     <div className='spirit-main'>
