@@ -17,5 +17,10 @@
       font-size: 14px;
       font-weight: bold;
     }
+    &__desc {
+      margin-top: -10px;
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+    }
   }
 }

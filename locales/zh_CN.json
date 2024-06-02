@@ -22,5 +22,9 @@
     "quickFix": "自助快速修复：",
     "refresh": "刷新页面",
     "reload": "重载应用"
+  },
+  "openaiConfig": {
+    "defaultModel": "默认模型",
+    "defaultModelTooltip": "新建聊天室时使用的默认模型，本数据按照时间进行排序，最新的模型在最上面"
   }
 }

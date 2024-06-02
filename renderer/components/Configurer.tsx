@@ -29,6 +29,14 @@ function OpenAI() {
             onChange={v => setConfig({ ...config, baseURL: v as string })}
           />
         </div>
+        <div className='spirit-field'>
+          <label>{t('openaiConfig.defaultModel')}</label>
+          <ModelSelector
+            value={config ? config.defaultModel : undefined}
+            onChange={v => setConfig({ ...config, defaultModel: v })}
+          />
+          <div className='spirit-field__desc'>{t('openaiConfig.defaultModelTooltip')}</div>
+        </div>
       </Col>
       <Col span={6}>
         <div className='spirit-field'>

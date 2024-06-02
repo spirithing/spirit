@@ -10,6 +10,8 @@ declare module 'spirit' {
   }
   export interface Store {
     bot: Bot
-    openaiConfig: ClientOptions
+    openaiConfig: ClientOptions & {
+      defaultModel?: string
+    }
   }
 }
