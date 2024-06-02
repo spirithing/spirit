@@ -28,7 +28,10 @@ export const useChatroom = () => {
   const editMessage = useCallback((index: number, text: string) => {
     setChatroom(prev => {
       if (!prev) return defaultChatroom
-      if (!prev.messages || index < 0 || index >= prev.messages.length) {
+      if (!prev.messages) {
+        throw new Error('No messages')
+      }
+      if (index < 0 || index >= prev.messages.length) {
         throw new Error('Invalid index')
       }
       prev.messages[index].text = text
