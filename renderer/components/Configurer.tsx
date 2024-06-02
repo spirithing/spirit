@@ -1,63 +1,106 @@
 import './Configurer.scss'
 
 import type { FC, ReactNode } from 'react'
-import { Translation } from 'react-i18next'
-import { Input, Select, Tabs, Textarea } from 'tdesign-react'
+import { Translation, useTranslation } from 'react-i18next'
+import { Col, Input, Row, Select, Tabs, Textarea } from 'tdesign-react'
 
 import { Base } from '../configurers/Base'
 import { useBot } from '../hooks/useBot'
+import { useChatroom } from '../hooks/useChatroom'
 import { useElectronStore } from '../hooks/useStore'
 
 function OpenAI() {
+  const { t } = useTranslation()
   const [config, setConfig] = useElectronStore('openaiConfig')
   return <>
-    <div className='spirit-field'>
-      <label>API Key</label>
-      <Input
-        value={config ? config.apiKey : ''}
-        onChange={v => setConfig({ ...config, apiKey: v })}
-        type='password'
-        // @ts-ignore
-        spellCheck={false}
-      />
-    </div>
-    <div className='spirit-field'>
-      <label>Base URL</label>
-      <Select
-        filterable
-        creatable
-        options={[
-          { label: 'OpenAI', value: 'https://api.openai.com/v1' },
-          { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
-        ]}
-        value={config ? config.baseURL ?? '' : ''}
-        onChange={v => setConfig({ ...config, baseURL: v as string })}
-      />
-    </div>
+    <Row gutter={12}>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('apiBaseUrl')}</label>
+          <Select
+            filterable
+            creatable
+            options={[
+              { label: 'OpenAI', value: 'https://api.openai.com/v1' },
+              { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
+            ]}
+            value={config ? config.baseURL ?? '' : ''}
+            onChange={v => setConfig({ ...config, baseURL: v as string })}
+          />
+        </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('apiKey')}</label>
+          <Input
+            value={config ? config.apiKey : ''}
+            onChange={v => setConfig({ ...config, apiKey: v })}
+            type='password'
+            // @ts-ignore
+            spellCheck={false}
+          />
+        </div>
+      </Col>
+    </Row>
   </>
 }
 
 function Bot() {
+  const { t } = useTranslation()
   const [bot, setBot] = useBot()
   return <>
-    <div className='spirit-field'>
-      <label>Name</label>
-      <Input
-        value={bot?.name}
-        onChange={v => setBot({ ...bot!, name: v })}
-      />
-    </div>
-    <div className='spirit-field'>
-      <label>Bot</label>
-      <Textarea
-        value={bot?.description}
-        onChange={v => setBot({ ...bot!, description: v })}
-        autosize={{
-          maxRows: 6,
-          minRows: 2
-        }}
-      />
-    </div>
+    <Row gutter={12}>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('name')}</label>
+          <Input
+            value={bot?.name}
+            onChange={v => setBot({ ...bot!, name: v })}
+          />
+        </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('desc')}</label>
+          <Textarea
+            value={bot?.description}
+            onChange={v => setBot({ ...bot!, description: v })}
+            autosize={{
+              maxRows: 6,
+              minRows: 2
+            }}
+          />
+        </div>
+      </Col>
+    </Row>
+  </>
+}
+
+function Chatroom() {
+  const { t } = useTranslation()
+  const [chatroom, { setChatroom }] = useChatroom()
+  return <>
+    <Row gutter={12}>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('name')}</label>
+          <Input
+            value={chatroom?.name}
+            onChange={v => setChatroom({ ...chatroom!, name: v })}
+          />
+        </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('desc')}</label>
+          <Textarea
+            value={chatroom?.description}
+            onChange={v => setChatroom({ ...chatroom!, description: v })}
+            autosize={{ minRows: 1, maxRows: 6 }}
+          />
+        </div>
+      </Col>
+    </Row>
   </>
 }
 
@@ -96,7 +139,8 @@ const tabs = [
   {
     icon: 'forum',
     value: 'chatroom',
-    title: <Translation>{t => t('chatroom')}</Translation>
+    title: <Translation>{t => t('chatroom')}</Translation>,
+    Configurer: Chatroom
   },
   {
     icon: 'verified_user',
