@@ -98,10 +98,15 @@ export function Sender(props: SenderProps) {
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
   const { t } = useTranslation()
 
-  const [, { sendMessage, editMessage, clearMessages }] = useChatroom()
+  const [{ options }, { sendMessage, editMessage, clearMessages }] = useChatroom()
   const openai = useOpenAI()
+  const [openaiConfig] = useElectronStore('openaiConfig')
   const [bot] = useBot()
   const messageTransformWithBot = useCallback((m: IMessage) => messageTransform(bot!, m), [bot])
+
+  const getModel = useCallback(() => {
+    return options?.model ?? openaiConfig?.defaultModel ?? 'gpt-4o'
+  }, [openaiConfig?.defaultModel, options?.model])
 
   useEEListener('addMessage', async (m, { messages }) => {
     if (m.user === bot) return
@@ -127,7 +132,7 @@ export function Sender(props: SenderProps) {
       count = (count + 1) % 4
     }, 300)
     const completions = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: getModel(),
       // eslint-disable-next-line camelcase
       max_tokens: 4096,
       messages: [
