@@ -77,8 +77,8 @@ const tabs = [
     Configurer: Base
   },
   {
-    icon: 'settings',
-    value: 'robot',
+    icon: 'robot',
+    value: 'openAI',
     title: 'openAI',
     Configurer: OpenAI
   },
@@ -111,7 +111,10 @@ export function Configurer() {
         value={tab.value}
         label={
           <>
-            <span className='s-icon'>{tab.icon}</span>&nbsp;{tab.title}
+            {tab.icon && <>
+              <span className='s-icon'>{tab.icon}</span>&nbsp;
+            </>}
+            {tab.title}
           </>
         }
       >
