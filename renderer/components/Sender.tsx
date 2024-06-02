@@ -9,6 +9,7 @@ import providePopup from '@shikitor/core/plugins/provide-popup'
 import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-toolbox'
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
+import { useDebouncedValue } from 'foxact/use-debounced-value'
 import type OpenAI from 'openai'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -87,6 +88,7 @@ export function Sender(props: SenderProps) {
   const {
     visibles
   } = ctxRef.current
+  const debouncedVisibles = useDebouncedValue(visibles, 300)
   const {
     className,
     Icon,
@@ -183,7 +185,7 @@ export function Sender(props: SenderProps) {
       }
     )}
   >
-    {visibles.header && props.Header}
+    {debouncedVisibles.header && props.Header}
     <div className={`${prefix}__input`}>
       <Tooltip
         content={
@@ -252,6 +254,6 @@ export function Sender(props: SenderProps) {
         }}
       />
     </div>
-    {visibles.footer && props.Footer}
+    {debouncedVisibles.footer && props.Footer}
   </div>
 }

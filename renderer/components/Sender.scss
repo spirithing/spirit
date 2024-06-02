@@ -79,7 +79,7 @@
     }
   }
   &--footer > .spirit-sender__input + * {
-    max-height: 0;
-    animation: unfold_to_40vh .3s forwards;
+    max-height: 40vh;
+    animation: unfold_to_40vh .3s;
   }
 }
