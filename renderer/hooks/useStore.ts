@@ -34,8 +34,7 @@ export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: S
       // @ts-ignore
       setValue(v)
     } else {
-      const uuid = keyUUID(key)
-      ipcRenderer.sendSync('setStore', uuid, key, v)
+      ipcRenderer.sendSync('setStore', keyUUID(key), key, v)
     }
   }, [key, keyAtom, setValue])
   return [memoValue, updateValue] as const
