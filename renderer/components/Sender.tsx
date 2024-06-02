@@ -136,7 +136,7 @@ export function Sender(props: SenderProps) {
             + 'Every message except yours has a corresponding username, in the format where the current message username appears at the beginning of each message.',
           role: 'system'
         },
-        ...messages.map(messageTransformWithBot).reverse()
+        ...messages?.map(messageTransformWithBot).reverse() ?? []
       ],
       stream: true
     }).finally(() => clearInterval(t))

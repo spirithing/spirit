@@ -12,7 +12,7 @@ export const getChatroom = (
   id = getActiveChatroom()
 ) => {
   const chatroomAtom = getChatroomAtom(id)
-  const empty = { id, messages: [] }
+  const empty = { id, messages: null }
   if (chatroomAtom === undefined) {
     return empty
   }

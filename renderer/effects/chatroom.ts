@@ -12,8 +12,9 @@ function subChatroom() {
   return subAtomByKey(`chatroom:${chatroomID}`, () => {
     chatroom = getChatroom()
     const { messages: newMessages } = chatroom
-    const { adds, dels } = diff(messages, newMessages)
     ee.emit('changeChatroom', chatroomID, chatroom)
+    if (messages === null) return
+    const { adds, dels } = diff(messages, newMessages ?? [])
     messages = newMessages
     adds.forEach(m => ee.emit('addMessage', m, chatroom))
     dels.forEach(m => ee.emit('delMessage', m, chatroom))

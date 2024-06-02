@@ -15,7 +15,7 @@ declare module 'spirit' {
     id: string
     name?: string
     description?: string
-    messages: IMessage[]
+    messages: IMessage[] | null
   }
   export interface Bot {
     name: string
