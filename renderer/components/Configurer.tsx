@@ -97,6 +97,11 @@ const tabs = [
     icon: 'forum',
     value: 'chatroom',
     title: <Translation>{t => t('chatroom')}</Translation>
+  },
+  {
+    icon: 'verified_user',
+    value: 'permissions',
+    title: <Translation>{t => t('permissions')}</Translation>
   }
 ] satisfies ConfigurerTab[]
 
