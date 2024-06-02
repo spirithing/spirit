@@ -4,6 +4,7 @@ import '@shikitor/core/plugins/provide-completions.css'
 import '@shikitor/core/plugins/provide-popup.css'
 import '@shikitor/core/plugins/provide-selection-toolbox.css'
 
+import type { Shikitor } from '@shikitor/core'
 import provideCompletions from '@shikitor/core/plugins/provide-completions'
 import providePopup from '@shikitor/core/plugins/provide-popup'
 import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-toolbox'
@@ -156,8 +157,15 @@ export function Sender(props: SenderProps) {
   }, [])
   const placeholder = useMemo(() => yiyan[yiyanIndex], [yiyanIndex])
 
-  const [, setDisplay] = useElectronStore('display')
+  const [display, setDisplay] = useElectronStore('display')
   const [text, setText] = useState('')
+  const shikitorRef = useRef<Shikitor>(null)
+  useEffect(() => {
+    if (display) {
+      shikitorRef.current?.focus()
+    }
+  }, [display])
+
   const { setColor } = useColor(() => {}, [])
   function IconComp() {
     if (Icon === undefined) {
@@ -205,6 +213,7 @@ export function Sender(props: SenderProps) {
         </div>
       </Tooltip>
       <Editor
+        ref={shikitorRef}
         value={text}
         onChange={setText}
         defaultOptions={{
@@ -218,9 +227,7 @@ export function Sender(props: SenderProps) {
         }), [placeholder])}
         plugins={plugins}
         onColorChange={setColor}
-        onMounted={shikitor => {
-          shikitor.focus()
-        }}
+        onMounted={shikitor => shikitor.focus()}
         onKeydown={e => {
           if (e.key === 'Escape' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
             if (text) {
