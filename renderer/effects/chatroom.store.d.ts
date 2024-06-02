@@ -11,16 +11,15 @@ declare module 'spirit' {
     nexts?: IMessage[][]
   }
   export interface ChatRoomOptions {
+    model?: (string & {}) | ChatModel
+    sessionLength?: number
+    maxMessages?: number
   }
   export interface ChatRoom {
     id: string
     name?: string
     description?: string
-    options?: {
-      model?: (string & {}) | ChatModel
-      sessionLength?: number
-      maxMessages?: number
-    }
+    options?: ChatRoomOptions
     messages: IMessage[] | null
   }
   export interface Store {
