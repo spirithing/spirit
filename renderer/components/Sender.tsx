@@ -11,6 +11,7 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
+import { isEqual } from 'lodash-es'
 import type OpenAI from 'openai'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -109,7 +110,7 @@ export function Sender(props: SenderProps) {
   }, [openaiConfig?.defaultModel, options?.model])
 
   useEEListener('addMessage', async (m, { messages }) => {
-    if (m.user === bot) return
+    if (isEqual(m.user, bot)) return
     if (import.meta.env.DEV && m.text === 'd') {
       sendMessage('pong', bot)
       return
