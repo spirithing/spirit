@@ -23,6 +23,7 @@ import { useCtxCallback } from '../hooks/useCtxCallback'
 import { useEEListener } from '../hooks/useEEListener'
 import { useOpenAI } from '../hooks/useOpenAI'
 import { useElectronStore } from '../hooks/useStore'
+import { classnames } from '../utils/classnames'
 
 export interface SenderContext {
   readonly visibles: {
@@ -83,6 +84,9 @@ const useSenderCtx = () => {
 export function Sender(props: SenderProps) {
   const prefix = 'spirit-sender'
   const ctxRef = useSenderCtx()
+  const {
+    visibles
+  } = ctxRef.current
   const {
     className,
     Icon,
@@ -169,8 +173,17 @@ export function Sender(props: SenderProps) {
     }
     return <Icon {...{ onClick: onIconClick }} />
   }
-  return <div className={`${prefix} ${className}`}>
-    {ctxRef.current.visibles.header && props.Header}
+  return <div
+    className={classnames(
+      prefix,
+      className,
+      {
+        [`${prefix}--header`]: visibles.header,
+        [`${prefix}--footer`]: visibles.footer
+      }
+    )}
+  >
+    {visibles.header && props.Header}
     <div className={`${prefix}__input`}>
       <Tooltip
         content={
@@ -239,6 +252,6 @@ export function Sender(props: SenderProps) {
         }}
       />
     </div>
-    {ctxRef.current.visibles.footer && props.Footer}
+    {visibles.footer && props.Footer}
   </div>
 }
