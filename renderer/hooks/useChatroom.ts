@@ -21,7 +21,7 @@ export const useChatroom = () => {
           ...prev,
           messages: [
             { ctime: Date.now(), text, user },
-            ...prev.messages
+            ...prev.messages ?? []
           ]
         })
     )
@@ -29,6 +29,9 @@ export const useChatroom = () => {
   const editMessage = useCallback((index: number, text: string) => {
     setChatroom(prev => {
       if (!prev) return defaultChatroom
+      if (!prev.messages || index < 0 || index >= prev.messages.length) {
+        throw new Error('Invalid index')
+      }
       prev.messages[index].text = text
       return { ...prev }
     })
