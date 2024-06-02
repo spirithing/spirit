@@ -1,19 +1,50 @@
 import './App.scss'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Card } from 'tdesign-react'
 
 import { Configurer } from './components/Configurer'
 import { Message } from './components/Message'
+import { ModelSelector } from './components/selectors/ModelSelector'
 import { Sender } from './components/Sender'
-import { useChatroom } from './hooks/useChatroom'
+import { useChatroom, useChatrooms } from './hooks/useChatroom'
 import { useMDRender } from './hooks/useMDRender'
 import { useElectronStore } from './hooks/useStore'
+import { classnames } from './utils/classnames'
+
+function Chatrooms() {
+  const [activeChatroom] = useChatroom()
+  const [chatrooms] = useChatrooms()
+  const [model, setModel] = useState<string>('gpt-4o')
+  return <div className={`${'spirit'}-chatrooms`}>
+    <Card
+      className={`${'spirit'}-chatroom__create`}
+    >
+      <div className='s-icon'>add</div>
+      <ModelSelector value={model} onChange={setModel} />
+    </Card>
+    {chatrooms?.map(chatroom => (
+      <Card
+        key={chatroom}
+        className={classnames(
+          `${'spirit'}-chatroom`,
+          {
+            [`${'spirit'}-chatroom--active`]: chatroom === activeChatroom.id
+          }
+        )}
+        header={chatroom}
+      >
+        No Description
+      </Card>
+    ))}
+  </div>
+}
 
 function Messages() {
   const mdRef = useMDRender()
   const [{ messages }] = useChatroom()
 
-  return <div className='messages'>
+  return <div className={`${'spirit'}-messages`}>
     {messages?.map(message => (
       <Message
         key={message.uuid}
@@ -47,6 +78,7 @@ export function App() {
   useDisplay()
   return <>
     <div className='spirit-main'>
+      <Chatrooms />
       <Sender
         onIconClick={ctx => ctx.toggleFooter()}
         Footer={<Configurer />}

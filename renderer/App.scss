@@ -10,12 +10,78 @@
   flex-direction: column;
   gap: 10px;
 
-  padding-top: 10vh;
-
-  height: 90vh;
+  height: 100vh;
   width: 100vw;
 }
-.messages {
+.spirit-chatrooms {
+  --pad: 1vh;
+
+  display: flex;
+  align-items: center;
+  gap: var(--pad);
+
+  height: calc(10vh - var(--pad) * 2);
+  padding: var(--pad);
+
+  overflow-x: auto;
+  .spirit-chatroom__create {
+    padding: var(--td-radius-medium);
+
+    width: 15vw;
+    height: calc(10vh - var(--pad) * 2);
+
+    cursor: pointer;
+    border: 2px solid var(--td-text-color-placeholder);
+    transition: .3s;
+    &:hover {
+      color: var(--td-brand-color-hover);
+      border-color: var(--td-brand-color-hover);
+    }
+    .t-card__body {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0;
+      height: 100%;
+    }
+    .s-icon {
+      width: fit-content;
+      font-size: 48px;
+    }
+    .t-select__wrap {
+      flex-grow: 1;
+      width: 0;
+    }
+  }
+  .spirit-chatroom {
+    display: flex;
+    flex-direction: column;
+    width: 15vw;
+    height: calc(10vh - var(--pad) * 2);
+
+    cursor: pointer;
+    border: 2px solid var(--td-text-color-placeholder);
+    transition: .3s;
+    &:hover {
+      border-color: var(--td-brand-color-hover);
+    }
+    &--active {
+      border-color: var(--td-brand-color-active);
+    }
+    .t-card__header {
+      padding: var(--td-radius-medium);
+      padding-bottom: 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .t-card__body {
+      padding: var(--td-radius-medium);
+      padding-top: 0;
+      color: var(--td-text-color-placeholder);
+    }
+  }
+}
+.spirit-messages {
   display: flex;
   flex-direction: column;
 

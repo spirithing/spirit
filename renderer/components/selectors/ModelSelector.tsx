@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import type { CSSProperties } from 'react'
 import useSWR from 'swr'
 import { LoadingIcon } from 'tdesign-icons-react'
 import { Select } from 'tdesign-react'
@@ -7,12 +8,16 @@ import { useOpenAI } from '../../hooks/useOpenAI'
 import ChatModel = OpenAI.ChatModel
 
 export interface ModelSelectorProps {
+  style?: CSSProperties
   value?: (string & {}) | ChatModel
+  defaultValue?: (string & {}) | ChatModel
   onChange?(value: NonNullable<ModelSelectorProps['value']>): void
 }
 
 export function ModelSelector({
+  style,
   value,
+  defaultValue,
   onChange
 }: ModelSelectorProps) {
   const openAI = useOpenAI()
@@ -20,8 +25,9 @@ export function ModelSelector({
   return <Select
     filterable
     creatable
+    style={style}
     value={value}
-    defaultValue={value}
+    defaultValue={defaultValue}
     onChange={v => onChange?.(v as NonNullable<ModelSelectorProps['value']>)}
     suffixIcon={isLoading || isValidating ? <LoadingIcon /> : undefined}
     options={models

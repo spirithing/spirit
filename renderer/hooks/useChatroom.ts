@@ -64,3 +64,6 @@ export const useChatroom = () => {
     clearMessages
   }] as const
 }
+
+const defaultChatrooms = ['default']
+export const useChatrooms = () => useElectronStore('chatrooms', defaultChatrooms)

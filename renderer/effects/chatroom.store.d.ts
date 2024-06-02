@@ -26,5 +26,7 @@ declare module 'spirit' {
     activeChatroom: string
     chatrooms: string[]
     [k: `chatroom:${string}`]: ChatRoom
+    // TODO
+    // [k: `messages:${string}`]: IMessage[]
   }
 }
