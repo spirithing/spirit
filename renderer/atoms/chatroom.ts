@@ -10,6 +10,11 @@ export const getChatroomAtom = (
 ) => keyAtom(`chatroom:${id}`)
 export const getChatroom = (
   id = getActiveChatroom()
-) => (
-  electronStore.get(getChatroomAtom(id)) ?? { id, messages: [] }
-)
+) => {
+  const chatroomAtom = getChatroomAtom(id)
+  const empty = { id, messages: [] }
+  if (chatroomAtom === undefined) {
+    return empty
+  }
+  return electronStore.get(chatroomAtom) ?? empty
+}
