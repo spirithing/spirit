@@ -8,6 +8,7 @@ import { Base } from '../configurers/Base'
 import { useBot } from '../hooks/useBot'
 import { useChatroom } from '../hooks/useChatroom'
 import { useElectronStore } from '../hooks/useStore'
+import { ModelSelector } from './selectors/ModelSelector'
 
 function OpenAI() {
   const { t } = useTranslation()
@@ -87,6 +88,13 @@ function Chatroom() {
           <Input
             value={chatroom?.name}
             onChange={v => setChatroom({ ...chatroom!, name: v })}
+          />
+        </div>
+        <div className='spirit-field'>
+          <label>{t('model')}</label>
+          <ModelSelector
+            value={chatroom?.options?.model}
+            onChange={v => setChatroom({ ...chatroom!, options: { ...chatroom?.options, model: v } })}
           />
         </div>
       </Col>

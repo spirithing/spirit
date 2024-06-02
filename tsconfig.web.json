@@ -3,8 +3,8 @@
   "include": [
     "main/*.share.d.ts",
     "sharing/*.d.ts",
-    "renderer/env.d.ts",
     "renderer/**/*",
+    "renderer/env.d.ts",
     "renderer/**/*.tsx",
     "preload/*.d.ts"
   ],
