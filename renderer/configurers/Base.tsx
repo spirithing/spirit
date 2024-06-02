@@ -2,8 +2,9 @@ import './Base.scss'
 
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Card, Col, Input, Row, Select } from 'tdesign-react'
+import { Button, Card, Col, Collapse, Input, Link, Row, Select } from 'tdesign-react'
 
+import favicon from '../../resources/icon.png'
 import { useElectronStore } from '../hooks/useStore'
 import { useUser } from '../hooks/useUser'
 import { bundledLocales } from '../providers/i18n'
@@ -114,5 +115,55 @@ export function Base() {
       <label>{t('theme')}</label>
       <ThemeSwitcher />
     </div>
+    <Collapse
+      borderless
+      className='spirit-info'
+    >
+      <Collapse.Panel
+        header='About'
+        headerRightContent={
+          <>
+            <Link
+              size='small'
+              href='spirit-oe://github.com/nwylzw/spirit'
+              onClick={e => e.stopPropagation()}
+            >
+              <span className='s-icon'>star</span>
+            </Link>
+          </>
+        }
+      >
+        <Card className='spirit-info__panel'>
+          <div className='left'>
+            <img src={favicon} alt='favicon' width={128} height={128} />
+          </div>
+          <div className='right'>
+            <h2>{t('spirit')}@{import.meta.env.VITE_APP_VERSION}</h2>
+            <br />
+            <div>
+              Built on {import.meta.env.VITE_BUILD_TIME
+                ? new Date(Number(import.meta.env.VITE_BUILD_TIME)).toLocaleString()
+                : 'unknown'}
+            </div>
+            <div>
+              Powered by {[
+                ['spirit-oe://github.com/electron/electron', 'Electron'],
+                ['spirit-oe://github.com/facebook/react', 'React'],
+                ['spirit-oe://github.com/tencent/tdesign-react', 'TDesign'],
+                ['spirit-oe://github.com/i18next/react-i18next', 'react-i18next']
+              ].map(([u, t], i, a) =>
+                <>
+                  <Link theme='primary' key={u} href={u}>{t}</Link>
+                  {i < a.length - 1 && ', '}
+                </>
+              )}
+            </div>
+            <div>
+              Copyright &copy; 2024-{new Date().getFullYear()}
+            </div>
+          </div>
+        </Card>
+      </Collapse.Panel>
+    </Collapse>
   </>
 }
