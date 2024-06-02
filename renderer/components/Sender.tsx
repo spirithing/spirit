@@ -10,7 +10,7 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import type OpenAI from 'openai'
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Bot, IMessage } from 'spirit'
 import { DialogPlugin, MessagePlugin, Tooltip } from 'tdesign-react'
@@ -19,16 +19,26 @@ import favicon from '../../resources/icon.png'
 import { useBot } from '../hooks/useBot'
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
+import { useCtxCallback } from '../hooks/useCtxCallback'
 import { useEEListener } from '../hooks/useEEListener'
 import { useOpenAI } from '../hooks/useOpenAI'
 import { useElectronStore } from '../hooks/useStore'
 
+export interface SenderContext {
+  readonly visibles: {
+    readonly header: boolean
+    readonly footer: boolean
+  }
+  toggleHeader(): void
+  toggleFooter(): void
+}
+
 export interface SenderProps {
   className?: string
-  Icon?: (({ onClick }: { onClick(): void }) => ReactNode) | string
+  Icon?: (({ onClick }: { onClick: SenderProps['onIconClick'] }) => ReactNode) | string
   Header?: ReactNode
   Footer?: ReactNode
-  onIconClick(): void
+  onIconClick(this: SenderContext, ctx: SenderContext): void
 }
 
 const yiyan = [
@@ -54,13 +64,31 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
   }
 }
 
+const useSenderCtx = () => {
+  const [visibles, setVisibles] = useState({
+    header: false,
+    footer: false
+  })
+  const visiblesRef = useRef(visibles)
+  visiblesRef.current = visibles
+  return useRef<SenderContext>({
+    get visibles() {
+      return visiblesRef.current
+    },
+    toggleHeader: () => setVisibles(v => ({ ...v, header: !v.header })),
+    toggleFooter: () => setVisibles(v => ({ ...v, footer: !v.footer }))
+  })
+}
+
 export function Sender(props: SenderProps) {
   const prefix = 'spirit-sender'
+  const ctxRef = useSenderCtx()
   const {
     className,
     Icon,
     onIconClick
   } = props
+  const clickIcon = useCtxCallback(ctxRef, onIconClick)
   const { t } = useTranslation()
 
   const [, { sendMessage, editMessage, clearMessages }] = useChatroom()
@@ -131,18 +159,18 @@ export function Sender(props: SenderProps) {
         alt='icon'
         src={favicon}
         className={`${prefix}__icon`}
-        onClick={onIconClick}
+        onClick={() => clickIcon(ctxRef.current)}
       />
     }
     if (typeof Icon === 'string') {
-      return <span className='s-icon' onClick={onIconClick}>
+      return <span className='s-icon' onClick={() => clickIcon(ctxRef.current)}>
         {Icon}
       </span>
     }
     return <Icon {...{ onClick: onIconClick }} />
   }
   return <div className={`${prefix} ${className}`}>
-    {props.Header}
+    {ctxRef.current.visibles.header && props.Header}
     <div className={`${prefix}__input`}>
       <Tooltip
         content={
@@ -200,7 +228,7 @@ export function Sender(props: SenderProps) {
           }
           if (e.key === '/' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
             e.preventDefault()
-            onIconClick()
+            clickIcon(ctxRef.current)
           }
           if (e.key === 'Enter' && e.metaKey) {
             e.preventDefault()
@@ -211,6 +239,6 @@ export function Sender(props: SenderProps) {
         }}
       />
     </div>
-    {props.Footer}
+    {ctxRef.current.visibles.footer && props.Footer}
   </div>
 }

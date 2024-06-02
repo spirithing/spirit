@@ -16,14 +16,10 @@
   width: 100vw;
 }
 .spirit-configurer-panel {
-  padding: 0;
-  max-height: 0;
+  padding: 10px;
+  max-height: 40vh;
   background-color: var(--td-bg-color-container);
   transition: .3s;
-  &--visible {
-    padding: 10px;
-    max-height: 40vh;
-  }
   .t-tab-panel {
     display: flex;
     flex-direction: column;
