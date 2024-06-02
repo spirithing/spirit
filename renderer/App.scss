@@ -14,21 +14,27 @@
   width: 100vw;
 }
 .spirit-chatrooms {
-  --pad: 1vh;
+  --pad: 3vh;
+  --h: 15vh;
 
   display: flex;
   align-items: center;
   gap: var(--pad);
 
-  height: calc(10vh - var(--pad) * 2);
+  height: calc(var(--h) - var(--pad) * 2);
   padding: var(--pad);
 
   overflow-x: auto;
+  & > *:first-child {
+    z-index: 10;
+    position: sticky;
+    left: 0;
+  }
   .spirit-chatroom__create {
     padding: var(--td-radius-medium);
 
     width: 15vw;
-    height: calc(10vh - var(--pad) * 2);
+    height: calc(var(--h) - var(--pad) * 2);
 
     cursor: pointer;
     border: 2px solid var(--td-text-color-placeholder);
@@ -54,10 +60,12 @@
     }
   }
   .spirit-chatroom {
+    position: relative;
     display: flex;
     flex-direction: column;
-    width: 15vw;
-    height: calc(10vh - var(--pad) * 2);
+    min-width: 15vw;
+    max-width: 15vw;
+    height: calc(var(--h) - var(--pad) * 2);
 
     cursor: pointer;
     border: 2px solid var(--td-text-color-placeholder);
@@ -68,11 +76,48 @@
     &--active {
       border-color: var(--td-brand-color-active);
     }
+    &__opt {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      transform: translate(50%, 50%);
+
+      padding: 4px;
+      background-color: var(--td-bg-color-container);
+      box-shadow: var(--td-shadow-2);
+      border-radius: 50%;
+      opacity: 0;
+      box-sizing: border-box;
+      border: 2px solid var(--td-border-level-1-color);
+
+      font-size: 16px;
+      user-select: none;
+      transition: .3s;
+      &:hover {
+        box-shadow: var(--td-shadow-3);
+        border: 2px solid var(--td-brand-color-hover);
+      }
+    }
+    &:hover .spirit-chatroom__opt {
+      opacity: 1;
+    }
+    &__download {
+      right: 36px;
+      &:hover {
+        color: var(--td-brand-color);
+      }
+    }
+    &__del {
+      color: var(--td-error-color);
+    }
     .t-card__header {
       padding: var(--td-radius-medium);
       padding-bottom: 0;
       font-size: 18px;
       font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .t-card__body {
       padding: var(--td-radius-medium);

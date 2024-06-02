@@ -11,18 +11,19 @@ import { useChatroom, useChatrooms } from './hooks/useChatroom'
 import { useMDRender } from './hooks/useMDRender'
 import { useElectronStore } from './hooks/useStore'
 import { classnames } from './utils/classnames'
+import { uuid } from './utils/uuid'
 
 function Chatrooms() {
   const [activeChatroom] = useChatroom()
-  const [chatrooms] = useChatrooms()
+  const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
   const [model, setModel] = useState<string>('gpt-4o')
   return <div className={`${'spirit'}-chatrooms`}>
-    <Card
-      className={`${'spirit'}-chatroom__create`}
-    >
-      <div className='s-icon'>add</div>
-      <ModelSelector value={model} onChange={setModel} />
-    </Card>
+    <div onClick={() => addChatroom(uuid(), model)}>
+      <Card className={`${'spirit'}-chatroom__create`}>
+        <div className='s-icon'>add</div>
+        <ModelSelector value={model} onChange={setModel} />
+      </Card>
+    </div>
     {chatrooms?.map(chatroom => (
       <Card
         key={chatroom}
@@ -32,9 +33,25 @@ function Chatrooms() {
             [`${'spirit'}-chatroom--active`]: chatroom === activeChatroom.id
           }
         )}
-        header={chatroom}
+        header={
+          <>
+            <span className='s-icon'>chat</span>
+            {chatroom}
+          </>
+        }
       >
         No Description
+        <div
+          className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__download`}
+        >
+          download
+        </div>
+        <div
+          className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__del`}
+          onClick={() => delChatroom(chatroom)}
+        >
+          delete
+        </div>
       </Card>
     ))}
   </div>
