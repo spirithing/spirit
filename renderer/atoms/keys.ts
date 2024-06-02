@@ -20,6 +20,7 @@ export function subAtomByKey<
       const atom = keyAtom(id)
       disposeSub()
       if (atom) {
+        callback()
         disposeSub = electronStore.sub(atom, callback)
       }
     })
