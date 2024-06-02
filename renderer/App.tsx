@@ -14,6 +14,42 @@ import { useUser } from './hooks/useUser'
 import { classnames } from './utils/classnames'
 import { uuid } from './utils/uuid'
 
+interface ConfirmBtnProps {
+  className?: string
+  onConfirm?(): void
+}
+
+function ConfirmBtn({
+  className,
+  onConfirm
+}: ConfirmBtnProps) {
+  const [needConfirm, setNeedConfirm] = useState(false)
+  return <div
+    tabIndex={0}
+    className={classnames(
+      className,
+      `${'spirit'}-confirm-button`,
+      {
+        [`${'spirit'}-confirm-button--active`]: needConfirm
+      }
+    )}
+    onBlur={() => setNeedConfirm(false)}
+    onClick={e => (
+      e.stopPropagation(),
+        needConfirm
+          ? onConfirm?.()
+          : setNeedConfirm(true)
+    )}
+  >
+    {!needConfirm
+      ? <span className='s-icon'>delete</span>
+      : <>
+        Confirm?
+        <span className='s-icon'>check</span>
+      </>}
+  </div>
+}
+
 function Chatrooms() {
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
@@ -42,16 +78,17 @@ function Chatrooms() {
           }
         >
           No Description
-          <div
-            className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__download`}
-          >
-            download
-          </div>
-          <div
-            className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__del`}
-            onClick={() => delChatroom(chatroom)}
-          >
-            delete
+          <div className={`${'spirit'}-chatroom__opts`}>
+            <div
+              className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__download`}
+              onClick={e => e.stopPropagation()}
+            >
+              download
+            </div>
+            <ConfirmBtn
+              className={`${'spirit'}-chatroom__opt ${'spirit'}-chatroom__del`}
+              onConfirm={() => delChatroom(chatroom)}
+            />
           </div>
         </Card>
       </div>
