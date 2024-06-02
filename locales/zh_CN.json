@@ -1,5 +1,8 @@
 {
   "spirit": "器灵",
+  "common": "通用",
+  "bot": "机器人",
+  "chatroom": "聊天室",
   "locale": "语言",
   "name": "名称",
   "theme": "主题",

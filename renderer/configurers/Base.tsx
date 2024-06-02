@@ -62,13 +62,14 @@ export function Base() {
   })
   const { t, i18n } = useTranslation()
   useEffect(() => {
+    let lang = common?.locale
     if (common?.locale === 'system') {
       // TODO
-      // i18n.changeLanguage(system?.locale ?? navigator.language)
-      i18n.changeLanguage(navigator.language)
-    } else {
-      i18n.changeLanguage(common?.locale)
+      // lang = system?.locale ?? navigator.language
+      lang = navigator.language
     }
+    if (lang === i18n.language) return
+    i18n.changeLanguage(lang)
   }, [common?.locale, i18n])
   const [user, setUser] = useUser()
   return <>
@@ -115,7 +116,3 @@ export function Base() {
     </div>
   </>
 }
-
-Base.Title = <>
-  <span className='s-icon'>settings</span>&nbsp;Base
-</>

@@ -1,5 +1,8 @@
 {
   "spirit": "Spirit",
+  "common": "Common",
+  "bot": "Bot",
+  "chatroom": "Chatroom",
   "locale": "Locale",
   "name": "Name",
   "theme": "Theme",
