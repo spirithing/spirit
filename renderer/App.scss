@@ -15,29 +15,6 @@
   height: 90vh;
   width: 100vw;
 }
-.spirit-configurer-panel {
-  padding: 10px;
-  max-height: 40vh;
-  background-color: var(--td-bg-color-container);
-  transition: .3s;
-  .t-tab-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-    padding: 10px;
-    min-height: 50px;
-  }
-  .spirit-field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    > label {
-      font-size: 14px;
-      font-weight: bold;
-    }
-  }
-}
 .messages {
   display: flex;
   flex-direction: column;

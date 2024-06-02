@@ -1,3 +1,5 @@
+import './Configurer.scss'
+
 import { Input, Select, Tabs, Textarea } from 'tdesign-react'
 
 import { Base } from '../configurers/Base'
