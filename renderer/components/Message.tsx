@@ -1,6 +1,9 @@
 import './Message.scss'
 
+import type { Shikitor } from '@shikitor/core'
+import { Editor } from '@shikitor/react'
 import type { ReactNode } from 'react'
+import { useRef, useState } from 'react'
 import type { IMessage, IUser } from 'spirit'
 import { Button } from 'tdesign-react'
 
@@ -18,7 +21,7 @@ interface OnClicks {
 export type MessageProps = NestedPropsGenerator<'onClick', OnClicks> & {
   className?: string
   value: IMessage
-  onChange?(value: IMessage): void
+  onTextChange?(text: string): void
   onDelete?(): void
   textRender?(text: string): ReactNode
 }
@@ -34,6 +37,8 @@ export function Message(props: MessageProps) {
     if (typeof fn === 'function') fn(...args)
   }
   const { user } = value
+  const shikitorRef = useRef<Shikitor>(null)
+  const [isEditing, setIsEditing] = useState(false)
   return (
     <>
       <div className={classnames('message-header', className)}>
@@ -41,33 +46,65 @@ export function Message(props: MessageProps) {
           {user.name}
         </div>}
         <div className='message-actions'>
-          <Button
+          {!isEditing && <Button
             variant='outline'
             shape='square'
             size='small'
           >
             <span className='s-icon'>fork_right</span>
-          </Button>
-          <Button
+          </Button>}
+          {!isEditing && <Button
             variant='outline'
             shape='square'
             size='small'
+            onClick={() => setIsEditing(true)}
           >
             <span className='s-icon'>edit</span>
-          </Button>
-          <Button
+          </Button>}
+          {isEditing && <Button
+            variant='outline'
+            shape='square'
+            size='small'
+            theme='success'
+            onClick={() => {
+              setIsEditing(false)
+              props.onTextChange?.(shikitorRef.current?.value ?? '')
+            }}
+          >
+            <span className='s-icon'>check</span>
+          </Button>}
+          {isEditing && <Button
+            variant='outline'
+            shape='square'
+            size='small'
+            onClick={() => setIsEditing(false)}
+          >
+            <span className='s-icon'>close</span>
+          </Button>}
+          {!isEditing && <Button
             variant='outline'
             shape='square'
             size='small'
             theme='danger'
           >
             <span className='s-icon'>delete</span>
-          </Button>
+          </Button>}
         </div>
       </div>
       <div className={classnames('message-content', className)}>
-        {textRender?.(value.text) ?? value.text}
-        <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
+        {isEditing
+          ? <Editor
+            ref={shikitorRef}
+            value={value.text}
+            options={{
+              language: 'markdown',
+              autoSize: { minRows: 3, maxRows: 20 }
+            }}
+          />
+          : <>
+            {textRender?.(value.text) ?? value.text}
+            <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
+          </>}
       </div>
     </>
   )

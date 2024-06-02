@@ -117,6 +117,7 @@
     border: var(--border-size) solid var(--td-border-level-1-color);
   }
   &-header {
+    z-index: 100;
     position: sticky;
     top: 0;
     font-size: 14px;
@@ -968,7 +969,7 @@
       background-color: var(--td-bg-color-container);
     }
     .s-icon {
-      font-size: 16px;
+      font-size: 18px;
     }
   }
   &-time {
