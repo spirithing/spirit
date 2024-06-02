@@ -83,6 +83,12 @@ export function Sender(props: SenderProps) {
       MessagePlugin.error('OpenAI not initialized')
       return
     }
+    sendMessage('Inputting', bot)
+    let count = 0
+    const t = setInterval(() => {
+      editMessage(0, 'Inputting' + '.'.repeat(count))
+      count = (count + 1) % 4
+    }, 300)
     const completions = await openai.chat.completions.create({
       model: 'gpt-4o',
       // eslint-disable-next-line camelcase
@@ -96,8 +102,8 @@ export function Sender(props: SenderProps) {
         ...messages.map(messageTransformWithBot).reverse()
       ],
       stream: true
-    })
-    sendMessage('', bot)
+    }).finally(() => clearInterval(t))
+    editMessage(0, '')
     let streamMessage = ''
     for await (const { choices: [{ delta }] } of completions) {
       streamMessage += delta.content ?? ''
