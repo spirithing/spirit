@@ -184,7 +184,7 @@ export function Sender(props: SenderProps) {
   const { setColor } = useColor(() => {}, [])
 
   const highlightTheme = useHighlightTheme()
-  function IconComp() {
+  const IconComp = useCallback(function IconComp() {
     if (Icon === undefined) {
       return <img
         alt='icon'
@@ -199,7 +199,7 @@ export function Sender(props: SenderProps) {
       </span>
     }
     return <Icon {...{ onClick: onIconClick }} />
-  }
+  }, [Icon, clickIcon, ctxRef, onIconClick])
   return <div
     className={classnames(
       prefix,
