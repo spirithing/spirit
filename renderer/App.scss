@@ -84,6 +84,7 @@
       right: -14px;
       transform: translateY(50%);
       opacity: 0;
+      transition: .3s;
     }
     &:hover .spirit-chatroom__opts {
       opacity: 1;
