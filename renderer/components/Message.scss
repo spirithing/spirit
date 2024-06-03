@@ -143,13 +143,12 @@
 
     margin-bottom: 20px;
     width: calc(100% - var(--td-radius-medium) * 2 - var(--border-size) * 2);
-    max-height: 40vh;
     border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);
     border-top: none;
-
-    overflow-y: auto;
   }
   &-text {
+    max-height: 50vh;
+    overflow-y: auto;
     .s-md {
       -ms-text-size-adjust: 100%;
       -webkit-text-size-adjust: 100%;
