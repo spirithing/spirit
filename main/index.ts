@@ -30,6 +30,7 @@ function createWindow() {
     transparent: true,
     frame: false,
     hasShadow: false,
+    alwaysOnTop: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
