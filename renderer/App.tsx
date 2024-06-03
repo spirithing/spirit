@@ -97,7 +97,7 @@ function Chatrooms() {
 }
 
 function Messages() {
-  const mdRef = useMDRender()
+  const mdr = useMDRender()
   const [user] = useUser()
   const [{ messages }, { editMessage }] = useChatroom()
 
@@ -113,7 +113,7 @@ function Messages() {
             <div
               className='s-md'
               dangerouslySetInnerHTML={{
-                __html: mdRef.current?.render(text) ?? ''
+                __html: mdr.render(text) ?? ''
               }}
             />
           </div>
