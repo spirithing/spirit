@@ -21,5 +21,9 @@
     "quickFix": "Quick fix: ",
     "refresh": "Refresh",
     "reload": "Reload Application"
+  },
+  "openaiConfig": {
+    "defaultModel": "Default model",
+    "defaultModelTooltip": "The default model used when creating a new chat room, this data is sorted by time with the most recent model at the top."
   }
 }
