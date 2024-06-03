@@ -2,12 +2,15 @@ import './Configurer.scss'
 
 import type { FC, ReactNode } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
+import type { BundledTheme } from 'shiki'
+import { bundledThemes } from 'shiki'
 import { Col, Input, Row, Select, Tabs, Textarea } from 'tdesign-react'
 
 import { Base } from '../configurers/Base'
 import { useBot } from '../hooks/useBot'
 import { useChatroom } from '../hooks/useChatroom'
 import { useElectronStore } from '../hooks/useStore'
+import { useThemeStore } from '../providers/theme'
 import { ModelSelector } from './selectors/ModelSelector'
 
 function OpenAI() {
@@ -120,6 +123,29 @@ function Chatroom() {
   </>
 }
 
+function Theme() {
+  const { t } = useTranslation()
+  const [themeStore, setThemeStore] = useThemeStore()
+  return <>
+    <Row gutter={12}>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('highlight')}</label>
+          <Select
+            filterable
+            options={Object.keys(bundledThemes).map((label) => ({
+              label,
+              value: label
+            }))}
+            value={themeStore?.highlightTheme}
+            onChange={v => setThemeStore({ ...themeStore, highlightTheme: v as BundledTheme })}
+          />
+        </div>
+      </Col>
+    </Row>
+  </>
+}
+
 interface ConfigurerTab {
   group?: ReactNode
   value: string
@@ -150,7 +176,8 @@ const tabs = [
   {
     icon: 'palette',
     value: 'theme',
-    title: <Translation>{t => t('theme')}</Translation>
+    title: <Translation>{t => t('theme')}</Translation>,
+    Configurer: Theme
   },
   {
     icon: 'forum',

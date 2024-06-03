@@ -26,6 +26,7 @@ import { useCtxCallback } from '../hooks/useCtxCallback'
 import { useEEListener } from '../hooks/useEEListener'
 import { useOpenAI } from '../hooks/useOpenAI'
 import { useElectronStore } from '../hooks/useStore'
+import { useTheme, useThemeStore } from '../providers/theme'
 import { classnames } from '../utils/classnames'
 
 export interface SenderContext {
@@ -181,6 +182,9 @@ export function Sender(props: SenderProps) {
   }, [display])
 
   const { setColor } = useColor(() => {}, [])
+
+  const [theme] = useTheme()
+  const [themeStore] = useThemeStore()
   function IconComp() {
     if (Icon === undefined) {
       return <img
@@ -233,12 +237,14 @@ export function Sender(props: SenderProps) {
         defaultOptions={{
           language: 'markdown',
           lineNumbers: 'off',
-          theme: 'material-theme-darker',
           autoSize: { maxRows: 6 }
         }}
         options={useMemo(() => ({
-          placeholder
-        }), [placeholder])}
+          placeholder,
+          theme: themeStore?.highlightTheme ?? (
+            theme === 'dark' ? 'github-dark' : 'github-light'
+          )
+        }), [placeholder, theme, themeStore?.highlightTheme])}
         plugins={plugins}
         onColorChange={setColor}
         onMounted={shikitor => shikitor.focus()}

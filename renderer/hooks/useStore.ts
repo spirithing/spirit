@@ -21,7 +21,15 @@ const useKeyAtom = <K extends keyof Store>(key: K):
     : defaultAtom
 }
 
-export const useElectronStore = <K extends keyof Store>(key: K, defaultValue?: Store[K]) => {
+export function useElectronStore<K extends keyof Store>(key: K): [
+  Store[K] | undefined,
+  (value: Store[K] | ((prev?: Store[K] | null) => Store[K])) => void
+]
+export function useElectronStore<K extends keyof Store>(key: K, defaultValue: Store[K]): [
+  Store[K],
+  (value: Store[K] | ((prev?: Store[K] | null) => Store[K])) => void
+]
+export function useElectronStore<K extends keyof Store>(key: K, defaultValue?: Store[K]) {
   const keyAtom = useKeyAtom(key)
   const [value, setValue] = useAtom(keyAtom, { store: electronStore })
   const memoValue = useMemo(() => value ?? defaultValue, [value, defaultValue])

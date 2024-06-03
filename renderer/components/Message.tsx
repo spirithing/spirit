@@ -1,12 +1,15 @@
 import './Message.scss'
 
 import type { Shikitor } from '@shikitor/core'
+import type { EditorProps } from '@shikitor/react'
 import { Editor } from '@shikitor/react'
 import type { ReactNode } from 'react'
+import { useMemo } from 'react'
 import { useRef, useState } from 'react'
 import type { IMessage, IUser } from 'spirit'
 import { Button } from 'tdesign-react'
 
+import { useTheme, useThemeStore } from '../providers/theme'
 import { classnames } from '../utils/classnames'
 
 type NestedPropsGenerator<Prefix extends string, T> = {
@@ -39,6 +42,15 @@ export function Message(props: MessageProps) {
   const { user } = value
   const shikitorRef = useRef<Shikitor>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [theme] = useTheme()
+  const [themeStore] = useThemeStore()
+  const editorOptions = useMemo<EditorProps['options']>(() => ({
+    language: 'markdown',
+    theme: themeStore?.highlightTheme ?? (
+      theme === 'dark' ? 'github-dark' : 'github-light'
+    ),
+    autoSize: { minRows: 3, maxRows: 20 }
+  }), [theme, themeStore?.highlightTheme])
   return (
     <>
       <div className={classnames('message-header', className)}>
@@ -96,10 +108,7 @@ export function Message(props: MessageProps) {
           ? <Editor
             ref={shikitorRef}
             value={value.text}
-            options={{
-              language: 'markdown',
-              autoSize: { minRows: 3, maxRows: 20 }
-            }}
+            options={editorOptions}
           />
           : <>
             {textRender?.(value.text) ?? value.text}
