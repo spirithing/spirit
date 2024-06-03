@@ -91,6 +91,14 @@ export function Sender(props: SenderProps) {
     visibles
   } = ctxRef.current
   const debouncedVisibles = useDebouncedValue(visibles, 300)
+  const memoDebouncedVisibles = useMemo(() => ({
+    header: visibles.header
+      ? visibles.header
+      : debouncedVisibles.header,
+    footer: visibles.footer
+      ? visibles.footer
+      : debouncedVisibles.footer
+  }), [debouncedVisibles.footer, debouncedVisibles.header, visibles.footer, visibles.header])
   const {
     className,
     Icon,
@@ -199,7 +207,7 @@ export function Sender(props: SenderProps) {
       }
     )}
   >
-    {debouncedVisibles.header && props.Header}
+    {memoDebouncedVisibles.header && props.Header}
     <div className={`${prefix}__input`}>
       <Tooltip
         content={
@@ -267,6 +275,6 @@ export function Sender(props: SenderProps) {
         }}
       />
     </div>
-    {debouncedVisibles.footer && props.Footer}
+    {memoDebouncedVisibles.footer && props.Footer}
   </div>
 }
