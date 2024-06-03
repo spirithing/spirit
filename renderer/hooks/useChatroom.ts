@@ -30,6 +30,25 @@ export const useChatroom = () => {
     })
     return message
   }, [defaultChatroom, defaultU, setChatroom])
+  const getMessage = useCallback((index: number | string, chatroom: ChatRoom = eCR) => {
+    if (!chatroom) {
+      throw new Error('No chatroom')
+    }
+    const { messages } = chatroom
+    if (!messages) {
+      throw new Error('No messages')
+    }
+    if (typeof index === 'number' && (index < 0 || index >= messages.length)) {
+      throw new Error('Invalid index')
+    }
+    if (typeof index === 'string') {
+      index = messages.findIndex(m => m.uuid === index)
+      if (index === -1) {
+        throw new Error('Message not found')
+      }
+    }
+    return [messages[index], index] as const
+  }, [eCR])
   const editMessage = useCallback((index: number | string, text: string) => {
     setChatroom(prev => {
       if (!prev) return defaultChatroom
@@ -50,6 +69,15 @@ export const useChatroom = () => {
       return { ...prev }
     })
   }, [defaultChatroom, setChatroom])
+  const delMessage = useCallback((index: number | string) => {
+    setChatroom(prev => {
+      if (!prev) return defaultChatroom
+      const [target, findIndex] = getMessage(index, prev)
+      if (!target) return prev
+      prev.messages?.splice(findIndex, 1)
+      return { ...prev }
+    })
+  }, [defaultChatroom, getMessage, setChatroom])
   const clearMessages = useCallback(() => {
     setChatroom(prev =>
       !prev
@@ -63,6 +91,7 @@ export const useChatroom = () => {
     setChatroom,
     sendMessage,
     editMessage,
+    delMessage,
     clearMessages
   }] as const
 }

@@ -99,7 +99,7 @@ function Chatrooms() {
 function Messages() {
   const mdr = useMDRender()
   const [user] = useUser()
-  const [{ messages }, { editMessage }] = useChatroom()
+  const [{ messages }, { editMessage, delMessage }] = useChatroom()
 
   return <div className={`${'spirit'}-messages`}>
     {messages?.map(message => (
@@ -108,6 +108,7 @@ function Messages() {
         className={message.user?.name === user.name ? 'self' : 'other'}
         value={message}
         onTextChange={text => editMessage(message.uuid, text)}
+        onDelete={() => delMessage(message.uuid)}
         textRender={text => (
           <div className='message-text'>
             <div

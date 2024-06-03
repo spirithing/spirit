@@ -95,6 +95,7 @@ export function Message(props: MessageProps) {
             shape='square'
             size='small'
             theme='danger'
+            onClick={props.onDelete}
           >
             <span className='s-icon'>delete</span>
           </Button>}
