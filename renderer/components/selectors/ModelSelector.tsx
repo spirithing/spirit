@@ -38,5 +38,8 @@ export function ModelSelector({
         title: `${model.id} (${new Date(model.created * 1000).toLocaleString()})`,
         value: model.id
       }))}
+    inputProps={{
+      onClick: ({ e }) => e.stopPropagation()
+    }}
   />
 }
