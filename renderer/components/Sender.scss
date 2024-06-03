@@ -1,6 +1,7 @@
 .spirit-sender {
   --icon-size: 32px;
 
+  position: relative;
   display: flex;
   flex-direction: column;
 
@@ -10,9 +11,7 @@
   font-size: 16px;
   border-radius: var(--td-radius-medium);
   background-color: var(--bg);
-  border: 1px solid var(--fg);
-
-  overflow: hidden;
+  border: 2px solid var(--fg);
   &__input {
     min-height: var(--icon-size);
     display: flex;
@@ -21,15 +20,17 @@
     padding: 10px;
   }
   &__prefix {
+    position: absolute;
+    left: 0;
+    transform: translateX(calc(-100% - 10px));
+
     width: var(--icon-size);
     height: var(--icon-size);
     border-radius: 6px;
+
     cursor: pointer;
     user-select: none;
     transition: .2s;
-    &:hover {
-      background-color: color-mix(in srgb, var(--fg), var(--bg) 50%);
-    }
   }
   @keyframes floating {
     0% {
@@ -54,6 +55,9 @@
     transform: translateY(2px);
     animation: floating 1s infinite linear;
   }
+  &:hover &__icon {
+    animation-play-state: paused;
+  }
 }
 .spirit-sender .shikitor {
   --line-height: var(--icon-size);
@@ -68,6 +72,7 @@
   &--header {}
   .spirit-sender__input + * {
     max-height: 0;
+    border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);
     overflow-y: auto;
     transition: .3s;
   }

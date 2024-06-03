@@ -222,7 +222,7 @@ export function Sender(props: SenderProps) {
         }
         placement='bottom'
         popperOptions={{
-          modifiers: [{ name: 'offset', options: { offset: [0, -10] } }]
+          modifiers: [{ name: 'offset', options: { offset: [0, -5] } }]
         }}
       >
         <div className={`${prefix}__prefix`}>
