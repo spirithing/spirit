@@ -27,5 +27,6 @@
     "defaultModelTooltip": "The default model used when creating a new chat room, this data is sorted by time with the most recent model at the top."
   },
   "model": "Model",
-  "highlight": "Text highlight"
+  "highlight": "Text highlight",
+  "highlightDark": "Higlight theme when dark mode"
 }

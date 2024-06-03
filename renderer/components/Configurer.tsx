@@ -128,7 +128,7 @@ function Theme() {
   const [themeStore, setThemeStore] = useThemeStore()
   return <>
     <Row gutter={12}>
-      <Col span={6}>
+      <Col span={4}>
         <div className='spirit-field'>
           <label>{t('highlight')}</label>
           <Select
@@ -139,6 +139,18 @@ function Theme() {
             }))}
             value={themeStore?.highlightTheme}
             onChange={v => setThemeStore({ ...themeStore, highlightTheme: v as BundledTheme })}
+          />
+        </div>
+        <div className='spirit-field'>
+          <label>{t('highlightDark')}</label>
+          <Select
+            filterable
+            options={Object.keys(bundledThemes).map((label) => ({
+              label,
+              value: label
+            }))}
+            value={themeStore?.highlightThemeWhenDark}
+            onChange={v => setThemeStore({ ...themeStore, highlightThemeWhenDark: v as BundledTheme })}
           />
         </div>
       </Col>
