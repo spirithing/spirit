@@ -9,7 +9,7 @@ import { useRef, useState } from 'react'
 import type { IMessage, IUser } from 'spirit'
 import { Button } from 'tdesign-react'
 
-import { useTheme, useThemeStore } from '../providers/theme'
+import { useHighlightTheme } from '../providers/theme'
 import { classnames } from '../utils/classnames'
 
 type NestedPropsGenerator<Prefix extends string, T> = {
@@ -42,15 +42,12 @@ export function Message(props: MessageProps) {
   const { user } = value
   const shikitorRef = useRef<Shikitor>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [theme] = useTheme()
-  const [themeStore] = useThemeStore()
+  const highlightTheme = useHighlightTheme()
   const editorOptions = useMemo<EditorProps['options']>(() => ({
     language: 'markdown',
-    theme: themeStore?.highlightTheme ?? (
-      theme === 'dark' ? 'github-dark' : 'github-light'
-    ),
+    theme: highlightTheme,
     autoSize: { minRows: 3, maxRows: 20 }
-  }), [theme, themeStore?.highlightTheme])
+  }), [highlightTheme])
   return (
     <>
       <div className={classnames('message-header', className)}>

@@ -11,6 +11,7 @@ declare module 'spirit' {
   }
   export interface Theme {
     highlightTheme?: BundledTheme
+    highlightThemeWhenDark?: BundledTheme
   }
   export interface Store {
     bot: Bot

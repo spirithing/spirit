@@ -50,3 +50,17 @@ export const useThemeStore = () =>
   useElectronStore('theme', {
     highlightTheme: 'github-dark'
   })
+export const useHighlightTheme = () => {
+  const theme = useTheme()
+  const [themeStore] = useThemeStore()
+  return useMemo(() => {
+    if (theme === 'dark') {
+      return themeStore.highlightThemeWhenDark ?? themeStore.highlightTheme ?? 'github-dark'
+    }
+    return themeStore.highlightTheme ?? 'github-light'
+  }, [
+    theme,
+    themeStore.highlightTheme,
+    themeStore.highlightThemeWhenDark
+  ])
+}
