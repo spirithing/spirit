@@ -12,11 +12,11 @@ dependencies:
     specifier: ^3.0.0
     version: 3.0.0(electron@28.3.3)
   '@shikitor/core':
-    specifier: ^0.0.8
-    version: 0.0.8(@types/react@18.3.3)(react@18.3.1)
+    specifier: ^0.0.9
+    version: 0.0.9(@types/react@18.3.3)(react@18.3.1)
   '@shikitor/react':
-    specifier: ^0.1.3
-    version: 0.1.3(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
+    specifier: ^0.1.5
+    version: 0.1.5(@types/react@18.3.3)(react@18.3.1)
   foxact:
     specifier: ^0.2.33
     version: 0.2.33(react@18.3.1)
@@ -38,6 +38,9 @@ dependencies:
   react-i18next:
     specifier: ^14.1.2
     version: 14.1.2(i18next@23.11.5)(react-dom@18.3.1)(react@18.3.1)
+  shiki:
+    specifier: ^1.6.2
+    version: 1.6.2
   swr:
     specifier: ^2.2.5
     version: 2.2.5(react@18.3.1)
@@ -1282,6 +1285,10 @@ packages:
   /@shikijs/core@1.6.0:
     resolution: {integrity: sha512-NIEAi5U5R7BLkbW1pG/ZKu3eb1lzc3/+jD0lFsuxMT7zjaf9bbNwdNyMr7zh/Zl8EXQtQ+MYBAt5G+JLu+5DlA==}
 
+  /@shikijs/core@1.6.2:
+    resolution: {integrity: sha512-guW5JeDzZ7uwOjTfCOFZ2VtVXk5tmkMzBYbKGfXsmAH1qYOej49L5jQDcGmwd6/OgvpmWhzO2GNJkQIFnbwLPQ==}
+    dev: false
+
   /@shikijs/markdown-it@1.6.0:
     resolution: {integrity: sha512-FZBOyjgtRb3SgV5MSRdpS8h0fHkhVH7MlCJSVatA4RAYgFwjxuUtH22lGHnnn353cCQvx2Z/9t2qIV9bXXfcsQ==}
     dependencies:
@@ -1295,28 +1302,26 @@ packages:
     dependencies:
       shiki: 1.6.0
 
-  /@shikitor/core@0.0.8(@types/react@18.3.3)(react@18.3.1):
-    resolution: {integrity: sha512-7ymQCBa7CunU7Sp73shDIVaJ7zGw7qHBcgz3aRBhwhgkLWySq+Q59YwWfmEAOeWncxKyfLOUN7066jmB/B7kIg==}
+  /@shikitor/core@0.0.9(@types/react@18.3.3)(react@18.3.1):
+    resolution: {integrity: sha512-ysxqciePgoZFC4i6ZhwAB1nad6KUduAUDuZnhKT+Q+i7uT8523/1Cz2WOGpNIqTD94KHWYNaNiM3c+3KQK4wpw==}
     dependencies:
       '@shikijs/core': 1.6.0
       '@shikijs/transformers': 1.6.0
       derive-valtio: 0.1.0(valtio@1.13.2)
-      shiki: 1.6.0
+      shiki: 1.6.2
       valtio: 1.13.2(@types/react@18.3.3)(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - react
     dev: false
 
-  /@shikitor/react@0.1.3(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-xwYaApviOwkf8TEfnboxV+7X5WvOlgFNowk+HGtfx7sikPM7+Vamyvl8QQw4pq12+wE5q0gyRizJNFvJ6sRe2g==}
+  /@shikitor/react@0.1.5(@types/react@18.3.3)(react@18.3.1):
+    resolution: {integrity: sha512-vjZgl9GGvUTAVqkatkRAFQZnd9bLlKgF1nxStn533Iet6q3bVOhc/K3BMaBPkZjZH16MSLrLeZMMS/hHzZGX2A==}
     peerDependencies:
       react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     dependencies:
-      '@shikitor/core': 0.0.8(@types/react@18.3.3)(react@18.3.1)
+      '@shikitor/core': 0.0.9(@types/react@18.3.3)(react@18.3.1)
       react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -5256,6 +5261,12 @@ packages:
     resolution: {integrity: sha512-P31ROeXcVgW/k3Z+vUUErcxoTah7ZRaimctOpzGuqAntqnnSmx1HOsvnbAB8Z2qfXPRhw61yptAzCsuKOhTHwQ==}
     dependencies:
       '@shikijs/core': 1.6.0
+
+  /shiki@1.6.2:
+    resolution: {integrity: sha512-X3hSm5GzzBd/BmPmGfkueOUADLyBoZo1ojYQXhd+NU2VJn458yt4duaS0rVzC+WtqftSV7mTVvDw+OB9AHi3Eg==}
+    dependencies:
+      '@shikijs/core': 1.6.2
+    dev: false
 
   /side-channel@1.0.6:
     resolution: {integrity: sha512-fDW/EZ6Q9RiO8eFG8Hj+7u/oW+XrPTIChwCOM2+th2A6OblDtYYIpve9m+KvI9Z4C9qSEXlaGR6bTEYHReuglA==}

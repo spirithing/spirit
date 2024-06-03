@@ -20,8 +20,9 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "@shikitor/core": "^0.0.8",
-    "@shikitor/react": "^0.1.3",
+    "shiki": "^1.6.2",
+    "@shikitor/core": "^0.0.9",
+    "@shikitor/react": "^0.1.5",
     "foxact": "^0.2.33",
     "get-windows": "^9.1.1",
     "i18next": "^23.11.5",
