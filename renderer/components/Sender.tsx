@@ -200,84 +200,133 @@ export function Sender(props: SenderProps) {
     }
     return <Icon {...{ onClick: onIconClick }} />
   }, [Icon, clickIcon, ctxRef, onIconClick])
-  return <div
-    className={classnames(
-      prefix,
-      className,
-      {
-        [`${prefix}--header`]: visibles.header,
-        [`${prefix}--footer`]: visibles.footer
+
+  const senderBgRef = useRef<HTMLDivElement>(null)
+  const senderRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    // 监听同步 Sender 位置以及宽高给 SenderBg
+    const sender = senderRef.current
+    const senderBg = senderBgRef.current
+    if (!sender || !senderBg) return
+    let disposed = false
+    const sync = async (type: string) => {
+      const isInited = senderBg.dataset.inited === '1'
+      if (!isInited && type !== 'init') return
+      await new Promise(resolve =>
+        setTimeout(
+          resolve,
+          {
+            init: 0,
+            resize: 200,
+            observer: 0
+          }[type]
+        )
+      )
+      if (disposed) return
+      const { x, y, width, height } = sender.getBoundingClientRect()
+      console.debug('sync', { type }, x, y, width, height)
+      senderBg.style.setProperty('--st', y + 'px')
+      senderBg.style.setProperty('--sl', x + 'px')
+      senderBg.style.setProperty('--sw', width + 'px')
+      senderBg.style.setProperty('--sh', height + 'px')
+      if (!isInited) {
+        senderBg.dataset.inited = '1'
       }
-    )}
-  >
-    {memoDebouncedVisibles.header && props.Header}
-    <div className={`${prefix}__input`}>
-      <Tooltip
-        content={
-          <>
-            {t('Display configure panel')}
-            <br />
-            ⌘ + /
-          </>
+    }
+    sync('init')
+    const syncResize = sync.bind(null, 'resize')
+    window.addEventListener('resize', syncResize)
+    const observer = new ResizeObserver(sync.bind(null, 'observer'))
+    observer.observe(sender)
+    return () => {
+      disposed = true
+      senderBg.dataset.inited = '0'
+      window.removeEventListener('resize', syncResize)
+      observer.disconnect()
+    }
+  }, [])
+  return <>
+    <div ref={senderBgRef} className={`${prefix}-bg`} />
+    <div
+      ref={senderRef}
+      className={classnames(
+        prefix,
+        className,
+        {
+          [`${prefix}--header`]: visibles.header,
+          [`${prefix}--footer`]: visibles.footer
         }
-        placement='bottom'
-        popperOptions={{
-          modifiers: [{ name: 'offset', options: { offset: [0, -5] } }]
-        }}
-      >
-        <div className={`${prefix}__prefix`}>
-          <IconComp />
-        </div>
-      </Tooltip>
-      <Editor
-        ref={shikitorRef}
-        value={text}
-        onChange={setText}
-        defaultOptions={{
-          language: 'markdown',
-          lineNumbers: 'off',
-          autoSize: { maxRows: 6 }
-        }}
-        options={useMemo(() => ({
-          placeholder,
-          theme: highlightTheme
-        }), [placeholder, highlightTheme])}
-        plugins={plugins}
-        onColorChange={setColor}
-        onMounted={shikitor => shikitor.focus()}
-        onKeydown={e => {
-          if (e.key === 'Escape' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-            if (text) {
-              const ins = DialogPlugin.confirm({
-                header: 'Clear the input',
-                body: 'Are you sure to clear the input?',
-                onConfirm: () => {
-                  setText('')
-                  ins.hide()
-                },
-                onClose: () => ins.hide()
-              })
-            } else {
-              setDisplay(false)
+      )}
+    >
+      {memoDebouncedVisibles.header && props.Header}
+      <div className={`${prefix}__input`}>
+        <Tooltip
+          content={
+            <>
+              {t('Display configure panel')}
+              <br />
+              ⌘ + /
+            </>
+          }
+          placement='bottom'
+          popperOptions={{
+            modifiers: [{ name: 'offset', options: { offset: [0, -5] } }]
+          }}
+        >
+          <div className={`${prefix}__prefix`}>
+            <IconComp />
+          </div>
+        </Tooltip>
+        <Editor
+          ref={shikitorRef}
+          value={text}
+          onChange={setText}
+          defaultOptions={{
+            language: 'markdown',
+            lineNumbers: 'off',
+            autoSize: { maxRows: 6 }
+          }}
+          options={useMemo(() => ({
+            placeholder,
+            theme: highlightTheme
+          }), [placeholder, highlightTheme])}
+          plugins={plugins}
+          onColorChange={setColor}
+          onMounted={shikitor => shikitor.focus()}
+          onKeydown={e => {
+            if (e.key === 'Escape' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+              if (text) {
+                const ins = DialogPlugin.confirm({
+                  header: 'Clear the input',
+                  body: 'Are you sure to clear the input?',
+                  onConfirm: () => {
+                    setText('')
+                    ins.hide()
+                  },
+                  onClose: () => ins.hide()
+                })
+              } else {
+                setDisplay(false)
+              }
             }
-          }
-          if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-            clearMessages()
-            return
-          }
-          if (e.key === '/' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-            e.preventDefault()
-            clickIcon(ctxRef.current)
-          }
-          if (e.key === 'Enter' && e.metaKey) {
-            e.preventDefault()
-            sendMessage(text)
-            setText('')
-            return
-          }
-        }}
-      />
+            if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+              clearMessages()
+              return
+            }
+            if (e.key === '/' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+              e.preventDefault()
+              clickIcon(ctxRef.current)
+            }
+            if (e.key === 'Enter' && e.metaKey) {
+              e.preventDefault()
+              sendMessage(text)
+              setText('')
+              return
+            }
+          }}
+        />
+      </div>
+      {memoDebouncedVisibles.footer && props.Footer}
     </div>
-    {memoDebouncedVisibles.footer && props.Footer}
-  </div>
+  </>
 }

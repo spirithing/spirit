@@ -1,5 +1,6 @@
 .spirit-sender {
   --icon-size: 32px;
+  --bg-color: color-mix(in srgb, var(--bg), #0001 10%);
 
   position: relative;
   display: flex;
@@ -10,8 +11,9 @@
 
   font-size: 16px;
   border-radius: var(--td-radius-medium);
-  background-color: var(--bg);
-  border: 2px solid var(--fg);
+  background-color: var(--bg-color);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--bg);
   &__input {
     min-height: var(--icon-size);
     display: flex;
@@ -58,14 +60,47 @@
   &:hover &__icon {
     animation-play-state: paused;
   }
+  &-bg {
+    --sw: var(--sender-width);
+    --sh: 52px;
+    --st: 15vh;
+    --sl: 0;
+    --image: linear-gradient(
+      135deg,
+      var(--td-brand-color-3) 10%,
+      var(--td-brand-color) 100%
+    );
+
+    --br: 2px;
+
+    &:not([data-inited='1']) {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    position: fixed;
+    top: var(--st);
+    left: var(--sl);
+    width: var(--sw);
+    height: var(--sh);
+    background-image: var(--image);
+    border-radius: var(--td-radius-medium);
+  }
 }
 .spirit-sender .shikitor {
   --line-height: var(--icon-size);
 
-  min-height: 100% !important;
   flex-grow: 1;
-  .shikitor-gutter-line-highlighted:before {
+  min-height: 100% !important;
+  background-color: transparent !important;
+  .shiki {
+    background-color: transparent !important;
+  }
+  &-gutter-line-highlighted:before {
     display: none;
+  }
+  &-placeholder {
+    filter: invert(1);
+    opacity: .6;
   }
 }
 .spirit-sender {
