@@ -225,7 +225,7 @@ export function Sender(props: SenderProps) {
     if (disposedRef.current) return
     const { x, y, width, height } = sender.getBoundingClientRect()
     console.debug('sync', { type }, x, y, width, height)
-    if (['init', 'resize'].includes(type)) {
+    if (['init', 'display', 'resize'].includes(type)) {
       senderBg.style.setProperty('--st', y + 'px')
       senderBg.style.setProperty('--sl', x + 'px')
     }
