@@ -38,7 +38,11 @@ export function Kbd(props: KbdProps) {
           meta: META,
           opt: OPT,
           shift: SHIFT,
-          enter: '↵'
+          enter: '↵',
+          left: '←',
+          right: '→',
+          up: '↑',
+          down: '↓'
         }[key as string] || key.toUpperCase() as string}
       </span>
     ))}

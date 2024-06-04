@@ -1,5 +1,6 @@
 import './App.scss'
 
+import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { UserIcon } from 'tdesign-icons-react'
 import { Avatar, AvatarGroup, Button, Popconfirm, Tabs, Tooltip } from 'tdesign-react'
@@ -31,11 +32,30 @@ function Chatrooms() {
             <div className={`${'spirit'}-chatroom-desc`}>
               No description for now.
             </div>
-            {index > 9
-              ? <></>
-              : activeChatroom.id === c
-              ? <></>
-              : <Kbd keys={['meta', `${index + 1}`]} />}
+            <div className={`${'spirit'}-chatroom-kbds`}>
+              {[
+                activeChatroom.id !== c && index < 9
+                  ? <Kbd keys={['meta', `${index + 1}`]} />
+                  : undefined,
+                activeChatroom.id !== c && index === chatrooms.length - 1
+                  ? <Kbd keys={['meta', 'shift', 'right']} />
+                  : undefined,
+                chatrooms[index - 1] === activeChatroom.id
+                  ? <Kbd keys={['meta', 'right']} />
+                  : undefined,
+                chatrooms[index + 1] === activeChatroom.id
+                  ? <Kbd keys={['meta', 'left']} />
+                  : undefined
+              ]
+                .filter(<T,>(v: T | undefined): v is T => !!v)
+                .reduce(
+                  (acc, curr, currentIndex) =>
+                    acc.length > 0
+                      ? [...acc, <span key={currentIndex}>/</span>, curr]
+                      : [curr],
+                  [] as ReactNode[]
+                )}
+            </div>
           </>
         }
         placement='top-left'

@@ -62,6 +62,11 @@
     font-size: 12px;
     opacity: .6;
   }
+  &-kbds {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 }
 .spirit-messages {
   display: flex;
