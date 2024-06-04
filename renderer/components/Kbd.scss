@@ -1,0 +1,18 @@
+.spirit-kbd {
+  border-radius: 3px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  &-key {
+    position: relative;
+    padding: 2px 5px;
+    border-radius: 3px;
+
+    color: var(--td-text-color-primary);
+    background-color: var(--td-bg-color-container);
+  }
+  &-key:not(:first-child) {
+    margin-left: 5px;
+  }
+}

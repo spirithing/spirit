@@ -28,6 +28,7 @@ import { useOpenAI } from '../hooks/useOpenAI'
 import { useElectronStore } from '../hooks/useStore'
 import { useHighlightTheme } from '../providers/theme'
 import { classnames } from '../utils/classnames'
+import { Kbd } from './Kbd'
 
 export interface SenderContext {
   readonly visibles: {
@@ -265,7 +266,7 @@ export function Sender(props: SenderProps) {
             <>
               {t('Display configure panel')}
               <br />
-              ⌘ + /
+              <Kbd keys={['meta', ',']} />
             </>
           }
           placement='bottom'
@@ -313,7 +314,7 @@ export function Sender(props: SenderProps) {
               clearMessages()
               return
             }
-            if (e.key === '/' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+            if (e.key === ',' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
               e.preventDefault()
               clickIcon(ctxRef.current)
             }
