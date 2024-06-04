@@ -17,11 +17,22 @@
 }
 .spirit-chatrooms {
   .s-icon {
-    font-size: 14px;
+    font-size: 16px;
   }
   .t-tabs__nav-item:not(.t-is-active):hover {
     .t-button:hover {
       background-color: var(--td-brand-color-light-hover);
+    }
+  }
+  .t-tabs__nav-action {
+    display: flex;
+    align-items: center;
+    > .t-button {
+      padding: 0 10px;
+      height: 100%;
+      &:not(:last-child) {
+        border-right: 1px solid var(--td-border-level-1-color);
+      }
     }
   }
 }

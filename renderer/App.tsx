@@ -24,7 +24,6 @@ function Chatrooms() {
     // TODO
   })
   return <Tabs
-    addable
     className={`${'spirit'}-chatrooms`}
     list={chatrooms.map((c, index) => ({
       value: c,
@@ -115,11 +114,41 @@ function Chatrooms() {
     }))}
     value={activeChatroom.id}
     onChange={v => setActiveChatroom(v as string)}
-    onAdd={() => {
-      const chatroom = uuid()
-      addChatroom(chatroom)
-      setActiveChatroom(chatroom)
-    }}
+    action={
+      <>
+        <Tooltip
+          content={
+            <>
+              Add new chatroom
+              <Kbd keys={['meta', 'n']} />
+            </>
+          }
+          placement='bottom'
+          popperOptions={{ modifiers: [{ name: 'offset', options: { offset: [0, -10] } }] }}
+        >
+          <Button
+            variant='text'
+            size='small'
+            onClick={() => {
+              const chatroom = uuid()
+              addChatroom(chatroom)
+              setActiveChatroom(chatroom)
+            }}
+          >
+            <span className='s-icon'>Add</span>
+          </Button>
+        </Tooltip>
+        <Button
+          variant='text'
+          size='small'
+          onClick={() => {
+            // TODO
+          }}
+        >
+          <span className='s-icon'>settings</span>
+        </Button>
+      </>
+    }
   />
 }
 
