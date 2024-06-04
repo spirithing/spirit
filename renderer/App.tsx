@@ -3,7 +3,7 @@ import './App.scss'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { UserIcon } from 'tdesign-icons-react'
-import { Avatar, AvatarGroup, Button, Popconfirm, Tabs, Tooltip } from 'tdesign-react'
+import { Avatar, AvatarGroup, Button, Tabs, Tooltip } from 'tdesign-react'
 
 import chatgptIcon from './assets/chatgpt.svg'
 import { Configurer } from './components/Configurer'
@@ -80,35 +80,28 @@ function Chatrooms() {
             />
           </AvatarGroup>
           <span className={`${'spirit'}-chatroom-label`}>{c}</span>
-          {c !== 'default' && <Popconfirm
-            placement='bottom-left'
-            content='Are you sure?'
-            onConfirm={({ e }) => {
-              e.stopPropagation()
-              setActiveChatroom(chatrooms[index + 1] ?? 'default')
-              delChatroom(c)
-            }}
-            onCancel={({ e }) => e.stopPropagation()}
+          {c !== 'default' && <Tooltip
+            content={
+              <>
+                Archive {c === activeChatroom.id ? 'current' : 'this'} chatroom
+                {c === activeChatroom.id && <Kbd keys={['meta', 'w']} />}
+              </>
+            }
+            placement='bottom'
           >
-            <Tooltip
-              content={
-                <>
-                  Delete {c === activeChatroom.id ? 'current' : 'this'} chatroom
-                  {c === activeChatroom.id && <Kbd keys={['meta', 'w']} />}
-                </>
-              }
-              placement='bottom'
+            <Button
+              shape='circle'
+              variant='text'
+              size='small'
+              onClick={e => {
+                e.stopPropagation()
+                setActiveChatroom(chatrooms[index + 1] ?? 'default')
+                delChatroom(c)
+              }}
             >
-              <Button
-                shape='circle'
-                variant='text'
-                size='small'
-                onClick={e => e.stopPropagation()}
-              >
-                <span className='s-icon'>close</span>
-              </Button>
-            </Tooltip>
-          </Popconfirm>}
+              <span className='s-icon'>archive</span>
+            </Button>
+          </Tooltip>}
         </div>
       </Tooltip>
     }))}
