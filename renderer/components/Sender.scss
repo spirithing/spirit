@@ -58,7 +58,7 @@
     transform: translateY(2px);
     animation: floating 1s infinite linear;
   }
-  &:hover &__icon {
+  &__prefix:hover &__icon {
     animation-play-state: paused;
   }
   &-bg {
