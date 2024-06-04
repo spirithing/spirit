@@ -11,6 +11,7 @@ import { Kbd } from './components/Kbd'
 import { Message } from './components/Message'
 import { Sender } from './components/Sender'
 import { useChatroom, useChatrooms } from './hooks/useChatroom'
+import { useEventListener } from './hooks/useEventListener'
 import { useMDRender } from './hooks/useMDRender'
 import { useElectronStore } from './hooks/useStore'
 import { useUser } from './hooks/useUser'
@@ -19,6 +20,9 @@ import { uuid } from './utils/uuid'
 function Chatrooms() {
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
+  useEventListener('keydown', () => {
+    // TODO
+  })
   return <Tabs
     addable
     className={`${'spirit'}-chatrooms`}
@@ -35,16 +39,16 @@ function Chatrooms() {
             <div className={`${'spirit'}-chatroom-kbds`}>
               {[
                 activeChatroom.id !== c && index < 9
-                  ? <Kbd keys={['meta', `${index + 1}`]} />
+                  ? <Kbd key='k0' keys={['meta', `${index + 1}`]} />
                   : undefined,
                 activeChatroom.id !== c && index === chatrooms.length - 1
-                  ? <Kbd keys={['meta', 'shift', 'right']} />
+                  ? <Kbd key='k1' keys={['meta', 'shift', 'right']} />
                   : undefined,
                 chatrooms[index - 1] === activeChatroom.id
-                  ? <Kbd keys={['meta', 'right']} />
+                  ? <Kbd key='k2' keys={['meta', 'right']} />
                   : undefined,
                 chatrooms[index + 1] === activeChatroom.id
-                  ? <Kbd keys={['meta', 'left']} />
+                  ? <Kbd key='k3' keys={['meta', 'left']} />
                   : undefined
               ]
                 .filter(<T,>(v: T | undefined): v is T => !!v)
@@ -87,14 +91,24 @@ function Chatrooms() {
             }}
             onCancel={({ e }) => e.stopPropagation()}
           >
-            <Button
-              shape='circle'
-              variant='text'
-              size='small'
-              onClick={e => e.stopPropagation()}
+            <Tooltip
+              content={
+                <>
+                  Delete {c === activeChatroom.id ? 'current' : 'this'} chatroom
+                  {c === activeChatroom.id && <Kbd keys={['meta', 'w']} />}
+                </>
+              }
+              placement='bottom'
             >
-              <span className='s-icon'>close</span>
-            </Button>
+              <Button
+                shape='circle'
+                variant='text'
+                size='small'
+                onClick={e => e.stopPropagation()}
+              >
+                <span className='s-icon'>close</span>
+              </Button>
+            </Tooltip>
           </Popconfirm>}
         </div>
       </Tooltip>

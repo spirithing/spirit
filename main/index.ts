@@ -87,7 +87,13 @@ function createWindow() {
       }, 200)
     }
   }
-  globalShortcut.register('command+space', () => toggleDisplay())
+  globalShortcut.register('CommandOrControl+space', () => toggleDisplay())
+  const ret = globalShortcut.register('CommandOrControl+W', () => {
+    // TODO send message to renderer
+  })
+  if (!ret) {
+    // TODO store shortcut register error message
+  }
   lisStore('display', toggleDisplay, displayStoreUUID)
 }
 
@@ -103,6 +109,10 @@ app.on('window-all-closed', () => {
 // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
 app.on('browser-window-created', (_, window) => {
   optimizer.watchWindowShortcuts(window)
+})
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll()
 })
 
 async function main() {
