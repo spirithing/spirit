@@ -25,7 +25,7 @@ function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     resizable: false,
-    show: true,
+    show: false,
     autoHideMenuBar: true,
     transparent: true,
     frame: false,
@@ -60,11 +60,9 @@ function createWindow() {
     mainWindow.show()
     setStore('display', true, displayStoreUUID)
   }
-  setStore('display', true, displayStoreUUID)
+  setStore('display', false, displayStoreUUID)
   const display = screen.getPrimaryDisplay()
   mainWindow.setBounds(calcBounds(display))
-
-  mainWindow.on('ready-to-show', () => mainWindow.show())
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
