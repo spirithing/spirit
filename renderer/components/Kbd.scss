@@ -1,16 +1,29 @@
 .spirit-kbd {
   border-radius: 3px;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   font-size: 12px;
-  font-weight: bold;
   white-space: nowrap;
   &-key {
+    --h: 14px;
     position: relative;
-    padding: 2px 5px;
+    padding: 2px 8px;
+    height: var(--h);
+    line-height: var(--h);
     border-radius: 3px;
 
-    color: var(--td-text-color-primary);
+    color: var(--td-text-color-placeholder);
     background-color: var(--td-bg-color-container);
+    &.meta {
+      font-size: 15px;
+      padding-top: 3px;
+      padding-bottom: 1px;
+    }
+    &.enter {
+      font-size: 15px;
+      padding-top: 1px;
+      padding-bottom: 3px;
+    }
   }
   &-key:not(:first-child) {
     margin-left: 5px;
