@@ -12,7 +12,8 @@
   font-size: 16px;
   border-radius: var(--td-radius-medium);
   background-color: var(--bg-color);
-  backdrop-filter: blur(10px);
+  // TODO make shikitor support `position: fixed` broken
+  // backdrop-filter: blur(10px);
   border: 2px solid var(--bg);
   &__input {
     min-height: var(--icon-size);
