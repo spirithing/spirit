@@ -4,6 +4,7 @@
   "main": "out/main/index.js",
   "type": "module",
   "scripts": {
+    "prepare": "rm -rf node_modules/electron/dist && node node_modules/electron/install.js",
     "prebuild": "electron-vite build",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
