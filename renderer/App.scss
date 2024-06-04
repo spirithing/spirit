@@ -1,4 +1,6 @@
 #root {
+  --chatroom-h: 120px;
+
   width: 100vw;
   height: 100vh;
   filter: drop-shadow(0 0 16px #0008);
@@ -13,8 +15,8 @@
   width: 100vw;
 }
 .spirit-chatrooms {
-  --pad: 3vh;
-  --h: 15vh;
+  --pad: 20px;
+  --h: var(--chatroom-h);
 
   display: flex;
   align-items: center;

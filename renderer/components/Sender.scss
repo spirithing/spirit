@@ -64,7 +64,7 @@
   &-bg {
     --sw: var(--sender-width);
     --sh: 52px;
-    --st: 15vh;
+    --st: var(--chatroom-h);
     --sl: 0;
     --image: linear-gradient(
       135deg,
