@@ -204,48 +204,51 @@ export function Sender(props: SenderProps) {
 
   const senderBgRef = useRef<HTMLDivElement>(null)
   const senderRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    // 监听同步 Sender 位置以及宽高给 SenderBg
+  const sync = useCallback(async (type: string, disposedRef: { current: boolean }) => {
     const sender = senderRef.current
     const senderBg = senderBgRef.current
     if (!sender || !senderBg) return
-    let disposed = false
-    const sync = async (type: string) => {
-      const isInited = senderBg.dataset.inited === '1'
-      if (!isInited && type !== 'init') return
-      await new Promise(resolve =>
-        setTimeout(
-          resolve,
-          {
-            init: 0,
-            resize: 200,
-            observer: 0
-          }[type]
-        )
+
+    const isInited = senderBg.dataset.inited === '1'
+    if (!isInited && type !== 'init') return
+    await new Promise(resolve =>
+      setTimeout(
+        resolve,
+        {
+          init: 0,
+          resize: 200,
+          observer: 0
+        }[type]
       )
-      if (disposed) return
-      const { x, y, width, height } = sender.getBoundingClientRect()
-      console.debug('sync', { type }, x, y, width, height)
-      senderBg.style.setProperty('--st', y + 'px')
-      senderBg.style.setProperty('--sl', x + 'px')
-      senderBg.style.setProperty('--sw', width + 'px')
-      senderBg.style.setProperty('--sh', height + 'px')
-      if (!isInited) {
-        senderBg.dataset.inited = '1'
-      }
+    )
+    if (disposedRef.current) return
+    const { x, y, width, height } = sender.getBoundingClientRect()
+    console.debug('sync', { type }, x, y, width, height)
+    senderBg.style.setProperty('--st', y + 'px')
+    senderBg.style.setProperty('--sl', x + 'px')
+    senderBg.style.setProperty('--sw', width + 'px')
+    senderBg.style.setProperty('--sh', height + 'px')
+    if (!isInited) {
+      senderBg.dataset.inited = '1'
     }
-    sync('init')
-    const syncResize = sync.bind(null, 'resize')
+  }, [])
+  useEffect(() => {
+    const sender = senderRef.current
+    const senderBg = senderBgRef.current
+    if (!sender || !senderBg) return
+    const disposedRef = { current: false }
+    sync('init', disposedRef)
+    const syncResize = sync.bind(null, 'resize', disposedRef)
     window.addEventListener('resize', syncResize)
-    const observer = new ResizeObserver(sync.bind(null, 'observer'))
+    const observer = new ResizeObserver(sync.bind(null, 'observer', disposedRef))
     observer.observe(sender)
     return () => {
-      disposed = true
+      disposedRef.current = true
       senderBg.dataset.inited = '0'
       window.removeEventListener('resize', syncResize)
       observer.disconnect()
     }
-  }, [])
+  }, [sync])
   return <>
     <div ref={senderBgRef} className={`${prefix}-bg`} />
     <div
