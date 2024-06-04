@@ -27,6 +27,8 @@ import { useEEListener } from '../hooks/useEEListener'
 import { useOpenAI } from '../hooks/useOpenAI'
 import { useElectronStore } from '../hooks/useStore'
 import { useHighlightTheme } from '../providers/theme'
+import chatroomCompletions from '../shikitor-plugins/chatroom-completions'
+import { electronStore, keyAtom } from '../store'
 import { classnames } from '../utils/classnames'
 import { Kbd } from './Kbd'
 
@@ -57,9 +59,24 @@ const yiyan = [
 
 const plugins = [
   providePopup,
-  provideCompletions,
+  provideCompletions({
+    popupPlacement: 'bottom',
+    footer: false
+  }),
   provideSelectionToolbox,
-  selectionToolboxForMd
+  selectionToolboxForMd,
+  chatroomCompletions({
+    get chatrooms() {
+      const chatroomsAtom = keyAtom('chatrooms')
+      const chatrooms = electronStore.get(chatroomsAtom)
+      return chatrooms?.map(id => ({
+        id,
+        name: id
+      })) ?? [
+        { id: 'default', name: 'Default' }
+      ]
+    }
+  })
 ]
 
 function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
