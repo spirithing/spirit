@@ -158,7 +158,10 @@
   }
 }
 .spirit-sender {
-  &--header {}
+  &--header > *:first-child {
+    border-radius: var(--td-radius-medium) var(--td-radius-medium) 0 0;
+    overflow: hidden;
+  }
   &__input + *:not(&__status-bar) {
     max-height: 0;
     // border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);

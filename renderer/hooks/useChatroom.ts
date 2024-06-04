@@ -99,7 +99,7 @@ export const useChatroom = () => {
 const defaultChatrooms = ['default']
 export const useChatrooms = () => {
   const [chatrooms, setChatrooms] = useElectronStore('chatrooms', defaultChatrooms)
-  const addChatroom = useCallback((id: string, model: string) => {
+  const addChatroom = useCallback((id: string, model?: string) => {
     setChatrooms(prev => {
       if (!prev) return defaultChatrooms
       return [id, ...prev]

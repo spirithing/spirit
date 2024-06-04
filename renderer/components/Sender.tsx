@@ -72,7 +72,7 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
 
 const useSenderCtx = () => {
   const [visibles, setVisibles] = useState({
-    header: false,
+    header: true,
     footer: false
   })
   const visiblesRef = useRef(visibles)

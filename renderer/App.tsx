@@ -1,99 +1,74 @@
 import './App.scss'
 
-import { useEffect, useState } from 'react'
-import { Card } from 'tdesign-react'
+import { useEffect } from 'react'
+import { Button, Popconfirm, Tabs, Tooltip } from 'tdesign-react'
 
 import { Configurer } from './components/Configurer'
+import { Kbd } from './components/Kbd'
 import { Message } from './components/Message'
-import { ModelSelector } from './components/selectors/ModelSelector'
 import { Sender } from './components/Sender'
 import { useChatroom, useChatrooms } from './hooks/useChatroom'
 import { useMDRender } from './hooks/useMDRender'
 import { useElectronStore } from './hooks/useStore'
 import { useUser } from './hooks/useUser'
-import { classnames } from './utils/classnames'
 import { uuid } from './utils/uuid'
-
-interface ConfirmBtnProps {
-  className?: string
-  onConfirm?(): void
-}
-
-function ConfirmBtn({
-  className,
-  onConfirm
-}: ConfirmBtnProps) {
-  const [needConfirm, setNeedConfirm] = useState(false)
-  return <div
-    tabIndex={0}
-    className={classnames(
-      className,
-      `${'spirit'}-confirm-button`,
-      {
-        [`${'spirit'}-confirm-button--active`]: needConfirm
-      }
-    )}
-    onBlur={() => setNeedConfirm(false)}
-    onClick={e => (
-      e.stopPropagation(),
-        needConfirm
-          ? onConfirm?.()
-          : setNeedConfirm(true)
-    )}
-  >
-    {!needConfirm
-      ? <span className='s-icon'>delete</span>
-      : <>
-        Confirm?
-        <span className='s-icon'>check</span>
-      </>}
-  </div>
-}
 
 function Chatrooms() {
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
-  const [model, setModel] = useState<string>('gpt-4o')
-  return <div className={`${'spirit'}-chatrooms`}>
-    <div onClick={() => addChatroom(uuid(), model)}>
-      <Card className={`${'spirit'}-chatroom__create`}>
-        <div className='s-icon'>add</div>
-        <ModelSelector value={model} onChange={setModel} />
-      </Card>
-    </div>
-    {chatrooms?.map(chatroom => (
-      <div key={chatroom} onClick={() => setActiveChatroom(chatroom)}>
-        <Card
-          className={classnames(
-            `${'spirit'}-chatroom`,
-            {
-              [`${'spirit'}-chatroom--active`]: chatroom === activeChatroom.id
-            }
-          )}
-          header={
-            <>
-              <span className='s-icon'>chat</span>
-              {chatroom}
-            </>
-          }
-        >
-          No Description
-          <div className={`${'spirit'}-chatroom__opts`}>
-            <div
-              className={`s-icon ${'spirit'}-chatroom__opt ${'spirit'}-chatroom__download`}
+  return <Tabs
+    addable
+    className={`${'spirit'}-chatrooms`}
+    list={chatrooms.map((c, index) => ({
+      value: c,
+      label: <Tooltip
+        overlayClassName={`${'spirit'}-chatroom-tooltip`}
+        content={
+          <>
+            {c}
+            <div className={`${'spirit'}-chatroom-desc`}>
+              No description for now.
+            </div>
+            {index > 9
+              ? <></>
+              : activeChatroom.id === c
+              ? <></>
+              : <Kbd keys={['meta', `${index + 1}`]} />}
+          </>
+        }
+        placement='top-left'
+        popperOptions={{
+          modifiers: [{ name: 'offset', options: { offset: [0, -20] } }]
+        }}
+      >
+        <div className={`${'spirit'}-chatroom`}>
+          <span className={`${'spirit'}-chatroom-label`}>{c}</span>
+          {c !== 'default' && <Popconfirm
+            placement='bottom-left'
+            content='Are you sure?'
+            onConfirm={({ e }) => {
+              e.stopPropagation()
+              setActiveChatroom(chatrooms[index + 1] ?? 'default')
+              delChatroom(c)
+            }}
+            onCancel={({ e }) => e.stopPropagation()}
+          >
+            <Button
+              shape='circle'
+              variant='text'
+              size='small'
               onClick={e => e.stopPropagation()}
             >
-              download
-            </div>
-            <ConfirmBtn
-              className={`${'spirit'}-chatroom__opt ${'spirit'}-chatroom__del`}
-              onConfirm={() => delChatroom(chatroom)}
-            />
-          </div>
-        </Card>
-      </div>
-    ))}
-  </div>
+              <span className='s-icon'>close</span>
+            </Button>
+          </Popconfirm>}
+        </div>
+      </Tooltip>
+    }))}
+    value={activeChatroom.id}
+    onChange={v => setActiveChatroom(v as string)}
+    onAdd={() => addChatroom(uuid())}
+  />
 }
 
 function Messages() {
@@ -138,9 +113,9 @@ export function App() {
   useDisplay()
   return <>
     <div className='spirit-main'>
-      <Chatrooms />
       <Sender
         onIconClick={ctx => ctx.toggleFooter()}
+        Header={<Chatrooms />}
         Footer={<Configurer />}
       />
       <Messages />

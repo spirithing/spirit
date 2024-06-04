@@ -11,131 +11,37 @@
   display: flex;
   flex-direction: column;
 
-  height: 100vh;
   width: 100vw;
+  height: 100vh;
+  padding-top: var(--chatroom-h);
 }
 .spirit-chatrooms {
-  --pad: 20px;
-  --h: var(--chatroom-h);
-
+  .s-icon {
+    font-size: 14px;
+  }
+  .t-tabs__nav-item:not(.t-is-active):hover {
+    .t-button:hover {
+      background-color: var(--td-brand-color-light-hover);
+    }
+  }
+}
+.spirit-chatroom {
   display: flex;
   align-items: center;
-  gap: var(--pad);
-
-  height: calc(var(--h) - var(--pad) * 2);
-  padding: var(--pad);
-
-  overflow-x: auto;
-  & > *:first-child {
-    z-index: 10;
-    position: sticky;
-    left: 0;
+  &-label {
+    display: inline-block;
+    max-width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
-  .spirit-chatroom__create {
-    padding: var(--td-radius-medium);
-
-    width: 15vw;
-    height: calc(var(--h) - var(--pad) * 2);
-
-    user-select: none;
-    cursor: pointer;
-    border: 2px solid var(--td-text-color-placeholder);
-    transition: .3s;
-    &:hover {
-      color: var(--td-brand-color-hover);
-      border-color: var(--td-brand-color-hover);
-    }
-    .t-card__body {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0;
-      height: 100%;
-    }
-    .s-icon {
-      width: fit-content;
-      font-size: 48px;
-    }
-    .t-select__wrap {
-      flex-grow: 1;
-      width: 0;
-    }
+  &-tooltip {
+    max-width: 250px;
   }
-  .spirit-chatroom {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 15vw;
-    max-width: 15vw;
-    height: calc(var(--h) - var(--pad) * 2);
-
-    cursor: pointer;
-    border: 2px solid var(--td-text-color-placeholder);
-    transition: .3s;
-    &:hover {
-      border-color: var(--td-brand-color-hover);
-    }
-    &--active {
-      border-color: var(--td-brand-color-active);
-    }
-    &__opts {
-      display: flex;
-      position: absolute;
-      gap: 10px;
-      bottom: 0;
-      right: -14px;
-      transform: translateY(50%);
-      opacity: 0;
-      transition: .3s;
-    }
-    &:hover .spirit-chatroom__opts {
-      opacity: 1;
-    }
-    &__opt {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 4px;
-      background-color: var(--td-bg-color-container);
-      box-shadow: var(--td-shadow-2);
-      min-width: 28px;
-      max-height: 28px;
-      border-radius: 14px;
-      box-sizing: border-box;
-      border: 2px solid var(--td-border-level-1-color);
-
-      font-size: 12px;
-      user-select: none;
-      transition: .3s;
-      &:hover {
-        box-shadow: var(--td-shadow-3);
-        border: 2px solid var(--td-brand-color-hover);
-      }
-      .s-icon {
-        font-size: 16px;
-      }
-    }
-    &__download &:hover {
-      color: var(--td-brand-color);
-    }
-    &__del {
-      color: var(--td-error-color);
-    }
-    .t-card__header {
-      padding: var(--td-radius-medium);
-      padding-bottom: 0;
-      font-size: 18px;
-      font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .t-card__body {
-      padding: var(--td-radius-medium);
-      padding-top: 0;
-      color: var(--td-text-color-placeholder);
-    }
+  &-desc {
+    color: var(--td-text-color-anti);
+    font-size: 12px;
+    opacity: .6;
   }
 }
 .spirit-messages {
