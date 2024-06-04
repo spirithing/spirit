@@ -12,6 +12,7 @@ type Key =
 
 export type KbdProps = {
   className?: string
+  noCard?: boolean
   style?: CSSProperties
   keys: Key[]
 }
@@ -22,7 +23,15 @@ const OPT = !isMac ? 'Alt' : '⌥'
 const SHIFT = !isMac ? 'Shift' : '⇧'
 
 export function Kbd(props: KbdProps) {
-  return <kbd className={`${'spirit'}-kbd`} {...props}>
+  return <kbd
+    className={classnames(
+      `${'spirit'}-kbd`,
+      {
+        [`${'spirit'}-kbd--no-card`]: props.noCard
+      }
+    )}
+    {...props}
+  >
     {props.keys.map((key, index) => (
       <span key={index} className={classnames(`${'spirit'}-kbd-key`, key)}>
         {{

@@ -4,6 +4,11 @@
   align-items: center;
   font-size: 12px;
   white-space: nowrap;
+  &--no-card &-key {
+    padding: 2px;
+    color: var(--td-text-color-anti);
+    background-color: transparent;
+  }
   &-key {
     --h: 14px;
     position: relative;
