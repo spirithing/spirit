@@ -16,7 +16,7 @@ import type OpenAI from 'openai'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Bot, IMessage } from 'spirit'
-import { DialogPlugin, MessagePlugin, Tooltip } from 'tdesign-react'
+import { Button, DialogPlugin, MessagePlugin, Tooltip } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
 import { useBot } from '../hooks/useBot'
@@ -87,7 +87,7 @@ const useSenderCtx = () => {
 }
 
 export function Sender(props: SenderProps) {
-  const prefix = 'spirit-sender'
+  const { prefix } = Sender
   const ctxRef = useSenderCtx()
   const {
     visibles
@@ -200,7 +200,7 @@ export function Sender(props: SenderProps) {
       </span>
     }
     return <Icon {...{ onClick: onIconClick }} />
-  }, [Icon, clickIcon, ctxRef, onIconClick])
+  }, [Icon, clickIcon, ctxRef, onIconClick, prefix])
 
   const senderBgRef = useRef<HTMLDivElement>(null)
   const senderRef = useRef<HTMLDivElement>(null)
@@ -348,6 +348,44 @@ export function Sender(props: SenderProps) {
         />
       </div>
       {memoDebouncedVisibles.footer && props.Footer}
+      <StatusBar />
     </div>
   </>
 }
+Sender.prefix = 'spirit-sender'
+
+function StatusBar() {
+  const { prefix } = StatusBar
+
+  return <div className={prefix}>
+    <div className={`${prefix}__message`}>
+      <Button
+        shape='square'
+        size='small'
+        variant='text'
+      >
+        <span className='s-icon'>settings</span>
+      </Button>
+      <span className={`${prefix}__text`}>
+        This is a status bar...
+      </span>
+    </div>
+    <div className={`${prefix}__actions`}>
+      <Button
+        size='small'
+        variant='text'
+      >
+        Clear <Kbd keys={['meta', 'K']} />
+      </Button>
+      <div className={`${prefix}__action-split`} />
+      <Button
+        size='small'
+        variant='text'
+      >
+        Send <Kbd keys={['meta', 'enter']} />
+      </Button>
+    </div>
+  </div>
+}
+
+StatusBar.prefix = `${Sender.prefix}__status-bar`

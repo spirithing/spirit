@@ -86,6 +86,59 @@
     background-image: var(--image);
     border-radius: var(--td-radius-medium);
   }
+  &__status-bar {
+    --td-bg-color-container-hover: color-mix(in srgb, var(--bg), var(--fg) 20%);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    height: 28px;
+    padding: 5px 10px;
+    border-top: 1px solid color-mix(in srgb, var(--fg), #0001 90%);
+    border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);
+    background-color: var(--bg);
+
+    color: var(--fg);
+    &__message {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-grow: 1;
+      width: 0;
+      font-size: 14px;
+    }
+    &__text {
+      color: var(--td-text-color-placeholder);
+    }
+    .s-icon {
+      color: var(--td-text-color-placeholder);
+      font-size: 16px;
+      user-select: none;
+    }
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      .spirit-kbd {
+        margin-left: 10px;
+      }
+      .spirit-kbd-key {
+        background-color: color-mix(in srgb, var(--bg), var(--fg) 10%);
+      }
+      .t-button:hover + .spirit-sender__status-bar__action-split {
+        opacity: 0;
+      }
+    }
+    &__action-split {
+      width: 2px;
+      height: 12px;
+      background-color: color-mix(in srgb, var(--bg), var(--fg) 10%);
+      border-radius: 2px;
+      opacity: 1;
+      transition: .3s;
+    }
+  }
 }
 .spirit-sender .shikitor {
   --line-height: var(--icon-size);
@@ -106,9 +159,9 @@
 }
 .spirit-sender {
   &--header {}
-  .spirit-sender__input + * {
+  &__input + *:not(&__status-bar) {
     max-height: 0;
-    border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);
+    // border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);
     overflow-y: auto;
     transition: .3s;
   }
@@ -120,7 +173,7 @@
       max-height: 50vh;
     }
   }
-  &--footer > .spirit-sender__input + * {
+  &--footer > &__input + * {
     max-height: 50vh;
     animation: unfold_to_40vh .3s;
   }
