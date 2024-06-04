@@ -26,8 +26,27 @@
   }
 }
 .spirit-chatroom {
+  --td-size-3: 12px;
+
   display: flex;
   align-items: center;
+  .t-avatar {
+    border: 1px solid var(--td-text-color-primary);
+    .t-image__wrapper {
+      display: flex;
+      align-items: center;
+    }
+    &__icon {
+      padding: 1px;
+      svg {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+  & > *:first-child:not(&-label) {
+    margin-right: 5px;
+  }
   &-label {
     display: inline-block;
     max-width: 120px;

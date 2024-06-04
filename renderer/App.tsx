@@ -1,8 +1,10 @@
 import './App.scss'
 
 import { useEffect } from 'react'
-import { Button, Popconfirm, Tabs, Tooltip } from 'tdesign-react'
+import { UserIcon } from 'tdesign-icons-react'
+import { Avatar, AvatarGroup, Button, Popconfirm, Tabs, Tooltip } from 'tdesign-react'
 
+import chatgptIcon from './assets/chatgpt.svg'
 import { Configurer } from './components/Configurer'
 import { Kbd } from './components/Kbd'
 import { Message } from './components/Message'
@@ -42,6 +44,18 @@ function Chatrooms() {
         }}
       >
         <div className={`${'spirit'}-chatroom`}>
+          <AvatarGroup cascading='left-up'>
+            <Avatar
+              size='18px'
+              shape='circle'
+              icon={<UserIcon />}
+            />
+            <Avatar
+              size='18px'
+              shape='circle'
+              image={chatgptIcon}
+            />
+          </AvatarGroup>
           <span className={`${'spirit'}-chatroom-label`}>{c}</span>
           {c !== 'default' && <Popconfirm
             placement='bottom-left'
@@ -67,7 +81,11 @@ function Chatrooms() {
     }))}
     value={activeChatroom.id}
     onChange={v => setActiveChatroom(v as string)}
-    onAdd={() => addChatroom(uuid())}
+    onAdd={() => {
+      const chatroom = uuid()
+      addChatroom(chatroom)
+      setActiveChatroom(chatroom)
+    }}
   />
 }
 
