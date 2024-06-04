@@ -217,6 +217,7 @@ export function Sender(props: SenderProps) {
         {
           init: 0,
           resize: 200,
+          display: 200,
           observer: 0
         }[type]
       )
@@ -224,14 +225,30 @@ export function Sender(props: SenderProps) {
     if (disposedRef.current) return
     const { x, y, width, height } = sender.getBoundingClientRect()
     console.debug('sync', { type }, x, y, width, height)
-    senderBg.style.setProperty('--st', y + 'px')
-    senderBg.style.setProperty('--sl', x + 'px')
-    senderBg.style.setProperty('--sw', width + 'px')
-    senderBg.style.setProperty('--sh', height + 'px')
+    if (['init', 'resize'].includes(type)) {
+      senderBg.style.setProperty('--st', y + 'px')
+      senderBg.style.setProperty('--sl', x + 'px')
+    }
+    if (['init', 'display', 'observer'].includes(type)) {
+      senderBg.style.setProperty('--sw', width + 'px')
+      senderBg.style.setProperty('--sh', height + 'px')
+    }
     if (!isInited) {
       senderBg.dataset.inited = '1'
     }
   }, [])
+  useEffect(() => {
+    const disposedRef = { current: false }
+    if (display) {
+      const senderBg = senderBgRef.current
+      if (!senderBg) return
+      ;['--sw', '--sh'].forEach(k => senderBg.style.removeProperty(k))
+      sync('display', { current: false })
+    }
+    return () => {
+      disposedRef.current = true
+    }
+  }, [display, sync])
   useEffect(() => {
     const sender = senderRef.current
     const senderBg = senderBgRef.current
