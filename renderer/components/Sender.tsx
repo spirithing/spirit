@@ -338,6 +338,7 @@ export function Sender(props: SenderProps) {
               clickIcon(ctxRef.current)
             }
             if (e.key === 'Enter' && e.metaKey) {
+              if (text.trim().length === 0) return
               e.preventDefault()
               sendMessage(text)
               setText('')
