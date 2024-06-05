@@ -104,6 +104,7 @@ function createWindow() {
     }
   }
   const shortcutsUUID = Math.random().toString(36).slice(2)
+  let accelerators: Record<string, string> = {}
   function addGlobalShortcuts() {
     const { start } = getStore('shortcuts') ?? {
       start: ['Alt', 'Space']
@@ -124,6 +125,8 @@ function createWindow() {
           .replace(/^Key/, '')
       )
     ).join('+')
+    accelerators.start
+      && globalShortcut.unregister(accelerators.start)
     globalShortcut.register(startAccelerator, () => toggleDisplay())
     const ret = globalShortcut.register('CommandOrControl+W', () => {
       // TODO send message to renderer
@@ -131,9 +134,14 @@ function createWindow() {
     if (!ret) {
       // TODO store shortcut register error message
     }
+    return {
+      start: startAccelerator
+    }
   }
-  addGlobalShortcuts()
-  lisStore('shortcuts', addGlobalShortcuts, shortcutsUUID)
+  accelerators = addGlobalShortcuts()
+  lisStore('shortcuts', () => {
+    accelerators = addGlobalShortcuts()
+  }, shortcutsUUID)
   lisStore('display', toggleDisplay, displayStoreUUID)
 }
 
