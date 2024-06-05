@@ -14,6 +14,11 @@ export interface KbdRecorderProps {
   className?: string
   clearable?: boolean
   resettable?: boolean
+  /**
+   * Fuzzy matching Numpad, MetaLeft, MetaRight, etc.
+   * @deprecated not implemented
+   */
+  fuzzy?: boolean
   value?: string[]
   defaultValue?: string[]
   onChange?: (value?: string[]) => void
