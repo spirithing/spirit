@@ -51,7 +51,7 @@ export function KbdRecorder(props: KbdRecorderProps) {
     } else {
       recordEnd?.()
     }
-    if (must === false) {
+    if (next === false) {
       if (keys && ['meta', 'ctrl', 'opt', 'shift'].includes(keys[keys.length - 1])) {
         setKeys(keysBeforeRecording.current)
       }
