@@ -138,7 +138,7 @@ function Chatrooms() {
             // TODO
           }}
         >
-          <span className='s-icon'>settings</span>
+          <span className='s-icon'>filter_alt</span>
         </Button>
       </>
     }
