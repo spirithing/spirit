@@ -84,6 +84,7 @@ function createWindow() {
       setStore('display', false, displayStoreUUID)
       setTimeout(() => {
         mainWindow.hide()
+        app.hide()
       }, 200)
     }
   }
