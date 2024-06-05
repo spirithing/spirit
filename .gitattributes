@@ -5,3 +5,8 @@
 *.ico -text
 *.gif -text
 *.webp -text
+
+*.eot binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
