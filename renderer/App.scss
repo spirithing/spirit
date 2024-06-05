@@ -16,8 +16,13 @@
   padding-top: var(--chatroom-h);
 }
 .spirit-chatrooms {
+  --td-bg-color-container-hover: var(--td-bg-color-component);
+  --td-bg-color-secondarycontainer-hover: var(--td-bg-color-component);
   .s-icon {
     font-size: 16px;
+  }
+  .t-tabs__operations {
+    border-bottom: 1px solid var(--td-border-level-1-color);
   }
   .t-tabs__nav-item:not(.t-is-active):hover {
     .t-button:hover {
@@ -27,6 +32,9 @@
   .t-tabs__nav-action {
     display: flex;
     align-items: center;
+    &.t-tabs__btn:hover {
+      background-color: var(--td-bg-color-secondarycontainer);
+    }
     > .t-button {
       padding: 0 10px;
       height: 100%;
