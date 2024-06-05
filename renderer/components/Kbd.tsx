@@ -6,7 +6,9 @@ import { classnames } from '../utils/classnames'
 
 type Key =
   | 'meta'
+  | 'ctrl'
   | 'opt'
+  | 'shift'
   | 'enter'
   | (string & {})
 
@@ -19,6 +21,7 @@ export type KbdProps = {
 
 const isMac = typeof window !== 'undefined' && /Mac/.test(window.navigator.platform)
 const META = !isMac ? 'Ctrl' : '⌘'
+const CTRL = !isMac ? 'Ctrl' : '⌃'
 const OPT = !isMac ? 'Alt' : '⌥'
 const SHIFT = !isMac ? 'Shift' : '⇧'
 
@@ -36,14 +39,19 @@ export function Kbd(props: KbdProps) {
       <span key={index} className={classnames(`${'spirit'}-kbd-key`, key)}>
         {{
           meta: META,
+          ctrl: CTRL,
           opt: OPT,
           shift: SHIFT,
           enter: '↵',
           left: '←',
           right: '→',
           up: '↑',
-          down: '↓'
-        }[key as string] || key.toUpperCase() as string}
+          down: '↓',
+          arrowleft: '←',
+          arrowright: '→',
+          arrowup: '↑',
+          arrowdown: '↓'
+        }[key.toLowerCase() as string] || key.toUpperCase() as string}
       </span>
     ))}
   </kbd>
