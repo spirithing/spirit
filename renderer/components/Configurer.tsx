@@ -190,6 +190,12 @@ function Shortcuts() {
           </Tooltip>
         </div>
       </Col>
+      <Col span={3}>
+        <div className='spirit-field'>
+          <label>{t('filteredApplications')}</label>
+          {/* TODO */}
+        </div>
+      </Col>
     </Row>
   </>
 }

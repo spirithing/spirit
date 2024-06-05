@@ -31,5 +31,6 @@
   "highlightDark": "Higlight theme when dark mode",
   "shortcuts": "Shortcuts",
   "startShortcut": "Start shortcut",
-  "startShortcutDesc": "How to replace Spotlight with Spririt"
+  "startShortcutDesc": "How to replace Spotlight with Spirit",
+  "filteredApplications": "Filtered applications"
 }
