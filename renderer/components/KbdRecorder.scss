@@ -1,0 +1,22 @@
+.spirit-kbd-recorder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: var(--td-comp-paddingLR-s);
+  height: 18px;
+  background-color: var(--td-bg-color-component);
+  border-radius: var(--td-radius-default);
+  border: 2px solid var(--td-border-level-2-color);
+
+  user-select: none;
+  &__opts {
+    --td-bg-color-container-hover: var(--td-bg-color-specialcomponent);
+
+    position: absolute;
+    right: var(--td-comp-paddingLR-m);
+    .s-icon {
+      font-size: 16px;
+    }
+  }
+}
