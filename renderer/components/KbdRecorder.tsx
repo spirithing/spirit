@@ -83,7 +83,7 @@ export function KbdRecorder(props: KbdRecorderProps) {
             e.ctrlKey && 'ctrl',
             e.altKey && 'opt',
             e.shiftKey && 'shift',
-            !['Meta', 'Control', 'Alt', 'Shift'].includes(e.key) && e.key
+            !['Meta', 'Control', 'Alt', 'Shift'].includes(e.key) && e.code
           ].filter(<T,>(x: T | false): x is T => Boolean(x)) as string[])
         }}
       >
