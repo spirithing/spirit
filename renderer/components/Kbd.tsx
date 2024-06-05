@@ -163,7 +163,7 @@ export function Kbd(props: KbdProps) {
         className={classnames(`${'spirit'}-kbd-key`, key)}
         title={key}
       >
-        {keyDisplayMapping[key.toLowerCase() as string] || key as string}
+        {keyDisplayMapping[key.toLowerCase()] || key.replace(/^Key/, '')}
       </span>
     ))}
   </kbd>
