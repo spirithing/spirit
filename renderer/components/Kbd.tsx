@@ -160,7 +160,7 @@ export function Kbd(props: KbdProps) {
     {props.keys.map(key => (
       <span
         key={key}
-        className={classnames(`${'spirit'}-kbd-key`, key)}
+        className={classnames(`${'spirit'}-kbd-key`, key.toLowerCase())}
         title={key}
       >
         {keyDisplayMapping[key.toLowerCase()] || key.replace(/^Key/, '')}

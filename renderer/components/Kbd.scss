@@ -10,13 +10,14 @@
     background-color: transparent;
   }
   &-key {
-    --h: 10px;
+    --h: 14px;
     position: relative;
-    padding: 2px 6px;
     height: var(--h);
+    min-width: 20px;
     line-height: var(--h);
     border-radius: 4px;
 
+    text-align: center;
     color: var(--td-text-color-placeholder);
     background-color: var(--td-bg-color-container);
     border: 2px solid color-mix(
@@ -30,20 +31,26 @@
       border-color: var(--td-bg-color-primary);
     }
     &.meta {
-      font-size: 15px;
-      padding-top: 3px;
-      padding-bottom: 1px;
+      font-size: 14px;
+      line-height: calc(var(--h) + 2px);
     }
-    &.shift {
+    &.shift, &.tab {
       font-size: 14px;
     }
     &.opt {
       font-size: 12px;
     }
-    &.enter {
-      font-size: 15px;
-      padding-top: 1px;
-      padding-bottom: 3px;
+    &.space {
+      font-size: 14px;
+      line-height: calc(var(--h) - 8px);
+    }
+    &.enter, &.numpadenter {
+      font-size: 14px;
+      line-height: calc(var(--h) - 2px);
+    }
+    &.pageup, &.pagedown {
+      font-size: 14px;
+      line-height: calc(var(--h) - 2px);
     }
   }
   &-key:not(:first-child) {
