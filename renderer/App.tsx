@@ -17,11 +17,49 @@ import { useElectronStore } from './hooks/useStore'
 import { useUser } from './hooks/useUser'
 import { uuid } from './utils/uuid'
 
+const withKeys = ['meta', 'ctrl', 'shift', 'alt'] as const
+type Shortcut = (typeof withKeys)[number] | (string & {})
+function isShortcut(e: KeyboardEvent, keys: Shortcut[]) {
+  let rerefKeys = [...keys]
+  for (const withKey of withKeys) {
+    // when withKey in keys, check e[`${key}Key`] is true, else assert e[`${key}Key`] is false
+    if (rerefKeys.includes(withKey)) {
+      if (!e[`${withKey}Key`]) return false
+      rerefKeys = rerefKeys.filter(key => key !== withKey)
+    } else {
+      if (e[`${withKey}Key`]) return false
+    }
+  }
+  return rerefKeys.includes(e.key)
+}
+
 function Chatrooms() {
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
-  useEventListener('keydown', () => {
-    // TODO
+  useEventListener('keydown', e => {
+    if (chatrooms.length > 1 /* TODO add text is empty check */) {
+      if (isShortcut(e, ['meta', 'shift', 'ArrowRight'])) {
+        setActiveChatroom(chatrooms[chatrooms.length - 1])
+        e.preventDefault()
+        return
+      }
+      if (isShortcut(e, ['meta', 'ArrowRight'])) {
+        const index = chatrooms.indexOf(activeChatroom.id)
+        if (index !== -1) {
+          setActiveChatroom(chatrooms[(index + 1) % chatrooms.length])
+          e.preventDefault()
+          return
+        }
+      }
+      if (isShortcut(e, ['meta', 'ArrowLeft'])) {
+        const index = chatrooms.indexOf(activeChatroom.id)
+        if (index !== -1) {
+          setActiveChatroom(chatrooms[(index - 1 + chatrooms.length) % chatrooms.length])
+          e.preventDefault()
+          return
+        }
+      }
+    }
   })
   return <Tabs
     className={`${'spirit'}-chatrooms`}
