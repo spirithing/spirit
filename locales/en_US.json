@@ -30,5 +30,6 @@
   "highlight": "Text highlight",
   "highlightDark": "Higlight theme when dark mode",
   "shortcuts": "Shortcuts",
-  "startShortcut": "Start shortcut"
+  "startShortcut": "Start shortcut",
+  "startShortcutDesc": "How to replace Spotlight with Spririt"
 }

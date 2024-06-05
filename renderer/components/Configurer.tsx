@@ -4,7 +4,7 @@ import type { FC, ReactNode } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
 import type { BundledTheme } from 'shiki'
 import { bundledThemes } from 'shiki'
-import { Col, Input, Row, Select, Tabs, Textarea } from 'tdesign-react'
+import { Col, Input, Link, Row, Select, Tabs, Textarea, Tooltip } from 'tdesign-react'
 
 import { Base } from '../configurers/Base'
 import { useBot } from '../hooks/useBot'
@@ -164,7 +164,7 @@ function Shortcuts() {
   const [shortcuts, setShortcuts] = useElectronStore('shortcuts')
   return <>
     <Row gutter={12}>
-      <Col span={4}>
+      <Col span={3}>
         <div className='spirit-field'>
           <label>{t('startShortcut')}</label>
           <KbdRecorder
@@ -178,6 +178,16 @@ function Shortcuts() {
               setShortcuts({ ...shortcuts, start: v })
             }}
           />
+          <Tooltip
+            content={
+              <>
+                {/* TODO */}
+                Open your system preferences and set a global shortcut for this action.
+              </>
+            }
+          >
+            <Link className='spirit-field__desc'>{t('startShortcutDesc')}</Link>
+          </Tooltip>
         </div>
       </Col>
     </Row>
