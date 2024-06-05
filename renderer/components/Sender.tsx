@@ -124,7 +124,6 @@ export function Sender(props: SenderProps) {
     onIconClick
   } = props
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
-  const { t } = useTranslation()
 
   const [{ options }, { sendMessage, editMessage, clearMessages }] = useChatroom()
   const openai = useOpenAI()
@@ -298,23 +297,6 @@ export function Sender(props: SenderProps) {
     >
       {memoDebouncedVisibles.header && props.Header}
       <div className={`${prefix}__input`}>
-        <Tooltip
-          content={
-            <>
-              {t('Display configure panel')}
-              <br />
-              <Kbd keys={['meta', ',']} />
-            </>
-          }
-          placement='bottom'
-          popperOptions={{
-            modifiers: [{ name: 'offset', options: { offset: [0, -5] } }]
-          }}
-        >
-          <div className={`${prefix}__prefix`}>
-            <IconComp />
-          </div>
-        </Tooltip>
         <Editor
           ref={shikitorRef}
           value={text}
@@ -365,24 +347,46 @@ export function Sender(props: SenderProps) {
         />
       </div>
       {memoDebouncedVisibles.footer && props.Footer}
-      <StatusBar />
+      <StatusBar Icon={IconComp} />
     </div>
   </>
 }
 Sender.prefix = 'spirit-sender'
 
-function StatusBar() {
+interface StatusBarProps {
+  Icon(): ReactNode
+}
+
+function StatusBar(props: StatusBarProps) {
   const { prefix } = StatusBar
+  const { Icon } = props
+  const { t } = useTranslation()
 
   return <div className={prefix}>
     <div className={`${prefix}__message`}>
-      <Button
-        shape='square'
-        size='small'
-        variant='text'
+      <Tooltip
+        content={
+          <>
+            {t('Display configure panel')}
+            <br />
+            <Kbd keys={['meta', ',']} />
+          </>
+        }
+        placement='bottom'
+        popperOptions={{
+          modifiers: [{ name: 'offset', options: { offset: [0, -5] } }]
+        }}
       >
-        <span className='s-icon'>settings</span>
-      </Button>
+        <Button
+          className={`${prefix}__prefix`}
+          shape='square'
+          size='small'
+          variant='text'
+          onClick={props['onClick:icon']}
+        >
+          <Icon />
+        </Button>
+      </Tooltip>
       <span className={`${prefix}__text`}>
         This is a status bar...
       </span>

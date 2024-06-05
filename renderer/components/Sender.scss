@@ -22,44 +22,26 @@
     gap: 10px;
     padding: 10px;
   }
-  &__prefix {
-    position: absolute;
-    left: 0;
-    transform: translateX(calc(-100% - 10px));
-
-    width: var(--icon-size);
-    height: var(--icon-size);
-    border-radius: 6px;
-
-    cursor: pointer;
-    user-select: none;
-    transition: .2s;
-  }
-  @keyframes floating {
+  @keyframes whirl {
     0% {
-      transform: translateY(2px);
-    }
-    25% {
-      transform: translateY(0);
+      transform: rotate(0deg);
     }
     50% {
-      transform: translateY(2px);
-    }
-    75% {
-      transform: translateY(4px);
+      transform: rotate(180deg);
     }
     100% {
-      transform: translateY(2px);
+      transform: rotate(360deg);
     }
   }
   &__icon {
-    width: var(--icon-size);
-    margin-top: -2px;
-    transform: translateY(2px);
-    animation: floating 1s infinite linear;
-  }
-  &__prefix:hover &__icon {
-    animation-play-state: paused;
+    width: 100%;
+    animation: whirl 5s linear infinite;
+    :root[theme-mode='dark'] & {
+      filter: invert(1);
+    }
+    &:hover {
+      animation-play-state: paused;
+    }
   }
   &-bg {
     --sw: var(--sender-width);
