@@ -7,8 +7,23 @@ import { activeWindow } from 'get-windows'
 import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
-import { lisStore, setStore } from './store'
+import { getStore, lisStore, setStore } from './store'
 import { os, username } from './utils/system'
+
+const VARIOUS_PUNCTUATION = {
+  // ), !, @, #, $, %, ^, &, *, (, :, ;, :, +, =, <, ,, _, -, >, ., ?, /, ~, `, {, ], [, |, \, }, "
+  bracketleft: '[',
+  bracketright: ']',
+  semicolon: ';',
+  quote: "'",
+  comma: ',',
+  period: '.',
+  slash: '/',
+  backslash: '\\',
+  backquote: '`',
+  minus: '-',
+  equal: '='
+}
 
 function createWindow() {
   const displayStoreUUID = Math.random().toString(36).slice(2)
@@ -88,13 +103,37 @@ function createWindow() {
       }, 200)
     }
   }
-  globalShortcut.register('CommandOrControl+space', () => toggleDisplay())
-  const ret = globalShortcut.register('CommandOrControl+W', () => {
-    // TODO send message to renderer
-  })
-  if (!ret) {
-    // TODO store shortcut register error message
+  const shortcutsUUID = Math.random().toString(36).slice(2)
+  function addGlobalShortcuts() {
+    const { start } = getStore('shortcuts') ?? {
+      start: ['Alt', 'Space']
+    }
+    // https://www.electronjs.org/docs/latest/api/accelerator
+    const startAccelerator = start.map(k =>
+      ({
+        ...VARIOUS_PUNCTUATION,
+        opt: 'Alt',
+        meta: 'Command',
+        ctrl: 'Control',
+        shift: 'Shift'
+      })[k.toLowerCase()] ?? (
+        k
+          .replace(/^Numpad/, 'Num')
+          .replace(/Decimal$/, 'Dec')
+          .replace(/^Arrow/, '')
+          .replace(/^Key/, '')
+      )
+    ).join('+')
+    globalShortcut.register(startAccelerator, () => toggleDisplay())
+    const ret = globalShortcut.register('CommandOrControl+W', () => {
+      // TODO send message to renderer
+    })
+    if (!ret) {
+      // TODO store shortcut register error message
+    }
   }
+  addGlobalShortcuts()
+  lisStore('shortcuts', addGlobalShortcuts, shortcutsUUID)
   lisStore('display', toggleDisplay, displayStoreUUID)
 }
 

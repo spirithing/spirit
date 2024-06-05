@@ -28,5 +28,7 @@
     "defaultModelTooltip": "新建聊天室时使用的默认模型，本数据按照时间进行排序，最新的模型在最上面"
   },
   "highlight": "文本高亮",
-  "highlightDark": "暗色模式高亮策略"
+  "highlightDark": "暗色模式高亮策略",
+  "shortcuts": "快捷键",
+  "startShortcut": "启动快捷键"
 }

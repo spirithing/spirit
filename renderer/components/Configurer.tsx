@@ -11,6 +11,7 @@ import { useBot } from '../hooks/useBot'
 import { useChatroom } from '../hooks/useChatroom'
 import { useElectronStore } from '../hooks/useStore'
 import { useThemeStore } from '../providers/theme'
+import { KbdRecorder } from './KbdRecorder'
 import { ModelSelector } from './selectors/ModelSelector'
 
 function OpenAI() {
@@ -158,6 +159,31 @@ function Theme() {
   </>
 }
 
+function Shortcuts() {
+  const { t } = useTranslation()
+  const [shortcuts, setShortcuts] = useElectronStore('shortcuts')
+  return <>
+    <Row gutter={12}>
+      <Col span={4}>
+        <div className='spirit-field'>
+          <label>{t('startShortcut')}</label>
+          <KbdRecorder
+            resettable
+            defaultValue={shortcuts?.start && shortcuts.start.length > 0
+              ? shortcuts.start
+              : ['opt', 'space']}
+            onRecordEnd={v => {
+              if (!v) return
+
+              setShortcuts({ ...shortcuts, start: v })
+            }}
+          />
+        </div>
+      </Col>
+    </Row>
+  </>
+}
+
 interface ConfigurerTab {
   group?: ReactNode
   value: string
@@ -201,6 +227,12 @@ const tabs = [
     icon: 'verified_user',
     value: 'permissions',
     title: <Translation>{t => t('permissions')}</Translation>
+  },
+  {
+    icon: 'keyboard',
+    value: 'shortcuts',
+    title: <Translation>{t => t('shortcuts')}</Translation>,
+    Configurer: Shortcuts
   }
 ] satisfies ConfigurerTab[]
 

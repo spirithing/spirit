@@ -5,9 +5,13 @@ declare module 'spirit' {
     os: string
     username: string
   }
+  export interface Shortcuts {
+    start: string[]
+  }
   export interface Store {
     display?: boolean
     system?: System
+    shortcuts?: Shortcuts
     activeWindow?: ActiveWindow
     'activeWindow:Error'?: string
   }
