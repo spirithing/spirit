@@ -60,6 +60,13 @@ function Chatrooms() {
         }
       }
     }
+    if (isShortcut(e, ['meta', 'n'])) {
+      const chatroom = uuid()
+      addChatroom(chatroom)
+      setActiveChatroom(chatroom)
+      e.preventDefault()
+      return
+    }
   })
   return <Tabs
     className={`${'spirit'}-chatrooms`}
