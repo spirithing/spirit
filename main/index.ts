@@ -25,18 +25,22 @@ const VARIOUS_PUNCTUATION = {
   equal: '='
 }
 
+async function storeActiveWindowMessage() {
+  try {
+    setStore('activeWindow', await activeWindow())
+    setStore('activeWindow:Error', undefined)
+  } catch (e) {
+    console.error(e)
+    setStore('activeWindow:Error', String(e))
+  }
+}
+
 function createWindow() {
   const displayStoreUUID = Math.random().toString(36).slice(2)
-  async function storeActiveWindowMessage() {
-    try {
-      setStore('activeWindow', await activeWindow())
-    } catch (e) {
-      console.error(e)
-      setStore('activeWindow:Error', String(e))
-    }
-  }
-  // noinspection JSIgnoredPromiseFromCall
-  storeActiveWindowMessage()
+  setTimeout(function loop() {
+    storeActiveWindowMessage()
+      .then(() => setTimeout(loop, 3000))
+  }, 0)
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     resizable: false,
@@ -61,9 +65,7 @@ function createWindow() {
       height: display.workAreaSize.height
     }
   }
-  function showInMouseHoverDisplay() {
-    // noinspection JSIgnoredPromiseFromCall
-    storeActiveWindowMessage()
+  async function showInMouseHoverDisplay() {
     const displays = screen.getAllDisplays()
     const mousePoint = screen.getCursorScreenPoint()
     const display = displays.find(display => {
