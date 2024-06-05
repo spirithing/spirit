@@ -23,7 +23,7 @@ export interface KbdRecorderProps {
   defaultValue?: string[]
   onChange?: (value?: string[]) => void
   onRecordStart?: () => void
-  onRecordEnd?: () => void
+  onRecordEnd?: (value?: string[]) => void
 }
 
 export function KbdRecorder(props: KbdRecorderProps) {
@@ -45,16 +45,18 @@ export function KbdRecorder(props: KbdRecorderProps) {
   const toggleRecording = useCallback((must?: boolean) => {
     const next = must ?? !recording
     setRecording(next)
+    let nextKeys = keys
+    if (next === false) {
+      if (keys && ['meta', 'ctrl', 'opt', 'shift'].includes(keys[keys.length - 1])) {
+        nextKeys = keysBeforeRecording.current
+        setKeys(nextKeys)
+      }
+    }
     if (next) {
       keysBeforeRecording.current = keys
       recordStart?.()
     } else {
-      recordEnd?.()
-    }
-    if (next === false) {
-      if (keys && ['meta', 'ctrl', 'opt', 'shift'].includes(keys[keys.length - 1])) {
-        setKeys(keysBeforeRecording.current)
-      }
+      recordEnd?.(nextKeys)
     }
   }, [keys, recordStart, recordEnd, recording, setKeys])
 
