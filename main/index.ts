@@ -124,6 +124,10 @@ function createWindow() {
         k
           .replace(/^Numpad/, 'Num')
           .replace(/Decimal$/, 'Dec')
+          .replace(/Multiply$/, 'Mult')
+          .replace(/Add$/, 'Add')
+          .replace(/Subtract$/, 'Sub')
+          .replace(/Divide$/, 'Div')
           .replace(/^Arrow/, '')
           .replace(/^Key/, '')
       )
