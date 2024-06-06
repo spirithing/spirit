@@ -57,7 +57,7 @@ export function Message(props: MessageProps) {
       exit={{ scale: 0.8, opacity: 0 }}
       transition={{ type: 'spring' }}
     >
-      <div className={classnames('message-header', className)}>
+      <div className={classnames('message-header')}>
         <Avatar
           size='small'
           content={user?.name.slice(0, 1)}
@@ -67,7 +67,7 @@ export function Message(props: MessageProps) {
         </div>}
         <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
       </div>
-      <div className={classnames('message-content', className)}>
+      <div className={classnames('message-content')}>
         {isEditing
           ? <Editor
             ref={shikitorRef}
