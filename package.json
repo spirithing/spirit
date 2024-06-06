@@ -68,5 +68,10 @@
     "typescript": "^5.4.5",
     "vite": "^5.0.12",
     "vitest": "^1.6.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "electron-vite@2.2.0": "patches/electron-vite@2.2.0.patch"
+    }
   }
 }

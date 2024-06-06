@@ -1,0 +1,13 @@
+diff --git a/dist/chunks/lib-iT7MOERj.mjs b/dist/chunks/lib-iT7MOERj.mjs
+index ce769e8650f005c064f35fb8b2c827cd3bb67d23..143368b84a68d16a30ee25f277300a44db8610b6 100644
+--- a/dist/chunks/lib-iT7MOERj.mjs
++++ b/dist/chunks/lib-iT7MOERj.mjs
+@@ -60,7 +60,7 @@ function loadPackageData(root = process.cwd()) {
+     return null;
+ }
+ function isFilePathESM(filePath) {
+-    if (/\.m[jt]s$/.test(filePath) || filePath.endsWith('.ts')) {
++    if (/\.m[jt]s$/.test(filePath)) {
+         return true;
+     }
+     else if (/\.c[jt]s$/.test(filePath)) {
