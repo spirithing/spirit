@@ -230,6 +230,12 @@ function useDisplay() {
 
 export function App() {
   useDisplay()
+  useEventListener('keydown', e => {
+    if (isShortcut(e, ['meta', ','])) {
+      e.preventDefault()
+      // TODO
+    }
+  })
   return <>
     <div className='spirit-main'>
       <Sender
