@@ -43,6 +43,7 @@ function createWindow() {
   }, 0)
   // Create the browser window.
   const mainWindow = new BrowserWindow({
+    title: 'Spirit',
     resizable: false,
     show: false,
     autoHideMenuBar: true,
@@ -50,7 +51,7 @@ function createWindow() {
     frame: false,
     hasShadow: false,
     alwaysOnTop: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon,
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
       sandbox: false,
