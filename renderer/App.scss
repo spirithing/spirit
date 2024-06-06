@@ -98,15 +98,25 @@
 
   overflow-y: auto;
   .self {
-    --td-border-level-1-color: color-mix(
-      in srgb,
-      var(--td-brand-color),
-      var(--td-bg-color-container) 70%
-    );
+    margin-left: auto;
+    margin-right: 0;
     background-color: color-mix(
       in srgb,
       var(--td-brand-color),
       var(--td-bg-color-container) 80%
     );
+    .message-header {}
+    .t-avatar {
+      background-color: color-mix(
+        in srgb,
+        var(--td-brand-color),
+        var(--td-bg-color-container) 40%
+      );
+      color: color-mix(
+        in srgb,
+        var(--td-brand-color),
+        var(--td-text-color-primary) 80%
+      );
+    }
   }
 }

@@ -7,7 +7,7 @@ import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 import { useRef, useState } from 'react'
 import type { IMessage, IUser } from 'spirit'
-import { Button } from 'tdesign-react'
+import { Avatar, Button } from 'tdesign-react'
 
 import { useHighlightTheme } from '../providers/theme'
 import { classnames } from '../utils/classnames'
@@ -49,57 +49,16 @@ export function Message(props: MessageProps) {
     autoSize: { minRows: 3, maxRows: 20 }
   }), [highlightTheme])
   return (
-    <>
+    <div className={classnames('message', className)}>
       <div className={classnames('message-header', className)}>
+        <Avatar
+          size='small'
+          content={user?.name.slice(0, 1)}
+        />
         {user && <div className='message-name' onClick={() => callFunc('onClick:name', user)}>
           {user.name}
         </div>}
-        <div className='message-actions'>
-          {!isEditing && <Button
-            variant='outline'
-            shape='square'
-            size='small'
-          >
-            <span className='s-icon'>fork_right</span>
-          </Button>}
-          {!isEditing && <Button
-            variant='outline'
-            shape='square'
-            size='small'
-            onClick={() => setIsEditing(true)}
-          >
-            <span className='s-icon'>edit</span>
-          </Button>}
-          {isEditing && <Button
-            variant='outline'
-            shape='square'
-            size='small'
-            theme='success'
-            onClick={() => {
-              setIsEditing(false)
-              props.onTextChange?.(shikitorRef.current?.value ?? '')
-            }}
-          >
-            <span className='s-icon'>check</span>
-          </Button>}
-          {isEditing && <Button
-            variant='outline'
-            shape='square'
-            size='small'
-            onClick={() => setIsEditing(false)}
-          >
-            <span className='s-icon'>close</span>
-          </Button>}
-          {!isEditing && <Button
-            variant='outline'
-            shape='square'
-            size='small'
-            theme='danger'
-            onClick={props.onDelete}
-          >
-            <span className='s-icon'>delete</span>
-          </Button>}
-        </div>
+        <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
       </div>
       <div className={classnames('message-content', className)}>
         {isEditing
@@ -110,9 +69,54 @@ export function Message(props: MessageProps) {
           />
           : <>
             {textRender?.(value.text) ?? value.text}
-            <div className='message-time'>{new Date(value.ctime).toLocaleString()}</div>
           </>}
       </div>
-    </>
+      <div className='message-actions'>
+        {!isEditing && <Button
+          variant='outline'
+          shape='square'
+          size='small'
+        >
+          <span className='s-icon'>fork_right</span>
+        </Button>}
+        {!isEditing && <Button
+          variant='outline'
+          shape='square'
+          size='small'
+          onClick={() => setIsEditing(true)}
+        >
+          <span className='s-icon'>edit</span>
+        </Button>}
+        {isEditing && <Button
+          variant='outline'
+          shape='square'
+          size='small'
+          theme='success'
+          onClick={() => {
+            setIsEditing(false)
+            props.onTextChange?.(shikitorRef.current?.value ?? '')
+          }}
+        >
+          <span className='s-icon'>check</span>
+        </Button>}
+        {isEditing && <Button
+          variant='outline'
+          shape='square'
+          size='small'
+          onClick={() => setIsEditing(false)}
+        >
+          <span className='s-icon'>close</span>
+        </Button>}
+        {!isEditing && <Button
+          variant='outline'
+          shape='square'
+          size='small'
+          theme='danger'
+          onClick={props.onDelete}
+        >
+          <span className='s-icon'>delete</span>
+        </Button>}
+      </div>
+    </div>
   )
 }
