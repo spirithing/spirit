@@ -57,6 +57,17 @@ const yiyan = [
   '这是由 AI 生成的一句话。'
 ]
 
+const useYiyanPlaceholder = () => {
+  const [yiyanIndex, setYiyanIndex] = useState(0)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setYiyanIndex(i => (i + 1) % yiyan.length)
+    }, 30000)
+    return () => clearInterval(timer)
+  }, [])
+  return useMemo(() => yiyan[yiyanIndex], [yiyanIndex])
+}
+
 const plugins = [
   providePopup,
   provideCompletions({
@@ -180,14 +191,7 @@ export function Sender(props: SenderProps) {
     }
   })
 
-  const [yiyanIndex, setYiyanIndex] = useState(0)
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setYiyanIndex(i => (i + 1) % yiyan.length)
-    }, 30000)
-    return () => clearInterval(timer)
-  }, [])
-  const placeholder = useMemo(() => yiyan[yiyanIndex], [yiyanIndex])
+  const placeholder = useYiyanPlaceholder()
 
   const [display, setDisplay] = useElectronStore('display')
   const [text, setText] = useState('')
