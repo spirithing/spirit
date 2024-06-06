@@ -21,16 +21,17 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "shiki": "^1.6.2",
     "@shikitor/core": "^0.0.9",
     "@shikitor/react": "^0.1.5",
     "foxact": "^0.2.33",
+    "framer-motion": "^11.2.10",
     "get-windows": "^9.1.1",
     "i18next": "^23.11.5",
     "lodash-es": "^4.17.21",
     "markdown-it": "^14.1.0",
     "openai": "^4.47.1",
     "react-i18next": "^14.1.2",
+    "shiki": "^1.6.2",
     "swr": "^2.2.5",
     "tdesign-icons-react": "^0.3.2",
     "tdesign-react": "^1.7.3"
