@@ -27,7 +27,7 @@ export default defineConfig({
     root: 'renderer',
     build: {
       rollupOptions: {
-        input: 'index.html'
+        input: 'renderer/index.html'
       }
     },
     plugins: [react()]
