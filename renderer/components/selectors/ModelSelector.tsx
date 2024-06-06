@@ -21,7 +21,10 @@ export function ModelSelector({
   onChange
 }: ModelSelectorProps) {
   const openAI = useOpenAI()
-  const { data: { data: models = [] } = {}, isLoading, isValidating } = useSWR('chatroom', () => openAI?.models.list())
+  const { data: { data: models = [] } = {}, isLoading, isValidating } = useSWR(
+    ['chatroom', openAI],
+    () => openAI?.models.list()
+  )
   return <Select
     filterable
     creatable
