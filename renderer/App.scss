@@ -94,11 +94,19 @@
   flex-grow: 1;
   height: 0;
   padding: 0 calc((100vw - var(--sender-width)) / 2) 10px;
-  padding-top: 20px;
+  margin-top: 20px;
 
   overflow-y: auto;
   .self {
-    --td-border-level-1-color: var(--td-brand-color-hover);
-    background-color: var(--td-brand-color-light-hover);
+    --td-border-level-1-color: color-mix(
+      in srgb,
+      var(--td-brand-color),
+      var(--td-bg-color-container) 70%
+    );
+    background-color: color-mix(
+      in srgb,
+      var(--td-brand-color),
+      var(--td-bg-color-container) 80%
+    );
   }
 }
