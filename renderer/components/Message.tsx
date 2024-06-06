@@ -52,10 +52,18 @@ export function Message(props: MessageProps) {
   return (
     <motion.div
       className={classnames('message', className)}
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.8, opacity: 0 }}
-      transition={{ type: 'spring' }}
+      initial={{
+        scale: 0.8,
+        opacity: 0
+      }}
+      animate={{
+        scale: 1,
+        opacity: 1
+      }}
+      exit={{
+        scale: 1,
+        opacity: 0
+      }}
     >
       <div className={classnames('message-header')}>
         <Avatar
