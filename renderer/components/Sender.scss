@@ -5,16 +5,17 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 
   margin: 0 auto;
   width: var(--sender-width);
-
-  font-size: 16px;
   border-radius: var(--td-radius-medium);
   background-color: var(--bg-color);
+  border: 2px solid var(--bg);
   // TODO make shikitor support `position: fixed` broken
   // backdrop-filter: blur(10px);
-  border: 2px solid var(--bg);
+
+  font-size: 16px;
   &__input {
     min-height: var(--icon-size);
     display: flex;
