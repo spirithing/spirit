@@ -1,3 +1,5 @@
+tmp*
+
 .idea
 tsconfig.vitest-temp.json
 

@@ -1,5 +1,6 @@
 appId: app.yijie.spirit
-productName: spirit
+productName: Spirit
+icon: build/icon.icns
 directories:
   buildResources: build
 files:
@@ -15,13 +16,19 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: spirit
+  icon: build/icon.icns
+  executableName: Spirit
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  installerIcon: build/icon.icns
+  uninstallerIcon: build/icon.icns
+  installerHeader: build/icon.icns
+  installerHeaderIcon: build/icon.icns
 mac:
+  icon: build/icon.icns
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -32,6 +39,7 @@ mac:
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
+  icon: build/icon.icns
   target:
     - AppImage
     - snap

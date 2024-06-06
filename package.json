@@ -1,5 +1,6 @@
 {
   "name": "spirit",
+  "description": "Spirit is a startup ai app.",
   "version": "0.0.1",
   "main": "out/main/index.js",
   "type": "module",
@@ -56,11 +57,13 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "eslint-plugin-unused-imports": "^3.2.0",
+    "iconutil": "^1.0.2",
     "jotai": "^2.8.2",
     "prettier": "^3.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.77.2",
+    "sips": "^1.0.3",
     "typescript": "^5.4.5",
     "vite": "^5.0.12",
     "vitest": "^1.6.0"
