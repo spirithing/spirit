@@ -1,0 +1,34 @@
+.spirit-messages {
+  display: flex;
+  flex-direction: column;
+
+  flex-grow: 1;
+  height: 0;
+  padding: 0 calc((100vw - var(--sender-width)) / 2) 10px;
+  margin-top: 20px;
+
+  overflow-y: auto;
+  .self {
+    margin-left: auto;
+    margin-right: 0;
+    max-width: 60%;
+    background-color: color-mix(
+      in srgb,
+      var(--td-brand-color),
+      var(--td-bg-color-container) 80%
+    );
+    .message-header {}
+    .t-avatar {
+      background-color: color-mix(
+        in srgb,
+        var(--td-brand-color),
+        var(--td-bg-color-container) 40%
+      );
+      color: color-mix(
+        in srgb,
+        var(--td-brand-color),
+        var(--td-text-color-primary) 80%
+      );
+    }
+  }
+}
