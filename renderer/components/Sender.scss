@@ -22,20 +22,8 @@
     gap: 10px;
     padding: 10px;
   }
-  @keyframes whirl {
-    0% {
-      transform: rotate(0deg);
-    }
-    50% {
-      transform: rotate(180deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
   &__icon {
     width: 100%;
-    animation: whirl 5s linear infinite;
     :root[theme-mode='dark'] & {
       filter: invert(1);
     }
