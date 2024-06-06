@@ -3,6 +3,7 @@ import './Message.scss'
 import type { Shikitor } from '@shikitor/core'
 import type { EditorProps } from '@shikitor/react'
 import { Editor } from '@shikitor/react'
+import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 import { useRef, useState } from 'react'
@@ -49,7 +50,13 @@ export function Message(props: MessageProps) {
     autoSize: { minRows: 3, maxRows: 20 }
   }), [highlightTheme])
   return (
-    <div className={classnames('message', className)}>
+    <motion.div
+      className={classnames('message', className)}
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{ type: 'spring' }}
+    >
       <div className={classnames('message-header', className)}>
         <Avatar
           size='small'
@@ -117,6 +124,6 @@ export function Message(props: MessageProps) {
           <span className='s-icon'>delete</span>
         </Button>}
       </div>
-    </div>
+    </motion.div>
   )
 }

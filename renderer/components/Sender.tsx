@@ -149,7 +149,7 @@ export function Sender(props: SenderProps) {
   useEEListener('addMessage', async (m, { messages }) => {
     if (isEqual(m.user, bot)) return
     if (import.meta.env.DEV && m.text === 'd') {
-      sendMessage('pong', bot)
+      setTimeout(() => sendMessage('pong', bot), 500)
       return
     }
 

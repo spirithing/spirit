@@ -1,5 +1,6 @@
 import './App.scss'
 
+import { AnimatePresence } from 'framer-motion'
 import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { UserIcon } from 'tdesign-icons-react'
@@ -196,25 +197,27 @@ function Messages() {
   const [{ messages }, { editMessage, delMessage }] = useChatroom()
 
   return <div className={`${'spirit'}-messages`}>
-    {messages?.map(message => (
-      <Message
-        key={message.uuid}
-        className={message.user?.name === user.name ? 'self' : 'other'}
-        value={message}
-        onTextChange={text => editMessage(message.uuid, text)}
-        onDelete={() => delMessage(message.uuid)}
-        textRender={text => (
-          <div className='message-text'>
-            <div
-              className='s-md'
-              dangerouslySetInnerHTML={{
-                __html: mdr.render(text) ?? ''
-              }}
-            />
-          </div>
-        )}
-      />
-    ))}
+    <AnimatePresence mode='popLayout'>
+      {messages?.map(message => (
+        <Message
+          key={message.uuid}
+          className={message.user?.name === user.name ? 'self' : 'other'}
+          value={message}
+          onTextChange={text => editMessage(message.uuid, text)}
+          onDelete={() => delMessage(message.uuid)}
+          textRender={text => (
+            <div className='message-text'>
+              <div
+                className='s-md'
+                dangerouslySetInnerHTML={{
+                  __html: mdr.render(text) ?? ''
+                }}
+              />
+            </div>
+          )}
+        />
+      ))}
+    </AnimatePresence>
   </div>
 }
 
