@@ -1,6 +1,8 @@
 import './Configurer.scss'
 
+import { Sketch } from '@uiw/react-color'
 import type { FC, ReactNode } from 'react'
+import { useEffect } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
 import type { BundledTheme } from 'shiki'
 import { bundledThemes } from 'shiki'
@@ -127,8 +129,55 @@ function Chatroom() {
 function Theme() {
   const { t } = useTranslation()
   const [themeStore, setThemeStore] = useThemeStore()
+  const { colors } = themeStore
+  useEffect(() => {
+    if (colors) {
+      if (colors.primary) {
+        if (!Array.isArray(colors.primary)) {
+          document.body.style.setProperty('--td-brand-color', colors.primary)
+        } else {
+          // TODO
+        }
+      }
+    }
+  }, [colors])
   return <>
     <Row gutter={12}>
+      <Col span={4}>
+        <div className='spirit-field'>
+          <label>{t('primaryColor')}</label>
+          <Sketch
+            style={{ width: '100%' }}
+            presetColors={[
+              '#f5222d',
+              '#fa541c',
+              '#fa8c16',
+              '#faad14',
+              '#fadb14',
+              '#a0d911',
+              '#52c41a',
+              '#13c2c2',
+              '#1890ff',
+              '#2f54eb',
+              '#722ed1',
+              '#eb2f96',
+              '#000000',
+              '#4A4A4A',
+              '#9B9B9B',
+              '#FFFFFF'
+            ]}
+            onChange={r => {
+              setThemeStore({
+                ...themeStore,
+                colors: {
+                  ...themeStore.colors,
+                  primary: r.hex
+                }
+              })
+            }}
+          />
+        </div>
+      </Col>
       <Col span={4}>
         <div className='spirit-field'>
           <label>{t('highlight')}</label>

@@ -1,5 +1,4 @@
 import type { ClientOptions } from 'openai'
-import type { BundledTheme } from 'shiki'
 
 declare module 'spirit' {
   export interface IUser {
@@ -8,10 +7,6 @@ declare module 'spirit' {
   export interface Bot {
     name: string
     description?: string
-  }
-  export interface Theme {
-    highlightTheme?: BundledTheme
-    highlightThemeWhenDark?: BundledTheme
   }
   export interface Store {
     bot: Bot
