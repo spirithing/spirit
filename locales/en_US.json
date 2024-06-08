@@ -32,5 +32,8 @@
   "shortcuts": "Shortcuts",
   "startShortcut": "Start shortcut",
   "startShortcutDesc": "How to replace Spotlight with Spirit",
-  "filteredApplications": "Filtered applications"
+  "filteredApplications": "Filtered applications",
+  "primaryColor": "Primary color",
+  "linearGradient": "Linear gradient",
+  "default": "Default"
 }

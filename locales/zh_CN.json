@@ -32,5 +32,8 @@
   "shortcuts": "快捷键",
   "startShortcut": "启动快捷键",
   "startShortcutDesc": "如何替换「聚焦」为「器灵」",
-  "filteredApplications": "过滤的应用"
+  "filteredApplications": "过滤的应用",
+  "primaryColor": "主题色",
+  "linearGradient": "线性渐变",
+  "default": "默认"
 }
