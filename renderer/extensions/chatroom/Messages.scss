@@ -17,7 +17,12 @@
       var(--td-brand-color),
       var(--td-bg-color-container) 80%
     );
-    .message-header {}
+    .message-header {
+      display: none;
+    }
+    .message-content {
+      padding-top: 0;
+    }
     .t-avatar {
       background-color: color-mix(
         in srgb,
