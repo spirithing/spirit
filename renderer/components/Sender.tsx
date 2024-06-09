@@ -16,7 +16,7 @@ import type { ForwardedRef, ReactNode } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
-import { Button, Image, ImageViewer, MessagePlugin, Tooltip } from 'tdesign-react'
+import { Button, Dropdown, Image, ImageViewer, Input, MessagePlugin, Tooltip } from 'tdesign-react'
 
 import { senderAtom } from '../atoms/sender'
 import { useChatroom } from '../hooks/useChatroom'
@@ -106,6 +106,7 @@ export interface SenderProps {
   icon?: ReactNode
   iconTooltip?: ReactNode
   message?: ReactNode
+  actions?: ReactNode
   header?: ReactNode
   footer?: ReactNode
   onIconClick(this: SenderContext, ctx: SenderContext): void
@@ -371,6 +372,7 @@ interface StatusBarProps {
 }
 
 function StatusBar(props: StatusBarProps) {
+  const { t } = useTranslation()
   const { prefix } = StatusBar
   const { icon, iconTooltip, message } = props
 
@@ -396,6 +398,7 @@ function StatusBar(props: StatusBarProps) {
     </div>
     <div className={`${prefix}__actions`}>
       <Button
+        className={`${prefix}__action`}
         size='small'
         variant='text'
       >
@@ -403,11 +406,65 @@ function StatusBar(props: StatusBarProps) {
       </Button>
       <div className={`${prefix}__action-split`} />
       <Button
+        className={`${prefix}__action`}
         size='small'
         variant='text'
       >
         Send <Kbd keys={['meta', 'enter']} />
       </Button>
+      <div className={`${prefix}__action-split`} />
+      <Dropdown
+        trigger='click'
+        placement='bottom-right'
+        minColumnWidth={250}
+        panelTopContent={
+          <Input
+            borderless
+            clearable
+            className={`${prefix}__dropdown-action-searcher`}
+            placeholder='Search actions...'
+            onClick={({ e }) => e.stopPropagation()}
+          />
+        }
+        options={[
+          {
+            content: <div className={`${prefix}__dropdown-action`}>
+              {t('Display configure panel')}
+              <Kbd keys={['meta', ',']} />
+            </div>
+          },
+          {
+            content: <div className={`${prefix}__dropdown-action`}>
+              Create new chatroom
+              <Kbd keys={['meta', 'n']} />
+            </div>
+          },
+          {
+            content: <div className={`${prefix}__dropdown-action`}>
+              Archive current chatroom
+              <Kbd keys={['meta', 'w']} />
+            </div>
+          },
+          {
+            content: <div className={`${prefix}__dropdown-action`}>
+              Close/Clear input text
+              <Kbd keys={['Escape']} />
+            </div>
+          }
+        ]}
+        popupProps={{
+          popperOptions: { modifiers: [{ name: 'offset', options: { offset: [0, -10] } }] }
+        }}
+      >
+        <Button
+          className={`${prefix}__action`}
+          shape='square'
+          size='small'
+          variant='text'
+        >
+          <span className='s-icon'>more_vert</span>
+        </Button>
+      </Dropdown>
     </div>
   </div>
 }

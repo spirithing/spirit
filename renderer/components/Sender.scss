@@ -121,6 +121,36 @@
         opacity: 0;
       }
     }
+    &__action {
+      .t-button__text {
+        color: var(--td-text-color-placeholder);
+      }
+      &:hover .t-button__text {
+        color: var(--td-text-color-primary);
+      }
+    }
+    &__dropdown-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      height: 30px;
+      &-searcher {
+        margin: 0 -7px;
+        margin-top: -7px;
+        width: calc(100% + 14px);
+        .t-input {
+          padding: 0 15px;
+          height: 40px;
+          border-radius: 0;
+        }
+        .t-input:focus {
+          border-color: var(--td-border-level-1-color);
+          outline: none;
+          box-shadow: none;
+        }
+      }
+    }
     &__action-split {
       width: 2px;
       height: 12px;
