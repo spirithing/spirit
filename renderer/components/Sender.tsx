@@ -13,17 +13,19 @@ import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, DialogPlugin, Tooltip } from 'tdesign-react'
+import { Button, Tooltip } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
 import { useCtxCallback } from '../hooks/useCtxCallback'
+import { useEventListener } from '../hooks/useEventListener'
 import { useElectronStore } from '../hooks/useStore'
 import { useHighlightTheme } from '../providers/theme'
 import chatroomCompletions from '../shikitor-plugins/chatroom-completions'
 import { electronStore, keyAtom } from '../store'
 import { classnames } from '../utils/classnames'
+import { isShortcut } from '../utils/isShortcut'
 import { Kbd } from './Kbd'
 
 export interface SenderContext {
@@ -222,6 +224,12 @@ export function Sender(props: SenderProps) {
       observer.disconnect()
     }
   }, [sync])
+
+  useEventListener('keydown', e => {
+    if (isShortcut(e, ['Escape'])) {
+      setDisplay(false)
+    }
+  })
   return <>
     <div ref={senderBgRef} className={`${prefix}-bg`} />
     <div
@@ -254,19 +262,12 @@ export function Sender(props: SenderProps) {
           onColorChange={setColor}
           onMounted={shikitor => shikitor.focus()}
           onKeydown={e => {
-            if (e.key === 'Escape' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+            if (isShortcut(e, ['Escape'])) {
               if (text) {
-                const ins = DialogPlugin.confirm({
-                  header: 'Clear the input',
-                  body: 'Are you sure to clear the input?',
-                  onConfirm: () => {
-                    setText('')
-                    ins.hide()
-                  },
-                  onClose: () => ins.hide()
-                })
-              } else {
-                setDisplay(false)
+                setText('')
+                e.preventDefault()
+                e.stopPropagation()
+                return
               }
             }
             if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
