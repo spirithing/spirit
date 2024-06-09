@@ -1,4 +1,5 @@
-import { ChatRoom, IUser } from 'spirit'
+import type { ChatRoom, IMessage, IUser } from 'spirit'
+
 import { electronStore, keyAtom } from '../store'
 import { uuid } from '../utils/uuid'
 
@@ -34,7 +35,12 @@ export const setChatroom = (id: string, chatroomOrSetter: ChatRoom | ((chatroom:
   electronStore.set(chatroomAtom, chatroom)
 }
 export const sendMessage = (id: string, text: string, user: IUser) => {
-  const message = { uuid: uuid(), ctime: Date.now(), text, user }
+  const message = {
+    uuid: uuid(),
+    ctime: Date.now(),
+    text,
+    user
+  } as IMessage
   setChatroom(id, chatroom => ({
     ...chatroom,
     messages: [message, ...(chatroom.messages ?? [])]
