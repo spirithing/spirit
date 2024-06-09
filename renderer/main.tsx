@@ -12,8 +12,20 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { ErrorFallback } from './components/ErrorFallback'
 import { I18NProvider } from './providers/i18n'
 import { ThemeProvider } from './providers/theme'
+import { electronStore, keyAtom } from './store'
 
-createRoot(document.getElementById('root') as HTMLElement)
+const root = document.getElementById('root')!
+
+root.addEventListener('click', e => {
+  if (e.target !== root) return
+
+  const displayAtom = keyAtom('display')
+  if (!displayAtom) return
+
+  electronStore.set(displayAtom, false)
+})
+
+createRoot(root)
   .render(
     <StrictMode>
       <ErrorBoundary Fallback={ErrorFallback}>
