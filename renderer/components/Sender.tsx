@@ -28,23 +28,6 @@ import { classnames } from '../utils/classnames'
 import { isShortcut } from '../utils/isShortcut'
 import { Kbd } from './Kbd'
 
-export interface SenderContext {
-  readonly visibles: {
-    readonly header: boolean
-    readonly footer: boolean
-  }
-  toggleHeader(): void
-  toggleFooter(): void
-}
-
-export interface SenderProps {
-  className?: string
-  Icon?: (({ onClick }: { onClick: SenderProps['onIconClick'] }) => ReactNode) | string
-  Header?: ReactNode
-  Footer?: ReactNode
-  onIconClick(this: SenderContext, ctx: SenderContext): void
-}
-
 const useYiyanPlaceholder = () => {
   const { t } = useTranslation()
   const yiyan = useMemo(() => [
@@ -103,6 +86,23 @@ const useSenderCtx = () => {
     toggleHeader: () => setVisibles(v => ({ ...v, header: !v.header })),
     toggleFooter: () => setVisibles(v => ({ ...v, footer: !v.footer }))
   })
+}
+
+export interface SenderContext {
+  readonly visibles: {
+    readonly header: boolean
+    readonly footer: boolean
+  }
+  toggleHeader(): void
+  toggleFooter(): void
+}
+
+export interface SenderProps {
+  className?: string
+  Icon?: (({ onClick }: { onClick: SenderProps['onIconClick'] }) => ReactNode) | string
+  Header?: ReactNode
+  Footer?: ReactNode
+  onIconClick(this: SenderContext, ctx: SenderContext): void
 }
 
 export function Sender(props: SenderProps) {
