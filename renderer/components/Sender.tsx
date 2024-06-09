@@ -15,7 +15,7 @@ import type { ForwardedRef, ReactNode } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
-import { Button, Image, ImageViewer, Tooltip } from 'tdesign-react'
+import { Button, Image, ImageViewer, MessagePlugin, Tooltip } from 'tdesign-react'
 
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
@@ -135,6 +135,14 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
 
   const [, { sendMessage }] = useChatroom()
+  const send = useCallback((text: string, assets: Asset[]) => {
+    if (text.trim().length === 0 && assets.length === 0) {
+      throw new Error('Empty message')
+    }
+    sendMessage(text, assets)
+    setAssets([])
+    setText('')
+  }, [sendMessage])
 
   const placeholder = useYiyanPlaceholder()
 
@@ -282,13 +290,17 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
               ])
             }
             if (isShortcut(e, ['metaOrCtrl', 'Enter'])) {
-              if (text.trim().length === 0 && assets.length === 0) return
-              e.stopPropagation()
-              e.preventDefault()
-              sendMessage(text, assets)
-              setAssets([])
-              setText('')
-              return
+              try {
+                send(text, assets)
+                e.stopPropagation()
+                e.preventDefault()
+                return
+              } catch (e) {
+                console.error(e)
+                if (e instanceof Error) {
+                  MessagePlugin.warning(e.message)
+                }
+              }
             }
           }}
         />
