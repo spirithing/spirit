@@ -153,6 +153,9 @@ function Theme() {
               '#9B9B9B',
               '#FFFFFF'
             ]}
+            color={Array.isArray(themeStore.colors?.primary)
+              ? themeStore.colors?.primary[0]
+              : themeStore.colors?.primary}
             onChange={r => {
               setThemeStore({
                 ...themeStore,
