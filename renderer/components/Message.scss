@@ -1014,7 +1014,11 @@
       opacity: 1;
     }
   }
-  &:hover &-actions {
+  &:hover &-actions:not(.displaying) {
     animation: displayWhen80Percent 1s forwards;
+  }
+  &-actions.displaying {
+    visibility: visible;
+    opacity: 1;
   }
 }

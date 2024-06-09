@@ -86,22 +86,11 @@ export function Message(props: MessageProps) {
             {textRender?.(value.text) ?? value.text}
           </>}
       </div>
-      <div className='message-actions'>
-        {!isEditing && <Button
-          variant='outline'
-          shape='square'
-          size='small'
-        >
-          <span className='s-icon'>fork_right</span>
-        </Button>}
-        {!isEditing && <Button
-          variant='outline'
-          shape='square'
-          size='small'
-          onClick={() => setIsEditing(true)}
-        >
-          <span className='s-icon'>edit</span>
-        </Button>}
+      <div
+        className={classnames('message-actions', {
+          displaying: isEditing
+        })}
+      >
         {isEditing && <Button
           variant='outline'
           shape='square'
@@ -121,6 +110,21 @@ export function Message(props: MessageProps) {
           onClick={() => setIsEditing(false)}
         >
           <span className='s-icon'>close</span>
+        </Button>}
+        {!isEditing && <Button
+          variant='outline'
+          shape='square'
+          size='small'
+        >
+          <span className='s-icon'>fork_right</span>
+        </Button>}
+        {!isEditing && <Button
+          variant='outline'
+          shape='square'
+          size='small'
+          onClick={() => setIsEditing(true)}
+        >
+          <span className='s-icon'>edit</span>
         </Button>}
         {!isEditing && <Button
           variant='outline'
