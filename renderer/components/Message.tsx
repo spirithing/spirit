@@ -10,6 +10,7 @@ import { useRef, useState } from 'react'
 import type { IMessage, IUser } from 'spirit'
 import { Avatar, Button } from 'tdesign-react'
 
+import favicon from '../../resources/icon.svg'
 import { useHighlightTheme } from '../providers/theme'
 import { classnames } from '../utils/classnames'
 
@@ -67,8 +68,8 @@ export function Message(props: MessageProps) {
     >
       <div className={classnames('message-header')}>
         <Avatar
-          size='small'
           content={user?.name.slice(0, 1)}
+          image={favicon}
         />
         {user && <div className='message-name' onClick={() => callFunc('onClick:name', user)}>
           {user.name}

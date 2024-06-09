@@ -117,22 +117,36 @@
   max-width: calc(100% - var(--td-radius-medium) * 2);
   background-color: var(--td-bg-color-container);
   border-radius: var(--td-radius-medium);
+  border-top-left-radius: 0;
   border: var(--border-size) solid var(--td-border-level-1-color);
 
   color: var(--td-text-color-primary);
   font-size: 14px;
+  &::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-top: 8px solid var(--td-bg-color-container);
+    border-left: 8px solid transparent;
+    transition: .3s;
+  }
   &-header {
     position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
 
-    padding-bottom: 5px;
     height: 24px;
 
     color: var(--td-text-color-secondary);
     font-size: 12px;
     .t-avatar {
+      position: absolute;
+      top: -10px;
+      left: -50px;
       user-select: none;
       transition: .3s;
       &:hover {
@@ -161,7 +175,6 @@
     display: flex;
     flex-direction: column;
 
-    padding-top: 5px;
     border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);
     border-top: none;
   }
