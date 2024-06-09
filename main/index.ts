@@ -7,7 +7,7 @@ import { activeWindow } from 'get-windows'
 import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
-import { getStore, lisStore, setStore } from './store'
+import { getStore, setStore, watch } from './store'
 import { isWindows, os, username } from './utils/system'
 
 const VARIOUS_PUNCTUATION = {
@@ -140,13 +140,13 @@ function createWindow() {
     }
   }
   accelerators = addGlobalShortcuts()
-  lisStore('shortcuts', () => {
+  watch('shortcuts', () => {
     accelerators = addGlobalShortcuts()
   }, shortcutsUUID)
   const bossAccelerator = isWindows
     ? 'Control+W'
     : 'Command+W'
-  lisStore('display', () => {
+  watch('display', () => {
     const display = getStore('display')
     if (display) {
       const ret = globalShortcut.register(bossAccelerator, () => {
@@ -159,7 +159,7 @@ function createWindow() {
       globalShortcut.unregister(bossAccelerator)
     }
   }, 'temp')
-  lisStore('display', toggleDisplay, displayStoreUUID)
+  watch('display', toggleDisplay, displayStoreUUID)
 }
 
 app.on('window-all-closed', () => {
