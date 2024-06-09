@@ -14,7 +14,7 @@ import { useDebouncedValue } from 'foxact/use-debounced-value'
 import type { ForwardedRef, ReactNode } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Tooltip } from 'tdesign-react'
+import { Button, Image, ImageViewer, Tooltip } from 'tdesign-react'
 
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
@@ -24,6 +24,7 @@ import { useElectronStore } from '../hooks/useStore'
 import { useHighlightTheme } from '../providers/theme'
 import chatroomCompletions from '../shikitor-plugins/chatroom-completions'
 import { electronStore, keyAtom } from '../store'
+import { blob2base64 } from '../utils/blob2base64'
 import { classnames } from '../utils/classnames'
 import { isShortcut } from '../utils/isShortcut'
 import { Kbd } from './Kbd'
@@ -214,6 +215,8 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
     }
   }, [sync])
 
+  const [images, setImages] = useState<string[]>([])
+
   useEventListener('keydown', e => {
     if (isShortcut(e, ['Escape'])) {
       setDisplay(false)
@@ -250,7 +253,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
           plugins={plugins}
           onColorChange={setColor}
           onMounted={shikitor => shikitor.focus()}
-          onKeydown={e => {
+          onKeydown={async e => {
             if (isShortcut(e, ['Escape'])) {
               if (text) {
                 setText('')
@@ -258,6 +261,22 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 e.stopPropagation()
                 return
               }
+            }
+            if (isShortcut(e, ['meta', 'v'])) {
+              const clipboard = [...await navigator.clipboard.read()]
+              const images = await Promise.all(
+                clipboard
+                  .map(async item => {
+                    const imageType = item.types.find(type => type.startsWith('image/'))
+                    return imageType
+                      ? blob2base64(new Blob([await item.getType(imageType)]))
+                      : null
+                  })
+              )
+              setImages(old => [
+                ...old,
+                ...images.filter(<T,>(image: T): image is NonNullable<T> => image !== null)
+              ])
             }
             if (e.key === 'Enter' && e.metaKey) {
               if (text.trim().length === 0) return
@@ -267,6 +286,39 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
               return
             }
           }}
+        />
+      </div>
+      <div className={`${prefix}__resources`}>
+        <ImageViewer
+          closeOnOverlay
+          closeOnEscKeydown
+          images={images}
+          trigger={({ open }) =>
+            <>
+              {images.map(src => (
+                <Image
+                  key={src}
+                  fit='contain'
+                  src={src}
+                  overlayTrigger='hover'
+                  onClick={open}
+                  overlayContent={
+                    <>
+                      <Button
+                        shape='circle'
+                        size='small'
+                        variant='outline'
+                        theme='danger'
+                        className={`${prefix}__resource-remove`}
+                        onClick={() => setImages(old => old.filter(image => image !== src))}
+                      >
+                        <span className='s-icon'>close</span>
+                      </Button>
+                    </>
+                  }
+                />
+              ))}
+            </>}
         />
       </div>
       {memoDebouncedVisibles.footer && props.footer}
@@ -279,6 +331,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
     </div>
   </>
 }
+
 Sender.prefix = 'spirit-sender'
 
 const _Sender = forwardRef(Sender)
