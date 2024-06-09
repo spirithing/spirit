@@ -91,50 +91,48 @@ export function Message(props: MessageProps) {
           displaying: isEditing
         })}
       >
-        {isEditing && <Button
-          variant='outline'
-          shape='square'
-          size='small'
-          theme='success'
-          onClick={() => {
-            setIsEditing(false)
-            props.onTextChange?.(shikitorRef.current?.value ?? '')
-          }}
-        >
-          <span className='s-icon'>check</span>
-        </Button>}
-        {isEditing && <Button
-          variant='outline'
-          shape='square'
-          size='small'
-          onClick={() => setIsEditing(false)}
-        >
-          <span className='s-icon'>close</span>
-        </Button>}
-        {!isEditing && <Button
-          variant='outline'
-          shape='square'
-          size='small'
-        >
-          <span className='s-icon'>fork_right</span>
-        </Button>}
-        {!isEditing && <Button
-          variant='outline'
-          shape='square'
-          size='small'
-          onClick={() => setIsEditing(true)}
-        >
-          <span className='s-icon'>edit</span>
-        </Button>}
-        {!isEditing && <Button
-          variant='outline'
-          shape='square'
-          size='small'
-          theme='danger'
-          onClick={props.onDelete}
-        >
-          <span className='s-icon'>delete</span>
-        </Button>}
+        {isEditing
+          ? <>
+            <Button
+              variant='outline'
+              shape='square'
+              size='small'
+              theme='success'
+              onClick={() => {
+                setIsEditing(false)
+                props.onTextChange?.(shikitorRef.current?.value ?? '')
+              }}
+            >
+              <span className='s-icon'>check</span>
+            </Button>
+            <Button
+              variant='outline'
+              shape='square'
+              size='small'
+              onClick={() => setIsEditing(false)}
+            >
+              <span className='s-icon'>close</span>
+            </Button>
+          </>
+          : <>
+            <Button
+              variant='outline'
+              shape='square'
+              size='small'
+              onClick={() => setIsEditing(true)}
+            >
+              <span className='s-icon'>edit</span>
+            </Button>
+            <Button
+              variant='outline'
+              shape='square'
+              size='small'
+              theme='danger'
+              onClick={props.onDelete}
+            >
+              <span className='s-icon'>delete</span>
+            </Button>
+          </>}
       </div>
     </motion.div>
   )
