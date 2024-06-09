@@ -1,11 +1,13 @@
 import './Chatrooms.scss'
 
 import { classnames } from '@shikitor/core/utils'
+import { useAtom } from 'jotai'
 import type { CSSProperties, ReactNode } from 'react'
 import { UserIcon } from 'tdesign-icons-react'
 import { Avatar, AvatarGroup, Button, Tabs, Tooltip } from 'tdesign-react'
 
 import chatgptIcon from '../../assets/chatgpt.svg'
+import { senderAtom } from '../../atoms/sender'
 import { Kbd } from '../../components/Kbd'
 import { useChatroom, useChatrooms } from '../../hooks/useChatroom'
 import { useEventListener } from '../../hooks/useEventListener'
@@ -20,10 +22,13 @@ export interface ChatroomsProps {
 export function Chatrooms(props: ChatroomsProps) {
   const { prefix } = Chatrooms
   const { className, style } = props
+  const [sender] = useAtom(senderAtom)
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
   useEventListener('keydown', e => {
     if (chatrooms.length > 1 /* TODO add text is empty check */) {
+      if (sender?.text) return
+
       if (isShortcut(e, ['meta', 'shift', 'ArrowRight'])) {
         setActiveChatroom(chatrooms[chatrooms.length - 1])
         e.preventDefault()

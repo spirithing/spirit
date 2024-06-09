@@ -11,12 +11,14 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
+import { useAtom } from 'jotai'
 import type { ForwardedRef, ReactNode } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
 import { Button, Image, ImageViewer, MessagePlugin, Tooltip } from 'tdesign-react'
 
+import { senderAtom } from '../atoms/sender'
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
 import { useCtxCallback } from '../hooks/useCtxCallback'
@@ -134,6 +136,8 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   } = props
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
 
+  const [text, setText] = useState('')
+  const [assets, setAssets] = useState<Asset[]>([])
   const [, { sendMessage }] = useChatroom()
   const send = useCallback((text: string, assets: Asset[]) => {
     if (text.trim().length === 0 && assets.length === 0) {
@@ -143,11 +147,16 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
     setAssets([])
     setText('')
   }, [sendMessage])
+  const [sender, setSender] = useAtom(senderAtom)
+  useEffect(() => {
+    if (sender?.text !== text) {
+      setSender({ text, send })
+    }
+  }, [assets, send, sender, setSender, text])
 
   const placeholder = useYiyanPlaceholder()
 
   const [display, setDisplay] = useElectronStore('display')
-  const [text, setText] = useState('')
   const shikitorRef = useRef<Shikitor>(null)
   useEffect(() => {
     if (display) {
@@ -223,8 +232,6 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
       observer.disconnect()
     }
   }, [sync])
-
-  const [assets, setAssets] = useState<Asset[]>([])
 
   useEventListener('keydown', e => {
     if (isShortcut(e, ['Escape'])) {
