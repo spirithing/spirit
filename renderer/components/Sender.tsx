@@ -11,7 +11,8 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
-import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ForwardedRef, ReactNode, useImperativeHandle } from 'react'
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Tooltip } from 'tdesign-react'
 
@@ -106,9 +107,10 @@ export interface SenderProps {
   onIconClick(this: SenderContext, ctx: SenderContext): void
 }
 
-export function Sender(props: SenderProps) {
+function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   const { prefix } = Sender
   const ctxRef = useSenderCtx()
+  useImperativeHandle(ref, () => ctxRef.current, [ctxRef])
   const {
     visibles
   } = ctxRef.current
@@ -278,6 +280,9 @@ export function Sender(props: SenderProps) {
   </>
 }
 Sender.prefix = 'spirit-sender'
+
+const _Sender = forwardRef(Sender)
+export { _Sender as Sender }
 
 interface StatusBarProps {
   icon: ReactNode

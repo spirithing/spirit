@@ -1,11 +1,12 @@
 import './App.scss'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import favicon from '../resources/icon.png'
 import { Configurer } from './components/Configurer'
 import { Kbd } from './components/Kbd'
+import type { SenderContext } from './components/Sender'
 import { Sender } from './components/Sender'
 import { Chatrooms } from './extensions/chatroom/Chatrooms'
 import { Messages } from './extensions/chatroom/Messages'
@@ -28,13 +29,15 @@ export function App() {
   useDisplay()
   useEventListener('keydown', e => {
     if (isShortcut(e, ['meta', ','])) {
+      senderRef.current?.toggleFooter()
       e.preventDefault()
-      // TODO
     }
   })
+  const senderRef = useRef<SenderContext>(null)
   return <>
     <div className='spirit-main'>
       <Sender
+        ref={senderRef}
         icon={
           <img
             alt='icon'
