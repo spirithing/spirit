@@ -3,40 +3,18 @@ import 'tdesign-react/es/style/index.css'
 import './store'
 import './main.scss'
 
-import type { ErrorInfo } from 'react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { useTranslation } from 'react-i18next'
 
 import { App } from './App'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { ErrorFallback } from './components/ErrorFallback'
 import { I18NProvider } from './providers/i18n'
 import { ThemeProvider } from './providers/theme'
 
 Object
   .values(import.meta.glob('./effects/*.ts'))
   .forEach(effect => effect())
-
-function ErrorFallback({ error, errorInfo }: { error: Error; errorInfo: ErrorInfo }) {
-  const { t } = useTranslation()
-  return <>
-    <h1>{t('errorFallback.title')}</h1>
-    <details style={{ whiteSpace: 'pre-wrap' }} open={import.meta.env.DEV}>
-      <pre>{error?.toString()}{errorInfo?.componentStack}</pre>
-    </details>
-    {t('errorFallback.tooltip')}
-    <ul>
-      <li>
-        <a href='spirit-oe://github.com/NWYLZW/spirit/issues/new'>
-          GitHub
-        </a>
-      </li>
-    </ul>
-    {t('errorFallback.quickFix')}
-    <a href='' onClick={() => location.reload()}>{t('errorFallback.refresh')}</a>,&nbsp;
-    <a href='' onClick={() => /* TODO */ void 0}>{t('errorFallback.reload')}</a>
-  </>
-}
 
 createRoot(document.getElementById('root') as HTMLElement)
   .render(
