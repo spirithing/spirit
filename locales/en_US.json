@@ -35,5 +35,6 @@
   "filteredApplications": "Filtered applications",
   "primaryColor": "Primary color",
   "linearGradient": "Linear gradient",
-  "default": "Default"
+  "default": "Default",
+  "layout": "Layout"
 }

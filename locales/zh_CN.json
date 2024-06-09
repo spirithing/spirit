@@ -35,5 +35,6 @@
   "filteredApplications": "过滤的应用",
   "primaryColor": "主题色",
   "linearGradient": "线性渐变",
-  "default": "默认"
+  "default": "默认",
+  "layout": "布局"
 }

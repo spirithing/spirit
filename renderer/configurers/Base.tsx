@@ -56,6 +56,90 @@ function ThemeSwitcher() {
   </div>
 }
 
+function LayoutSwitcher() {
+  const { t } = useTranslation()
+  const prefix = 'spirit-layout-switcher'
+  const [common, setCommon] = useElectronStore('common')
+  const layout = common?.layout ?? 'auto'
+  return <div className={prefix}>
+    <Card
+      size='small'
+      hoverShadow
+      className={classnames(layout === 'compact' ? `${prefix}--active` : '')}
+      header={
+        <>
+          <span className='s-icon'>grid_view</span>
+          {t('compact')}
+        </>
+      }
+    >
+      <div className={`${prefix}__window`}>
+        <div className={`${prefix}__input`}>
+          <div className={`${prefix}__input-text`} />
+        </div>
+        <div className={`${prefix}__footer`}>
+          <div className={`${prefix}__footer-icon`} />
+          <div className={`${prefix}__footer-message`} />
+          <div className={`${prefix}__footer-actions`} />
+        </div>
+      </div>
+    </Card>
+    <Card
+      size='small'
+      hoverShadow
+      className={classnames(layout === 'default' ? `${prefix}--active` : '', `${prefix}--active`)}
+      header={
+        <>
+          <span className='s-icon'>grid_on</span>
+          {t('default')}
+        </>
+      }
+    >
+      <div className={`${prefix}__window`}>
+        <div className={`${prefix}__tabs`}>
+          <div className={`${prefix}__tab`} />
+        </div>
+        <div className={`${prefix}__input`}>
+          <div className={`${prefix}__input-text`} />
+        </div>
+        <div className={`${prefix}__footer`}>
+          <div className={`${prefix}__footer-icon`} />
+          <div className={`${prefix}__footer-message`} />
+          <div className={`${prefix}__footer-actions`} />
+        </div>
+      </div>
+    </Card>
+    <Card
+      size='small'
+      hoverShadow
+      className={classnames(layout === 'more' ? `${prefix}--active` : '')}
+      header={
+        <>
+          <span className='s-icon'>view_compact</span>
+          {t('more')}
+        </>
+      }
+    >
+      <div className={`${prefix}__window`}>
+        <div className={`${prefix}__tabs`}>
+          <div className={`${prefix}__tab`} />
+        </div>
+        <div className={`${prefix}__input`}>
+          <div className={`${prefix}__input-text`} />
+        </div>
+        <div className={`${prefix}__selections`}>
+          <div className={`${prefix}__selection`} />
+        </div>
+        <div className={`${prefix}__footer`}>
+          <div className={`${prefix}__footer-icon`} />
+          <div className={`${prefix}__footer-message`} />
+          <div className={`${prefix}__footer-actions`} />
+        </div>
+      </div>
+    </Card>
+  </div>
+}
+
 export function Base() {
   const [system] = useElectronStore('system')
   const [common, setCommon] = useElectronStore('common', {
@@ -114,6 +198,10 @@ export function Base() {
     <div className='spirit-field'>
       <label>{t('theme')}</label>
       <ThemeSwitcher />
+    </div>
+    <div className='spirit-field'>
+      <label>{t('layout')}</label>
+      <LayoutSwitcher />
     </div>
     <Collapse
       borderless
