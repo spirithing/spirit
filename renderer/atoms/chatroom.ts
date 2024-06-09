@@ -1,9 +1,9 @@
 import { electronStore, keyAtom } from '../store'
 
-export const activeChatroomAtom = () => keyAtom('activeChatroom')
+export const getActiveChatroomAtom = () => keyAtom('activeChatroom')
 export const getActiveChatroom = () =>
-  activeChatroomAtom()
-    ? electronStore.get(activeChatroomAtom()) ?? 'default'
+  getActiveChatroomAtom()
+    ? electronStore.get(getActiveChatroomAtom()) ?? 'default'
     : 'default'
 export const getChatroomAtom = (
   id = getActiveChatroom()
