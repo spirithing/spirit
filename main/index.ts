@@ -2,13 +2,13 @@ import './store'
 
 // TODO listen language change by os-locale
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, type Display, globalShortcut, protocol, screen, shell } from 'electron'
+import { app, BrowserWindow, clipboard, type Display, globalShortcut, protocol, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'
 import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
 import { getStore, lisStore, setStore } from './store'
-import { os, username } from './utils/system'
+import { isWindows, os, username } from './utils/system'
 
 const VARIOUS_PUNCTUATION = {
   // ), !, @, #, $, %, ^, &, *, (, :, ;, :, +, =, <, ,, _, -, >, ., ?, /, ~, `, {, ], [, |, \, }, "
@@ -135,12 +135,6 @@ function createWindow() {
     accelerators.start
       && globalShortcut.unregister(accelerators.start)
     globalShortcut.register(startAccelerator, () => toggleDisplay())
-    const ret = globalShortcut.register('CommandOrControl+W', () => {
-      // TODO send message to renderer
-    })
-    if (!ret) {
-      // TODO store shortcut register error message
-    }
     return {
       start: startAccelerator
     }
@@ -149,6 +143,22 @@ function createWindow() {
   lisStore('shortcuts', () => {
     accelerators = addGlobalShortcuts()
   }, shortcutsUUID)
+  const bossAccelerator = isWindows
+    ? 'Control+W'
+    : 'Command+W'
+  lisStore('display', () => {
+    const display = getStore('display')
+    if (display) {
+      const ret = globalShortcut.register(bossAccelerator, () => {
+        // TODO send message to renderer
+      })
+      if (!ret) {
+        // TODO store shortcut register error message
+      }
+    } else {
+      globalShortcut.unregister(bossAccelerator)
+    }
+  }, 'temp')
   lisStore('display', toggleDisplay, displayStoreUUID)
 }
 
@@ -175,6 +185,10 @@ async function main() {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   await app.whenReady()
+  const clipboardFormats = ['Text', 'HTML', 'RTF', 'Image', 'Bookmark']
+  clipboardFormats.forEach(format => {
+    console.log(format, clipboard[`read${format}`]('selection'))
+  })
   // open external link in default browser
   const schema = 'spirit-oe'
   protocol.registerHttpProtocol(schema, request => {
