@@ -278,7 +278,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 ...images.filter(<T,>(image: T): image is NonNullable<T> => image !== null)
               ])
             }
-            if (e.key === 'Enter' && e.metaKey) {
+            if (isShortcut(e, ['metaOrCtrl', 'Enter'])) {
               if (text.trim().length === 0) return
               e.preventDefault()
               sendMessage(text)
