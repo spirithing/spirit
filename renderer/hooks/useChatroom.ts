@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import type { ChatRoom, IUser } from 'spirit'
+import type { ChatRoom, IMessage, IUser } from 'spirit'
 
 import { ipcRenderer } from '../electron'
 import { useElectronStore } from '../hooks/useStore'
@@ -17,7 +17,12 @@ export const useChatroom = () => {
   const [chatroom, setChatroom] = useElectronStore(`chatroom:${activeChatroom}`, defaultChatroom)
   const eCR = chatroom!
   const sendMessage = useCallback((text: string, user: IUser = defaultU) => {
-    const message = { uuid: uuid(), ctime: Date.now(), text, user }
+    const message: IMessage = {
+      uuid: uuid(),
+      ctime: Date.now(),
+      text,
+      user
+    }
     setChatroom(prev => {
       if (!prev) return defaultChatroom
       return {
