@@ -15,7 +15,6 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import { useTranslation } from 'react-i18next'
 import { Button, Tooltip } from 'tdesign-react'
 
-import favicon from '../../resources/icon.png'
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
 import { useCtxCallback } from '../hooks/useCtxCallback'
@@ -99,7 +98,9 @@ export interface SenderContext {
 
 export interface SenderProps {
   className?: string
-  Icon?: (({ onClick }: { onClick: SenderProps['onIconClick'] }) => ReactNode) | string
+  icon?: ReactNode
+  iconTooltip?: ReactNode
+  message?: ReactNode
   header?: ReactNode
   footer?: ReactNode
   onIconClick(this: SenderContext, ctx: SenderContext): void
@@ -122,8 +123,10 @@ export function Sender(props: SenderProps) {
   }), [debouncedVisibles.footer, debouncedVisibles.header, visibles.footer, visibles.header])
   const {
     className,
-    Icon,
-    onIconClick
+    icon,
+    iconTooltip,
+    onIconClick,
+    message
   } = props
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
 
@@ -143,22 +146,6 @@ export function Sender(props: SenderProps) {
   const { setColor } = useColor(() => {}, [])
 
   const highlightTheme = useHighlightTheme()
-  const IconComp = useCallback(function IconComp() {
-    if (Icon === undefined) {
-      return <img
-        alt='icon'
-        src={favicon}
-        className={`${prefix}__icon`}
-        onClick={() => clickIcon(ctxRef.current)}
-      />
-    }
-    if (typeof Icon === 'string') {
-      return <span className='s-icon' onClick={() => clickIcon(ctxRef.current)}>
-        {Icon}
-      </span>
-    }
-    return <Icon {...{ onClick: onIconClick }} />
-  }, [Icon, clickIcon, ctxRef, onIconClick, prefix])
 
   const senderBgRef = useRef<HTMLDivElement>(null)
   const senderRef = useRef<HTMLDivElement>(null)
@@ -270,10 +257,6 @@ export function Sender(props: SenderProps) {
                 return
               }
             }
-            if (e.key === ',' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-              e.preventDefault()
-              clickIcon(ctxRef.current)
-            }
             if (e.key === 'Enter' && e.metaKey) {
               if (text.trim().length === 0) return
               e.preventDefault()
@@ -285,31 +268,32 @@ export function Sender(props: SenderProps) {
         />
       </div>
       {memoDebouncedVisibles.footer && props.footer}
-      <StatusBar Icon={IconComp} />
+      <StatusBar
+        icon={icon}
+        iconTooltip={iconTooltip}
+        onClick:icon={() => clickIcon(ctxRef.current)}
+        message={message}
+      />
     </div>
   </>
 }
 Sender.prefix = 'spirit-sender'
 
 interface StatusBarProps {
-  Icon(): ReactNode
+  icon: ReactNode
+  iconTooltip?: ReactNode
+  'onClick:icon'?: () => void
+  message?: ReactNode
 }
 
 function StatusBar(props: StatusBarProps) {
   const { prefix } = StatusBar
-  const { Icon } = props
-  const { t } = useTranslation()
+  const { icon, iconTooltip, message } = props
 
   return <div className={prefix}>
     <div className={`${prefix}__message`}>
       <Tooltip
-        content={
-          <>
-            {t('Display configure panel')}
-            <br />
-            <Kbd keys={['meta', ',']} />
-          </>
-        }
+        content={iconTooltip}
         placement='bottom'
       >
         <Button
@@ -319,11 +303,11 @@ function StatusBar(props: StatusBarProps) {
           variant='text'
           onClick={props['onClick:icon']}
         >
-          <Icon />
+          {icon}
         </Button>
       </Tooltip>
       <span className={`${prefix}__text`}>
-        This is a status bar...
+        {message}
       </span>
     </div>
     <div className={`${prefix}__actions`}>
