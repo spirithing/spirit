@@ -88,8 +88,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     max_tokens: 4096,
     messages: [
       {
-        content: `Your name is "${bot.name}" and your description is "${bot.description}".\n`
-          + 'Every message except yours has a corresponding username, in the format where the current message username appears at the beginning of each message.',
+        content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
         role: 'system'
       },
       ...messages?.map(messageTransformWithBot).reverse() ?? []
