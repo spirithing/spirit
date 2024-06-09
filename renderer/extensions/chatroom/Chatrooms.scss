@@ -5,6 +5,7 @@
     font-size: 16px;
   }
   .t-tabs__operations {
+    margin-top: -1px;
     border-bottom: 1px solid var(--td-border-level-1-color);
   }
   .t-tabs__nav-item:not(.t-is-active):hover {
