@@ -97,7 +97,7 @@
       .spirit-kbd-key {
         background-color: color-mix(in srgb, var(--bg), var(--fg) 10%);
       }
-      .t-button:hover + .spirit-sender__status-bar__action-split {
+      &:hover .spirit-sender__status-bar__action-split {
         opacity: 0;
       }
     }
