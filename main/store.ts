@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 
 import { BrowserWindow, ipcMain } from 'electron'
+import * as path from 'node:path'
 import type { Store } from 'spirit'
 
 import { userDataPath } from './utils/system'
@@ -9,20 +10,31 @@ const appPath = userDataPath
 if (!fs.existsSync(appPath)) {
   fs.mkdirSync(appPath)
 }
-const configPath = appPath + '/config.json'
-if (!fs.existsSync(configPath)) {
-  fs.writeFileSync(configPath, '{}')
+const configsPath = path.resolve(userDataPath, 'configs')
+if (!fs.existsSync(configsPath)) {
+  fs.mkdirSync(configsPath)
 }
-const configStr = fs.readFileSync(configPath, 'utf-8')
+const configs = fs
+  .readdirSync(configsPath)
+  .filter(file => file.endsWith('.json'))
 let config: Record<string, unknown> = {}
-try {
-  config = JSON.parse(configStr)
-  if (typeof config !== 'object') {
-    throw new Error('Invalid config')
+configs.forEach(configPath => {
+  const absConfigPath = path.resolve(configsPath, configPath)
+  const name = path.basename(absConfigPath, '.json')
+  if (!fs.existsSync(absConfigPath)) {
+    fs.writeFileSync(absConfigPath, '{}')
   }
-} catch (e) {
-  console.error('Failed to parse config:', e)
-}
+  const configStr = fs.readFileSync(absConfigPath, 'utf-8')
+  try {
+    const parsed = JSON.parse(configStr)
+    if (typeof parsed !== 'object') {
+      throw new Error('Invalid config')
+    }
+    config[name] = parsed
+  } catch (e) {
+    console.error('Failed to parse config:', e)
+  }
+})
 
 const storeListenersMap = new Map<string, Map<string, (value: unknown) => void>>()
 const store = new Map<string, unknown>()
@@ -33,7 +45,8 @@ export function setStore<
   K extends keyof Store,
 >(key: K, value: Store[K], uuid?: string) {
   store.set(key, value)
-  fs.writeFileSync(configPath, JSON.stringify(Object.fromEntries(store.entries())))
+  const configPath = path.resolve(configsPath, `${key}.json`)
+  fs.writeFileSync(configPath, JSON.stringify(value ?? {}, null, 2))
   const storeListeners = storeListenersMap.get(key)
   if (!storeListeners || storeListeners.size === 0) return
   storeListeners.forEach((listener, key) => {
