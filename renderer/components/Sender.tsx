@@ -127,7 +127,7 @@ export function Sender(props: SenderProps) {
   } = props
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
 
-  const [, { sendMessage, clearMessages }] = useChatroom()
+  const [, { sendMessage }] = useChatroom()
 
   const placeholder = useYiyanPlaceholder()
 
@@ -269,10 +269,6 @@ export function Sender(props: SenderProps) {
                 e.stopPropagation()
                 return
               }
-            }
-            if (e.key === 'k' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-              clearMessages()
-              return
             }
             if (e.key === ',' && e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
               e.preventDefault()
