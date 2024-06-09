@@ -1,8 +1,11 @@
-export const withKeys = ['meta', 'ctrl', 'shift', 'alt'] as const
+export const withKeys = ['meta', 'metaOrCtrl', 'ctrl', 'shift', 'alt'] as const
 export type Shortcut = (typeof withKeys)[number] | (string & {})
 export function isShortcut(e: KeyboardEvent, keys: Shortcut[]) {
   let rerefKeys = [...keys]
-  for (const withKey of withKeys) {
+  for (let withKey of withKeys) {
+    if (withKey === 'metaOrCtrl') {
+      withKey = navigator.platform.includes('Mac') ? 'meta' : 'ctrl'
+    }
     // when withKey in keys, check e[`${key}Key`] is true, else assert e[`${key}Key`] is false
     if (rerefKeys.includes(withKey)) {
       if (!e[`${withKey}Key`]) return false

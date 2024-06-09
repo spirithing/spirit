@@ -262,7 +262,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 return
               }
             }
-            if (isShortcut(e, ['meta', 'v'])) {
+            if (isShortcut(e, ['metaOrCtrl', 'v'])) {
               const clipboard = [...await navigator.clipboard.read()]
               const images = await Promise.all(
                 clipboard
