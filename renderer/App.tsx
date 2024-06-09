@@ -32,8 +32,8 @@ export function App() {
     <div className='spirit-main'>
       <Sender
         onIconClick={ctx => ctx.toggleFooter()}
-        Header={<Chatrooms />}
-        Footer={<Configurer />}
+        header={<Chatrooms />}
+        footer={<Configurer />}
       />
       <Messages />
     </div>
