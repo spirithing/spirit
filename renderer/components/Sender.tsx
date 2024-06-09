@@ -100,8 +100,8 @@ export interface SenderContext {
 export interface SenderProps {
   className?: string
   Icon?: (({ onClick }: { onClick: SenderProps['onIconClick'] }) => ReactNode) | string
-  Header?: ReactNode
-  Footer?: ReactNode
+  header?: ReactNode
+  footer?: ReactNode
   onIconClick(this: SenderContext, ctx: SenderContext): void
 }
 
@@ -243,7 +243,7 @@ export function Sender(props: SenderProps) {
         }
       )}
     >
-      {memoDebouncedVisibles.header && props.Header}
+      {memoDebouncedVisibles.header && props.header}
       <div className={`${prefix}__input`}>
         <Editor
           ref={shikitorRef}
@@ -284,7 +284,7 @@ export function Sender(props: SenderProps) {
           }}
         />
       </div>
-      {memoDebouncedVisibles.footer && props.Footer}
+      {memoDebouncedVisibles.footer && props.footer}
       <StatusBar Icon={IconComp} />
     </div>
   </>
