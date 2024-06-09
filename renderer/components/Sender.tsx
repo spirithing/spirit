@@ -311,9 +311,6 @@ function StatusBar(props: StatusBarProps) {
           </>
         }
         placement='bottom'
-        popperOptions={{
-          modifiers: [{ name: 'offset', options: { offset: [0, -5] } }]
-        }}
       >
         <Button
           className={`${prefix}__prefix`}
