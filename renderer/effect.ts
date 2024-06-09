@@ -1,3 +1,6 @@
+console.log('123')
 Object
-  .values(import.meta.glob('./effects/*.ts'))
-  .forEach(effect => effect())
+  .entries(import.meta.glob('./effects/*.ts', {}))
+  .forEach(([path, effect]) => {
+    console.log('effect', path, effect())
+  })

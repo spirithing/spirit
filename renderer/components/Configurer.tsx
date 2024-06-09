@@ -2,7 +2,6 @@ import './Configurer.scss'
 
 import { Sketch } from '@uiw/react-color'
 import type { FC, ReactNode } from 'react'
-import { useEffect } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
 import type { BundledTheme } from 'shiki'
 import { bundledThemes } from 'shiki'
@@ -129,18 +128,6 @@ function Chatroom() {
 function Theme() {
   const { t } = useTranslation()
   const [themeStore, setThemeStore] = useThemeStore()
-  const { colors } = themeStore
-  useEffect(() => {
-    if (colors) {
-      if (colors.primary) {
-        if (!Array.isArray(colors.primary)) {
-          document.body.style.setProperty('--td-brand-color', colors.primary)
-        } else {
-          // TODO
-        }
-      }
-    }
-  }, [colors])
   return <>
     <Row gutter={12}>
       <Col span={4}>
