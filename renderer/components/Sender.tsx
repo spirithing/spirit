@@ -11,20 +11,14 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
-import { isEqual } from 'lodash-es'
-import type OpenAI from 'openai'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { Bot, IMessage } from 'spirit'
-import { Button, DialogPlugin, MessagePlugin, Tooltip } from 'tdesign-react'
+import { Button, DialogPlugin, Tooltip } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
-import { useBot } from '../hooks/useBot'
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
 import { useCtxCallback } from '../hooks/useCtxCallback'
-import { useEEListener } from '../hooks/useEEListener'
-import { useOpenAI } from '../hooks/useOpenAI'
 import { useElectronStore } from '../hooks/useStore'
 import { useHighlightTheme } from '../providers/theme'
 import chatroomCompletions from '../shikitor-plugins/chatroom-completions'
@@ -79,6 +73,7 @@ const plugins = [
   chatroomCompletions({
     get chatrooms() {
       const chatroomsAtom = keyAtom('chatrooms')
+      if (!chatroomsAtom) return []
       const chatrooms = electronStore.get(chatroomsAtom)
       return chatrooms?.map(id => ({
         id,
@@ -89,14 +84,6 @@ const plugins = [
     }
   })
 ]
-
-function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
-  const isBot = m.user?.name === bot.name
-  return {
-    role: isBot ? 'assistant' : 'user',
-    content: `${isBot ? '' : `${m.user?.name}:\n`}${m.text}`
-  }
-}
 
 const useSenderCtx = () => {
   const [visibles, setVisibles] = useState({
@@ -136,60 +123,7 @@ export function Sender(props: SenderProps) {
   } = props
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
 
-  const [{ options }, { sendMessage, editMessage, clearMessages }] = useChatroom()
-  const openai = useOpenAI()
-  const [openaiConfig] = useElectronStore('openaiConfig')
-  const [bot] = useBot()
-  const messageTransformWithBot = useCallback((m: IMessage) => messageTransform(bot!, m), [bot])
-
-  const getModel = useCallback(() => {
-    return options?.model ?? openaiConfig?.defaultModel ?? 'gpt-4o'
-  }, [openaiConfig?.defaultModel, options?.model])
-
-  useEEListener('addMessage', async (m, { messages }) => {
-    if (isEqual(m.user, bot)) return
-    if (import.meta.env.DEV && m.text === 'd') {
-      setTimeout(() => sendMessage('pong', bot), 500)
-      return
-    }
-
-    if (!bot) {
-      // TODO check name and description is empty, and prompt user to configure it
-      MessagePlugin.error('Bot not initialized')
-      return
-    }
-    if (!openai) {
-      // TODO prompt user to configure it
-      MessagePlugin.error('OpenAI not initialized')
-      return
-    }
-    const { uuid } = sendMessage('Inputting', bot)
-    let count = 0
-    const t = setInterval(() => {
-      editMessage(0, 'Inputting' + '.'.repeat(count))
-      count = (count + 1) % 4
-    }, 300)
-    const completions = await openai.chat.completions.create({
-      model: getModel(),
-      // eslint-disable-next-line camelcase
-      max_tokens: 4096,
-      messages: [
-        {
-          content: `Your name is "${bot.name}" and your description is "${bot.description}".\n`
-            + 'Every message except yours has a corresponding username, in the format where the current message username appears at the beginning of each message.',
-          role: 'system'
-        },
-        ...messages?.map(messageTransformWithBot).reverse() ?? []
-      ],
-      stream: true
-    }).finally(() => clearInterval(t))
-    editMessage(uuid, '')
-    let streamMessage = ''
-    for await (const { choices: [{ delta }] } of completions) {
-      streamMessage += delta.content ?? ''
-      editMessage(0, streamMessage)
-    }
-  })
+  const [, { sendMessage, clearMessages }] = useChatroom()
 
   const placeholder = useYiyanPlaceholder()
 
