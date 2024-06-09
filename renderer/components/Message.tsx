@@ -84,7 +84,15 @@ export function Message(props: MessageProps) {
             options={editorOptions}
           />
           : <>
-            {textRender?.(value.text) ?? value.text}
+            {value.text ? textRender?.(value.text) ?? value.text : ''}
+            {value.assets?.map(({ type, url }) => {
+              switch (type) {
+                case 'image':
+                  return <img key={url} src={url} alt='' />
+                default:
+                  return null
+              }
+            })}
           </>}
       </div>
       <div

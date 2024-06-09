@@ -16,13 +16,18 @@ export const useChatroom = () => {
   }), [activeChatroom])
   const [chatroom, setChatroom] = useElectronStore(`chatroom:${activeChatroom}`, defaultChatroom)
   const eCR = chatroom!
-  const sendMessage = useCallback((text: string, user: IUser = defaultU) => {
-    const message: IMessage = {
+  const sendMessage = useCallback((
+    text?: string,
+    assets?: IMessage['assets'],
+    user: IUser = defaultU
+  ) => {
+    const message = {
       uuid: uuid(),
       ctime: Date.now(),
       text,
+      assets,
       user
-    }
+    } as IMessage
     setChatroom(prev => {
       if (!prev) return defaultChatroom
       return {

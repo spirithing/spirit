@@ -10,9 +10,32 @@ import { electronStore, keyAtom } from '../store'
 
 function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
   const isBot = m.user?.name === bot.name
+  const name = m.user?.name ?? 'unknown'
+  if (isBot) {
+    return {
+      name,
+      role: 'assistant',
+      content: m.text
+    }
+  }
   return {
-    role: isBot ? 'assistant' : 'user',
-    content: `${isBot ? '' : `${m.user?.name}:\n`}${m.text}`
+    name,
+    role: 'user',
+    content: m.assets
+      ? [
+        {
+          type: 'text',
+          text: isBot ? '' : `${m.user?.name}:\n${m.text}`
+        },
+        ...m.assets?.map(({ type, url }) => ({
+          type: {
+            image: 'image_url' as const
+          }[type],
+          // eslint-disable-next-line camelcase
+          image_url: { url }
+        })) ?? []
+      ]
+      : m.text
   }
 }
 

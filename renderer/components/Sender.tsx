@@ -14,6 +14,7 @@ import { useDebouncedValue } from 'foxact/use-debounced-value'
 import type { ForwardedRef, ReactNode } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { Asset } from 'spirit'
 import { Button, Image, ImageViewer, Tooltip } from 'tdesign-react'
 
 import { useChatroom } from '../hooks/useChatroom'
@@ -24,8 +25,8 @@ import { useElectronStore } from '../hooks/useStore'
 import { useHighlightTheme } from '../providers/theme'
 import chatroomCompletions from '../shikitor-plugins/chatroom-completions'
 import { electronStore, keyAtom } from '../store'
-import { blob2base64 } from '../utils/blob2base64'
 import { classnames } from '../utils/classnames'
+import { imgBlob2base64 } from '../utils/imgBlob2base64'
 import { isShortcut } from '../utils/isShortcut'
 import { Kbd } from './Kbd'
 
@@ -215,7 +216,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
     }
   }, [sync])
 
-  const [images, setImages] = useState<string[]>([])
+  const [assets, setAssets] = useState<Asset[]>([])
 
   useEventListener('keydown', e => {
     if (isShortcut(e, ['Escape'])) {
@@ -269,19 +270,23 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                   .map(async item => {
                     const imageType = item.types.find(type => type.startsWith('image/'))
                     return imageType
-                      ? blob2base64(new Blob([await item.getType(imageType)]))
+                      ? imgBlob2base64(imageType, new Blob([await item.getType(imageType)]))
                       : null
                   })
               )
-              setImages(old => [
+              setAssets(old => [
                 ...old,
-                ...images.filter(<T,>(image: T): image is NonNullable<T> => image !== null)
+                ...images
+                  .filter(<T,>(image: T): image is NonNullable<T> => image !== null)
+                  .map(image => ({ type: 'image' as const, url: image }))
               ])
             }
             if (isShortcut(e, ['metaOrCtrl', 'Enter'])) {
-              if (text.trim().length === 0) return
+              if (text.trim().length === 0 && assets.length === 0) return
+              e.stopPropagation()
               e.preventDefault()
-              sendMessage(text)
+              sendMessage(text, assets)
+              setAssets([])
               setText('')
               return
             }
@@ -292,14 +297,14 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
         <ImageViewer
           closeOnOverlay
           closeOnEscKeydown
-          images={images}
+          images={assets.map(({ url }) => url)}
           trigger={({ open }) =>
             <>
-              {images.map(src => (
+              {assets.map(({ url }, i) => (
                 <Image
-                  key={src}
+                  key={i}
                   fit='contain'
-                  src={src}
+                  src={url}
                   overlayTrigger='hover'
                   onClick={open}
                   overlayContent={
@@ -310,7 +315,9 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                         variant='outline'
                         theme='danger'
                         className={`${prefix}__resource-remove`}
-                        onClick={() => setImages(old => old.filter(image => image !== src))}
+                        onClick={() => {
+                          setAssets(old => old.filter((_, j) => j !== i))
+                        }}
                       >
                         <span className='s-icon'>close</span>
                       </Button>
