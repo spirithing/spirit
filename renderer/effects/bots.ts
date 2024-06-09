@@ -2,6 +2,7 @@ import { isEqual } from 'lodash-es'
 import type OpenAI from 'openai'
 import type { Bot, IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
+
 import { editMessage, sendMessage } from '../atoms/chatroom'
 import { openAIAtom } from '../atoms/openAI'
 import { ee } from '../instances/ee'
