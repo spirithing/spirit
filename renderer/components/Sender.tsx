@@ -11,8 +11,8 @@ import provideSelectionToolbox from '@shikitor/core/plugins/provide-selection-to
 import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-md'
 import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
-import { ForwardedRef, ReactNode, useImperativeHandle } from 'react'
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { ForwardedRef, ReactNode } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Tooltip } from 'tdesign-react'
 
