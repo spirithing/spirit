@@ -36,5 +36,9 @@
   "primaryColor": "主题色",
   "linearGradient": "线性渐变",
   "default": "默认",
-  "layout": "布局"
+  "layout": "布局",
+  "startup": "开机自启",
+  "startupDesc": "登陆时自动启动",
+  "menubar": "菜单条",
+  "menubarDesc": "在菜单条展示图标"
 }

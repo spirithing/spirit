@@ -36,5 +36,9 @@
   "primaryColor": "Primary color",
   "linearGradient": "Linear gradient",
   "default": "Default",
-  "layout": "Layout"
+  "layout": "Layout",
+  "startup": "Startup",
+  "startupDesc": "Launch at login",
+  "menubar": "Menu bar",
+  "menubarDesc": "Show icon in menu bar"
 }

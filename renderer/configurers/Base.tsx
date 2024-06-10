@@ -2,7 +2,7 @@ import './Base.scss'
 
 import { Fragment, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button, Card, Col, Collapse, Input, Link, Row, Select } from 'tdesign-react'
+import { Button, Card, Col, Collapse, Input, Link, Row, Select, Switch } from 'tdesign-react'
 
 import favicon from '../../resources/icon.png'
 import { useElectronStore } from '../hooks/useStore'
@@ -158,6 +158,32 @@ export function Base() {
   }, [common?.locale, i18n])
   const [user, setUser] = useUser()
   return <>
+    <Row gutter={12}>
+      <Col span={3}>
+        <div className='spirit-field'>
+          <label>{t('startup')}</label>
+          <div>
+            {/* TODO */}
+            <Switch size='large' />
+          </div>
+          <div className='spirit-field__desc'>
+            {t('startupDesc')}
+          </div>
+        </div>
+      </Col>
+      <Col span={3}>
+        <div className='spirit-field'>
+          <label>{t('menubar')}</label>
+          <div>
+            {/* TODO */}
+            <Switch size='large' />
+          </div>
+          <div className='spirit-field__desc'>
+            {t('menubarDesc')}
+          </div>
+        </div>
+      </Col>
+    </Row>
     <Row gutter={12}>
       <Col span={6}>
         <div className='spirit-field'>
