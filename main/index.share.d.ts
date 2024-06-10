@@ -8,9 +8,15 @@ declare module 'spirit' {
   export interface Shortcuts {
     start: string[]
   }
+  export interface Application {
+    name: string
+    path: string
+    icon?: string | null
+  }
   export interface Store {
     display?: boolean
     system?: System
+    applications?: Application[]
     shortcuts?: Shortcuts
     activeWindow?: ActiveWindow
     'activeWindow:Error'?: string

@@ -1,10 +1,11 @@
 import './App.scss'
 
 import { useAtom } from 'jotai'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import favicon from '../resources/icon.png'
+import type { Selection } from './atoms/sender'
 import { selectionsGroupsAtom, senderAtom } from './atoms/sender'
 import { Configurer } from './components/Configurer'
 import { Kbd } from './components/Kbd'
@@ -37,40 +38,39 @@ export function App() {
   })
 
   const [sender] = useAtom(senderAtom)
+  const [applications] = useElectronStore('applications')
+  const applicationSelections = useMemo<Selection[]>(() =>
+    applications
+      ?.filter(item => item.name.toLowerCase().includes(sender?.text.toLowerCase() ?? ''))
+      ?.map(app => ({
+        icon: app.icon
+          ? { type: 'image', path: app.icon }
+          : { type: 'icon', value: '🚀' },
+        title: app.name.replace(/\.app$/, ''),
+        operations: [
+          { type: 'text', value: 'Application' }
+        ]
+      }))
+      ?? [], [applications, sender?.text])
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
-    // if (!sender?.text.trim().length) {
-    //   setSelectionsGroups([])
-    //   return
-    // }
+    if (!sender?.text.trim().length) {
+      setSelectionsGroups([])
+      return
+    }
     setSelectionsGroups([
       {
         title: 'default',
         selections: [
-          {
-            icon: { type: 'icon', value: '👋' },
-            title: 'Item0',
-            operations: [
-              { type: 'text', value: 'Command' }
-            ]
-          }
+          ...applicationSelections
         ]
       },
       {
         title: 'recent',
-        selections: [
-          {
-            icon: { type: 'icon', value: '👋' },
-            title: 'Item1',
-            placeholder: 'Placeholder',
-            operations: [
-              { type: 'text', value: 'Command' }
-            ]
-          }
-        ]
+        selections: []
       }
     ])
-  }, [sender?.text, setSelectionsGroups])
+  }, [applicationSelections, sender?.text, setSelectionsGroups])
   const senderRef = useRef<SenderContext>(null)
   return <>
     <div className='spirit-main'>

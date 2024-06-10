@@ -8,6 +8,8 @@ import { join } from 'path'
 
 import icon from '../resources/icon.png?asset'
 import { getStore, setStore, watch } from './store'
+import { applications } from './utils/applications'
+import getIcon from './utils/getIcon'
 import { isWindows, os, username } from './utils/system'
 
 const VARIOUS_PUNCTUATION = {
@@ -98,6 +100,17 @@ function createWindow() {
   function toggleDisplay(b = !mainWindow.isVisible()) {
     if (b) {
       showInMouseHoverDisplay()
+      applications().then(async applications => {
+        setStore('applications', applications)
+        setStore(
+          'applications',
+          await Promise.all(applications.map(async app => {
+            return app.icon
+              ? app
+              : { ...app, icon: await getIcon(app.path) }
+          }))
+        )
+      })
     } else {
       setStore('display', false, displayStoreUUID)
       setTimeout(() => {

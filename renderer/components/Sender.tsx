@@ -12,7 +12,8 @@ import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-
 import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
 import { useAtom } from 'jotai'
-import { ForwardedRef, Fragment, ReactNode } from 'react'
+import type { ForwardedRef, ReactNode } from 'react'
+import { Fragment } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
@@ -22,6 +23,7 @@ import { selectionsGroupsAtom, senderAtom } from '../atoms/sender'
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
 import { useCtxCallback } from '../hooks/useCtxCallback'
+import { useEventCallback } from '../hooks/useEventCallback'
 import { useEventListener } from '../hooks/useEventListener'
 import { useElectronStore } from '../hooks/useStore'
 import { useHighlightTheme } from '../providers/theme'
@@ -138,23 +140,23 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   } = props
   const clickIcon = useCtxCallback(ctxRef, onIconClick)
 
-  const [text, setText] = useState('')
   const [assets, setAssets] = useState<Asset[]>([])
   const [, { sendMessage }] = useChatroom()
-  const send = useCallback((text: string, assets: Asset[]) => {
-    if (text.trim().length === 0 && assets.length === 0) {
+  const send = useEventCallback((text: string | undefined, assets: Asset[]) => {
+    if (!text || text.trim().length === 0 && assets.length === 0) {
       throw new Error('Empty message')
     }
     sendMessage(text, assets)
     setAssets([])
     setText('')
-  }, [sendMessage])
+  })
   const [sender, setSender] = useAtom(senderAtom)
-  useEffect(() => {
-    if (sender?.text !== text) {
-      setSender({ text, send, ...sender })
-    }
-  }, [assets, send, sender, setSender, text])
+  const [text, setText] = [
+    sender?.text,
+    useEventCallback((text: string) => {
+      setSender({ ...sender, text, send })
+    })
+  ]
 
   const [selectionsGroups] = useAtom(selectionsGroupsAtom)
   const [selectionIndex, setSelectionIndex] = useState<[number, number] | undefined>(undefined)
@@ -345,7 +347,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 e.preventDefault()
               }
               if (isShortcut(e, ['ArrowDown'])) {
-                const lineCount = text.split('\n').length
+                const lineCount = text?.split('\n').length ?? 1
                 if (cursor.line !== lineCount) return
                 setSelectionIndex((index) => {
                   const [i, j] = index ?? [undefined, undefined]
@@ -459,7 +461,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                     {icon.type === 'icon' && <span className='s-icon'>
                       {icon.value}
                     </span>}
-                    {icon.type === 'image' && <image href={icon.path} />}
+                    {icon.type === 'image' && <img src={icon.path} alt='' />}
                   </div>
                   <div className={`${prefix}__selection-content`}>
                     <div className={`${prefix}__selection-title`}>
