@@ -1,7 +1,7 @@
 import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 import { BrowserWindow, ipcMain } from 'electron'
-import * as path from 'node:path'
 import type { Store } from 'spirit'
 
 import { userDataPath } from './utils/system'
@@ -17,7 +17,7 @@ if (!fs.existsSync(configsPath)) {
 const configs = fs
   .readdirSync(configsPath)
   .filter(file => file.endsWith('.json'))
-let config: Record<string, unknown> = {}
+const config: Record<string, unknown> = {}
 configs.forEach(configPath => {
   const absConfigPath = path.resolve(configsPath, configPath)
   const name = path.basename(absConfigPath, '.json')
