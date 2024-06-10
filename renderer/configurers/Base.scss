@@ -78,6 +78,11 @@
       filter: grayscale(0);
     }
   }
+  .t-card:hover:not(#{&}--active) {
+    .t-card__body {
+      filter: grayscale(.6);
+    }
+  }
   &__window {
     width: 60%;
     margin: 10px auto 0;
