@@ -26,11 +26,7 @@ configs.forEach(configPath => {
   }
   const configStr = fs.readFileSync(absConfigPath, 'utf-8')
   try {
-    const parsed = JSON.parse(configStr)
-    if (typeof parsed !== 'object') {
-      throw new Error('Invalid config')
-    }
-    config[name] = parsed
+    config[name] = JSON.parse(configStr)
   } catch (e) {
     console.error('Failed to parse config:', e)
   }
