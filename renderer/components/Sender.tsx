@@ -164,6 +164,28 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   useEffect(() => {
     setSelectionIndex(undefined)
   }, [selectionsGroups])
+  const triggerSelectionAction = useEventCallback((
+    type: 'click' | 'enter',
+    i: number,
+    j: number
+  ) => {
+    const action = selectionsGroups[i]?.selections[j][type + 'Action']
+      ?? (
+        type === 'click'
+          ? selectionsGroups[i]?.selections[j].enterAction
+          : undefined
+      )
+    if (!action) return
+    const [act, ...args] = Array.isArray(action)
+      ? action
+      : [action]
+    ee.emit(
+      'act',
+      act,
+      // @ts-expect-error
+      ...args
+    )
+  })
 
   const placeholder = useYiyanPlaceholder()
 
@@ -328,18 +350,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
             }
             if (isShortcut(e, ['Enter'])) {
               if (selectionIndex === undefined) return
-              const [i, j] = selectionIndex
-              const selection = selectionsGroups[i]?.selections[j]
-              if (!selection?.enterAction) return
-              const [act, ...args] = Array.isArray(selection.enterAction)
-                ? selection.enterAction
-                : [selection.enterAction]
-              ee.emit(
-                'act',
-                act,
-                // @ts-expect-error
-                ...args
-              )
+              triggerSelectionAction('enter', ...selectionIndex)
               e.preventDefault()
               e.stopPropagation()
             }
@@ -482,6 +493,12 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                   className={classnames(`${prefix}__selection`, {
                     active: selectionIndex?.[0] === i && selectionIndex?.[1] === j
                   })}
+                  onClick={e => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setSelectionIndex([i, j])
+                    triggerSelectionAction('click', i, j)
+                  }}
                 >
                   <div className={`${prefix}__selection-icon`}>
                     {icon.type === 'icon' && <span className='s-icon'>
