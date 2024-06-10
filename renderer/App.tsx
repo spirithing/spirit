@@ -1,9 +1,11 @@
 import './App.scss'
 
+import { useAtom } from 'jotai'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import favicon from '../resources/icon.png'
+import { selectionsGroupsAtom, senderAtom } from './atoms/sender'
 import { Configurer } from './components/Configurer'
 import { Kbd } from './components/Kbd'
 import type { SenderContext } from './components/Sender'
@@ -33,6 +35,42 @@ export function App() {
       e.preventDefault()
     }
   })
+
+  const [sender] = useAtom(senderAtom)
+  const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
+  useEffect(() => {
+    // if (!sender?.text.trim().length) {
+    //   setSelectionsGroups([])
+    //   return
+    // }
+    setSelectionsGroups([
+      {
+        title: 'default',
+        selections: [
+          {
+            icon: { type: 'icon', value: '👋' },
+            title: 'Item0',
+            operations: [
+              { type: 'text', value: 'Command' }
+            ]
+          }
+        ]
+      },
+      {
+        title: 'recent',
+        selections: [
+          {
+            icon: { type: 'icon', value: '👋' },
+            title: 'Item1',
+            placeholder: 'Placeholder',
+            operations: [
+              { type: 'text', value: 'Command' }
+            ]
+          }
+        ]
+      }
+    ])
+  }, [sender?.text, setSelectionsGroups])
   const senderRef = useRef<SenderContext>(null)
   return <>
     <div className='spirit-main'>

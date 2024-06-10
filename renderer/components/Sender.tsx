@@ -12,13 +12,13 @@ import selectionToolboxForMd from '@shikitor/core/plugins/selection-toolbox-for-
 import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
 import { useAtom } from 'jotai'
-import type { ForwardedRef, ReactNode } from 'react'
+import { ForwardedRef, Fragment, ReactNode } from 'react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
 import { Button, Dropdown, Image, ImageViewer, Input, MessagePlugin, Tooltip } from 'tdesign-react'
 
-import { senderAtom } from '../atoms/sender'
+import { selectionsGroupsAtom, senderAtom } from '../atoms/sender'
 import { useChatroom } from '../hooks/useChatroom'
 import { useColor } from '../hooks/useColor'
 import { useCtxCallback } from '../hooks/useCtxCallback'
@@ -113,6 +113,7 @@ export interface SenderProps {
 }
 
 function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
+  const { t } = useTranslation()
   const { prefix } = Sender
   const ctxRef = useSenderCtx()
   useImperativeHandle(ref, () => ctxRef.current, [ctxRef])
@@ -151,9 +152,15 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   const [sender, setSender] = useAtom(senderAtom)
   useEffect(() => {
     if (sender?.text !== text) {
-      setSender({ text, send })
+      setSender({ text, send, ...sender })
     }
   }, [assets, send, sender, setSender, text])
+
+  const [selectionsGroups] = useAtom(selectionsGroupsAtom)
+  const [selectionIndex, setSelectionIndex] = useState<[number, number] | undefined>(undefined)
+  useEffect(() => {
+    setSelectionIndex(undefined)
+  }, [selectionsGroups])
 
   const placeholder = useYiyanPlaceholder()
 
@@ -310,6 +317,58 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 }
               }
             }
+            const shikitor = shikitorRef.current
+            if (shikitor) {
+              const { cursor } = shikitor
+              if (isShortcut(e, ['ArrowUp'])) {
+                if (cursor.line !== 1) return
+                setSelectionIndex((index) => {
+                  const [i, j] = index ?? [undefined, undefined]
+                  if (i === undefined || j === undefined) {
+                    return [0, 0]
+                  }
+                  const selections = selectionsGroups[i]?.selections
+                  if (!selections) return [0, 0]
+                  const nextJ = j - 1
+                  if (nextJ < 0) {
+                    return [
+                      (i - 1 + selectionsGroups.length) % selectionsGroups.length,
+                      selectionsGroups[(i - 1 + selectionsGroups.length) % selectionsGroups.length].selections.length
+                      - 1
+                    ]
+                  }
+                  return [
+                    i,
+                    nextJ
+                  ]
+                })
+                e.preventDefault()
+              }
+              if (isShortcut(e, ['ArrowDown'])) {
+                const lineCount = text.split('\n').length
+                if (cursor.line !== lineCount) return
+                setSelectionIndex((index) => {
+                  const [i, j] = index ?? [undefined, undefined]
+                  if (i === undefined || j === undefined) {
+                    return [0, 0]
+                  }
+                  const selections = selectionsGroups[i]?.selections
+                  if (!selections) return [0, 0]
+                  const nextJ = j + 1
+                  if (nextJ >= selections.length) {
+                    return [
+                      (i + 1) % selectionsGroups.length,
+                      0
+                    ]
+                  }
+                  return [
+                    i,
+                    nextJ
+                  ]
+                })
+                e.preventDefault()
+              }
+            }
           }}
         />
       </div>
@@ -347,6 +406,108 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
               ))}
             </>}
         />
+      </div>
+      <div className={`${prefix}__selections`}>
+        {selectionsGroups.map(({ title, operations, selections }, i) =>
+          <Fragment key={i}>
+            {title && title !== 'default' && <div className={`${prefix}__group`}>
+              <div className={`${prefix}__group-title`}>
+                {t(
+                  // @ts-expect-error
+                  title
+                )}
+              </div>
+              <div className={`${prefix}__group-operations`}>
+                {operations?.map(({ type, value, tooltip }, i) =>
+                  <Tooltip
+                    key={i}
+                    content={t(
+                      // @ts-expect-error
+                      tooltip
+                    )}
+                  >
+                    {type === 'icon'
+                      ? <Button
+                        shape='square'
+                        variant='text'
+                        size='small'
+                      >
+                        <span className='s-icon'>{value}</span>
+                      </Button>
+                      : <Button
+                        variant='text'
+                        size='small'
+                      >
+                        {t(
+                          // @ts-expect-error
+                          value
+                        )}
+                      </Button>}
+                  </Tooltip>
+                )}
+              </div>
+            </div>}
+            {selections?.map(
+              ({ icon, title, placeholder, operations }, j) =>
+                <div
+                  key={j}
+                  className={classnames(`${prefix}__selection`, {
+                    active: selectionIndex?.[0] === i && selectionIndex?.[1] === j
+                  })}
+                >
+                  <div className={`${prefix}__selection-icon`}>
+                    {icon.type === 'icon' && <span className='s-icon'>
+                      {icon.value}
+                    </span>}
+                    {icon.type === 'image' && <image href={icon.path} />}
+                  </div>
+                  <div className={`${prefix}__selection-content`}>
+                    <div className={`${prefix}__selection-title`}>
+                      {t(
+                        // @ts-expect-error
+                        title
+                      )}
+                    </div>
+                    {placeholder && <div className={`${prefix}__selection-placeholder`}>
+                      {t(
+                        // @ts-expect-error
+                        placeholder
+                      )}
+                    </div>}
+                  </div>
+                  <div className={`${prefix}__selection-operations`}>
+                    {operations?.map(({ type, value, tooltip }, i) =>
+                      <Tooltip
+                        key={i}
+                        content={t(
+                          // @ts-expect-error
+                          tooltip
+                        )}
+                      >
+                        {type === 'icon'
+                          ? <Button
+                            shape='square'
+                            variant='text'
+                            size='small'
+                          >
+                            <span className='s-icon'>{value}</span>
+                          </Button>
+                          : <Button
+                            variant='text'
+                            size='small'
+                          >
+                            {t(
+                              // @ts-expect-error
+                              value
+                            )}
+                          </Button>}
+                      </Tooltip>
+                    )}
+                  </div>
+                </div>
+            )}
+          </Fragment>
+        )}
       </div>
       {memoDebouncedVisibles.footer && props.footer}
       <StatusBar

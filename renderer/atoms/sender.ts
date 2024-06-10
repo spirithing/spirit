@@ -1,6 +1,39 @@
 import { atom } from 'jotai'
 import type { Asset } from 'spirit'
 
+export type SelectionGroup = {
+  title: string
+  operations?: {
+    type: 'icon' | 'text'
+    value: string
+    tooltip?: string
+  }[]
+  selections: Selection[]
+}
+
+export const selectionsGroupsAtom = atom<SelectionGroup[]>([
+  {
+    title: 'default',
+    selections: []
+  }
+])
+
+export type Selection = {
+  icon:
+    | { type: 'icon'; value: string }
+    | { type: 'image'; path: string }
+  title: string
+  group?: string
+  placeholder?: string
+  operations?: {
+    type: 'icon' | 'text'
+    value: string
+    tooltip?: string
+  }[]
+  enterAction?: string
+  clickAction?: string
+}
+
 export const senderAtom = atom<
   {
     text: string

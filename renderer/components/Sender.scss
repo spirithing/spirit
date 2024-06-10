@@ -47,6 +47,87 @@
       font-size: 14px;
     }
   }
+  &__selections {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px solid var(--td-border-level-1-color);
+  }
+  &__selection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: var(--td-radius-medium);
+    border: 1px solid transparent;
+
+    cursor: pointer;
+    user-select: none;
+    transition: .3s;
+    &.active, &:hover {
+      backdrop-filter: blur(10px);
+      background-color: color-mix(in srgb, var(--bg), transparent 30%);
+      border: 1px solid var(--td-border-level-2-color);
+    }
+    &.active {}
+    &:hover {
+      box-shadow: var(--td-shadow-1);
+    }
+    &-content {
+      flex-grow: 1;
+      width: 0;
+    }
+    &-title {
+      color: var(--td-text-color-primary);
+      font-size: 14px;
+    }
+    &-placeholder {
+      color: var(--td-text-color-placeholder);
+      font-size: 12px;
+    }
+    &-type {
+      color: var(--td-text-color-secondary);
+      font-size: 14px;
+    }
+    .s-icon {
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      background-color: var(--td-text-color-primary);
+      text-align: center;
+      color: var(--td-bg-color-container);
+      font-size: 14px;
+      border-radius: 8px;
+    }
+  }
+  &__group {
+    display: flex;
+    align-items: center;
+    margin-bottom: -5px;
+    &-title {
+      flex-grow: 1;
+      width: 0;
+      color: var(--td-text-color-placeholder);
+      font-size: 12px;
+    }
+    &-operations {
+      display: flex;
+      gap: 2px;
+      .t-button {
+        --td-bg-color-container-hover: var(--td-bg-color-container);
+        &:hover {
+          box-shadow: var(--td-shadow-1);
+        }
+      }
+    }
+    .s-icon {
+      font-size: 14px;
+    }
+  }
   &-bg {
     --sw: var(--sender-width);
     --sh: 52px;
@@ -183,7 +264,7 @@
     border-radius: var(--td-radius-medium) var(--td-radius-medium) 0 0;
     overflow: hidden;
   }
-  &__input ~ *:not(&__status-bar):not(&__resources) {
+  &__input ~ *:not(&__status-bar):not(&__resources):not(&__selections) {
     max-height: 0;
     // border-radius: 0 0 var(--td-radius-medium) var(--td-radius-medium);
     overflow-y: auto;
@@ -197,7 +278,9 @@
       max-height: 50vh;
     }
   }
-  &--footer > &__input ~ *:not(&__status-bar):not(&__resources) {
+  &--footer
+    > &__input
+    ~ *:not(&__status-bar):not(&__resources):not(&__selections) {
     max-height: 50vh;
     animation: unfold_to_40vh .3s;
   }

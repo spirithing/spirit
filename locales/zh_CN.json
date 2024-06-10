@@ -40,5 +40,6 @@
   "startup": "开机自启",
   "startupDesc": "登陆时自动启动",
   "menubar": "菜单条",
-  "menubarDesc": "在菜单条展示图标"
+  "menubarDesc": "在菜单条展示图标",
+  "recent": "最近使用"
 }
