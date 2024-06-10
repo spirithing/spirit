@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import favicon from '../resources/icon.png'
-import type { Selection } from './atoms/sender'
+import type { Selection, SelectionGroup } from './atoms/sender'
 import { selectionsGroupsAtom, senderAtom } from './atoms/sender'
 import { Configurer } from './components/Configurer'
 import { Kbd } from './components/Kbd'
@@ -42,7 +42,7 @@ export function App() {
   const applicationSelections = useMemo<Selection[]>(() =>
     applications
       ?.filter(item => item.name.toLowerCase().includes(sender?.text.toLowerCase() ?? ''))
-      ?.map(app => ({
+      .map(app => ({
         icon: app.icon
           ? { type: 'image', path: app.icon }
           : { type: 'icon', value: '🚀' },
@@ -58,18 +58,21 @@ export function App() {
       setSelectionsGroups([])
       return
     }
-    setSelectionsGroups([
+    const defaultSelections = [
+      ...applicationSelections
+    ]
+    const selectionsGroups: SelectionGroup[] = [
       {
         title: 'default',
-        selections: [
-          ...applicationSelections
-        ]
-      },
-      {
-        title: 'recent',
-        selections: []
+        selections: defaultSelections
       }
-    ])
+      // TODO display in full mode layout
+      // {
+      //   title: 'recent',
+      //   selections: []
+      // }
+    ]
+    setSelectionsGroups(selectionsGroups.filter(group => group.selections.length))
   }, [applicationSelections, sender?.text, setSelectionsGroups])
   const senderRef = useRef<SenderContext>(null)
   return <>
