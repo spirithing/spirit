@@ -322,6 +322,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
             const shikitor = shikitorRef.current
             if (shikitor) {
               const { cursor } = shikitor
+              // TODO metaOrCtrl + shift + ArrowUp
               if (isShortcut(e, ['ArrowUp'])) {
                 if (cursor.line !== 1) return
                 setSelectionIndex((index) => {
@@ -346,6 +347,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 })
                 e.preventDefault()
               }
+              // TODO metaOrCtrl + shift + ArrowDown
               if (isShortcut(e, ['ArrowDown'])) {
                 const lineCount = text?.split('\n').length ?? 1
                 if (cursor.line !== lineCount) return
