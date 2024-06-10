@@ -39,19 +39,21 @@ export function App() {
 
   const [sender] = useAtom(senderAtom)
   const [applications] = useElectronStore('applications')
-  const applicationSelections = useMemo<Selection[]>(() =>
-    applications
+  const applicationSelections = useMemo<Selection[]>(() => {
+    const filtered = applications
       ?.filter(item => item.name.toLowerCase().includes(sender?.text.toLowerCase() ?? ''))
-      .map(app => ({
-        icon: app.icon
-          ? { type: 'image', path: app.icon }
-          : { type: 'icon', value: '🚀' },
-        title: app.name.replace(/\.app$/, ''),
-        operations: [
-          { type: 'text', value: 'Application' }
-        ]
-      }))
-      ?? [], [applications, sender?.text])
+      ?? []
+    return filtered.map(app => ({
+      icon: app.icon
+        ? { type: 'image', path: app.icon }
+        : { type: 'icon', value: '🚀' },
+      title: app.name.replace(/\.app$/, ''),
+      enterAction: ['open', app.path],
+      operations: [
+        { type: 'text', value: 'Application' }
+      ]
+    }))
+  }, [applications, sender?.text])
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
     if (!sender?.text.trim().length) {

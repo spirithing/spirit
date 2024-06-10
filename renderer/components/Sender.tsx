@@ -26,6 +26,7 @@ import { useCtxCallback } from '../hooks/useCtxCallback'
 import { useEventCallback } from '../hooks/useEventCallback'
 import { useEventListener } from '../hooks/useEventListener'
 import { useElectronStore } from '../hooks/useStore'
+import { ee } from '../instances/ee'
 import { useHighlightTheme } from '../providers/theme'
 import chatroomCompletions from '../shikitor-plugins/chatroom-completions'
 import { electronStore, keyAtom } from '../store'
@@ -281,6 +282,12 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
           onMounted={shikitor => shikitor.focus()}
           onKeydown={async e => {
             if (isShortcut(e, ['Escape'])) {
+              if (selectionIndex !== undefined) {
+                setSelectionIndex(undefined)
+                e.preventDefault()
+                e.stopPropagation()
+                return
+              }
               if (text) {
                 setText('')
                 e.preventDefault()
@@ -318,6 +325,24 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                   MessagePlugin.warning(e.message)
                 }
               }
+            }
+            if (isShortcut(e, ['Enter'])) {
+              if (selectionIndex === undefined) return
+              const [i, j] = selectionIndex
+              const selection = selectionsGroups[i]?.selections[j]
+              if (!selection?.enterAction) return
+              const [act, ...args] = Array.isArray(selection.enterAction)
+                ? selection.enterAction
+                : [selection.enterAction]
+              ee.emit(
+                'act',
+                act,
+                // @ts-expect-error
+                ...args
+              )
+              MessagePlugin.info('Enter')
+              e.preventDefault()
+              e.stopPropagation()
             }
             const shikitor = shikitorRef.current
             if (shikitor) {

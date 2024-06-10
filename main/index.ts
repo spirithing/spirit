@@ -1,4 +1,5 @@
 import './store'
+import './external'
 
 // TODO listen language change by os-locale
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
