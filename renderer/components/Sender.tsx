@@ -340,7 +340,6 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 // @ts-expect-error
                 ...args
               )
-              MessagePlugin.info('Enter')
               e.preventDefault()
               e.stopPropagation()
             }
