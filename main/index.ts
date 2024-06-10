@@ -208,6 +208,7 @@ async function main() {
     const url = request.url.substr(schema.length)
     shell.openExternal(`https${url}`)
   })
+  // TODO protocol.unregisterProtocol
   app.dock.hide()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
