@@ -15,116 +15,6 @@ import { useThemeStore } from '../providers/theme'
 import { KbdRecorder } from './KbdRecorder'
 import { ModelSelector } from './selectors/ModelSelector'
 
-function OpenAI() {
-  const { t } = useTranslation()
-  const [config, setConfig] = useElectronStore('openaiConfig')
-  return <>
-    <Row gutter={12}>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('apiBaseUrl')}</label>
-          <Select
-            filterable
-            creatable
-            options={[
-              { label: 'OpenAI', value: 'https://api.openai.com/v1' },
-              { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
-            ]}
-            value={config ? config.baseURL ?? '' : ''}
-            onChange={v => setConfig({ ...config, baseURL: v as string })}
-          />
-        </div>
-        <div className='spirit-field'>
-          <label>{t('openaiConfig.defaultModel')}</label>
-          <ModelSelector
-            value={config ? config.defaultModel : undefined}
-            onChange={v => setConfig({ ...config, defaultModel: v })}
-          />
-          <div className='spirit-field__desc'>{t('openaiConfig.defaultModelTooltip')}</div>
-        </div>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('apiKey')}</label>
-          <Input
-            value={config ? config.apiKey : ''}
-            onChange={v => setConfig({ ...config, apiKey: v })}
-            type='password'
-            // @ts-ignore
-            spellCheck={false}
-          />
-        </div>
-      </Col>
-    </Row>
-  </>
-}
-
-function Bot() {
-  const { t } = useTranslation()
-  const [bot, setBot] = useBot()
-  return <>
-    <Row gutter={12}>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('name')}</label>
-          <Input
-            value={bot?.name}
-            onChange={v => setBot({ ...bot!, name: v })}
-          />
-        </div>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('desc')}</label>
-          <Textarea
-            value={bot?.description}
-            onChange={v => setBot({ ...bot!, description: v })}
-            autosize={{
-              maxRows: 6,
-              minRows: 2
-            }}
-          />
-        </div>
-      </Col>
-    </Row>
-  </>
-}
-
-function Chatroom() {
-  const { t } = useTranslation()
-  const [chatroom, { setChatroom }] = useChatroom()
-  return <>
-    <Row gutter={12}>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('name')}</label>
-          <Input
-            value={chatroom?.name}
-            onChange={v => setChatroom({ ...chatroom!, name: v })}
-          />
-        </div>
-        <div className='spirit-field'>
-          <label>{t('model')}</label>
-          <ModelSelector
-            value={chatroom?.options?.model}
-            onChange={v => setChatroom({ ...chatroom!, options: { ...chatroom?.options, model: v } })}
-          />
-        </div>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('desc')}</label>
-          <Textarea
-            value={chatroom?.description}
-            onChange={v => setChatroom({ ...chatroom!, description: v })}
-            autosize={{ minRows: 1, maxRows: 6 }}
-          />
-        </div>
-      </Col>
-    </Row>
-  </>
-}
-
 function Theme() {
   const { t } = useTranslation()
   const [themeStore, setThemeStore] = useThemeStore()
@@ -239,6 +129,116 @@ function Shortcuts() {
   </>
 }
 
+function OpenAI() {
+  const { t } = useTranslation()
+  const [config, setConfig] = useElectronStore('openaiConfig')
+  return <>
+    <Row gutter={12}>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('apiBaseUrl')}</label>
+          <Select
+            filterable
+            creatable
+            options={[
+              { label: 'OpenAI', value: 'https://api.openai.com/v1' },
+              { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
+            ]}
+            value={config ? config.baseURL ?? '' : ''}
+            onChange={v => setConfig({ ...config, baseURL: v as string })}
+          />
+        </div>
+        <div className='spirit-field'>
+          <label>{t('openaiConfig.defaultModel')}</label>
+          <ModelSelector
+            value={config ? config.defaultModel : undefined}
+            onChange={v => setConfig({ ...config, defaultModel: v })}
+          />
+          <div className='spirit-field__desc'>{t('openaiConfig.defaultModelTooltip')}</div>
+        </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('apiKey')}</label>
+          <Input
+            value={config ? config.apiKey : ''}
+            onChange={v => setConfig({ ...config, apiKey: v })}
+            type='password'
+            // @ts-ignore
+            spellCheck={false}
+          />
+        </div>
+      </Col>
+    </Row>
+  </>
+}
+
+function Chatroom() {
+  const { t } = useTranslation()
+  const [chatroom, { setChatroom }] = useChatroom()
+  return <>
+    <Row gutter={12}>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('name')}</label>
+          <Input
+            value={chatroom?.name}
+            onChange={v => setChatroom({ ...chatroom!, name: v })}
+          />
+        </div>
+        <div className='spirit-field'>
+          <label>{t('model')}</label>
+          <ModelSelector
+            value={chatroom?.options?.model}
+            onChange={v => setChatroom({ ...chatroom!, options: { ...chatroom?.options, model: v } })}
+          />
+        </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('desc')}</label>
+          <Textarea
+            value={chatroom?.description}
+            onChange={v => setChatroom({ ...chatroom!, description: v })}
+            autosize={{ minRows: 1, maxRows: 6 }}
+          />
+        </div>
+      </Col>
+    </Row>
+  </>
+}
+
+function Bot() {
+  const { t } = useTranslation()
+  const [bot, setBot] = useBot()
+  return <>
+    <Row gutter={12}>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('name')}</label>
+          <Input
+            value={bot?.name}
+            onChange={v => setBot({ ...bot!, name: v })}
+          />
+        </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('desc')}</label>
+          <Textarea
+            value={bot?.description}
+            onChange={v => setBot({ ...bot!, description: v })}
+            autosize={{
+              maxRows: 6,
+              minRows: 2
+            }}
+          />
+        </div>
+      </Col>
+    </Row>
+  </>
+}
+
 interface ConfigurerTab {
   group?: ReactNode
   value: string
@@ -255,22 +255,22 @@ const tabs = [
     Configurer: Base
   },
   {
-    icon: 'robot',
-    value: 'openAI',
-    title: 'OpenAI',
-    Configurer: OpenAI
-  },
-  {
-    icon: 'smart_toy',
-    value: 'bot',
-    title: <Translation>{t => t('bot')}</Translation>,
-    Configurer: Bot
-  },
-  {
     icon: 'palette',
     value: 'theme',
     title: <Translation>{t => t('theme')}</Translation>,
     Configurer: Theme
+  },
+  {
+    icon: 'keyboard',
+    value: 'shortcuts',
+    title: <Translation>{t => t('shortcuts')}</Translation>,
+    Configurer: Shortcuts
+  },
+  {
+    icon: 'robot',
+    value: 'openAI',
+    title: 'OpenAI',
+    Configurer: OpenAI
   },
   {
     icon: 'forum',
@@ -279,15 +279,15 @@ const tabs = [
     Configurer: Chatroom
   },
   {
+    icon: 'smart_toy',
+    value: 'bot',
+    title: <Translation>{t => t('bot')}</Translation>,
+    Configurer: Bot
+  },
+  {
     icon: 'verified_user',
     value: 'permissions',
     title: <Translation>{t => t('permissions')}</Translation>
-  },
-  {
-    icon: 'keyboard',
-    value: 'shortcuts',
-    title: <Translation>{t => t('shortcuts')}</Translation>,
-    Configurer: Shortcuts
   }
 ] satisfies ConfigurerTab[]
 
