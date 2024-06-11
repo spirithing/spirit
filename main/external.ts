@@ -14,3 +14,10 @@ ipcMain.on('open', (_, path) => {
     return
   }
 })
+ipcMain.on('wechat', (_, id) => {
+  if (isMac) {
+    fetch(`http://localhost:48065/wechat/start?session=${id}`)
+      .catch(console.error)
+    return
+  }
+})

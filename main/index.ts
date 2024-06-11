@@ -5,7 +5,9 @@ import './external'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, clipboard, type Display, globalShortcut, protocol, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'
+import * as url from 'node:url'
 import { join } from 'path'
+import type { WeChat } from 'spirit'
 
 import icon from '../resources/icon.png?asset'
 import { getStore, setStore, watch } from './store'
@@ -36,6 +38,25 @@ async function storeActiveWindowMessage() {
     console.error(e)
     setStore('activeWindow:Error', String(e))
   }
+}
+
+function refreshStoreWhenOpen() {
+  applications().then(async applications => {
+    setStore('applications', applications)
+    setStore(
+      'applications',
+      await Promise.all(applications.map(async app => {
+        return app.icon
+          ? app
+          : { ...app, icon: await getIcon(app.path) }
+      }))
+    )
+  })
+  fetch('http://localhost:48065/wechat/search').then(res =>
+    res.json() as unknown as {
+      items: WeChat[]
+    }
+  ).then(({ items }) => setStore('wechats', items))
 }
 
 function createWindow() {
@@ -102,17 +123,7 @@ function createWindow() {
   function toggleDisplay(b = !mainWindow.isVisible()) {
     if (b) {
       showInMouseHoverDisplay()
-      applications().then(async applications => {
-        setStore('applications', applications)
-        setStore(
-          'applications',
-          await Promise.all(applications.map(async app => {
-            return app.icon
-              ? app
-              : { ...app, icon: await getIcon(app.path) }
-          }))
-        )
-      })
+      refreshStoreWhenOpen()
     } else {
       setStore('display', false, displayStoreUUID)
       setTimeout(() => {
@@ -209,6 +220,10 @@ async function main() {
   protocol.registerHttpProtocol(schema, request => {
     const url = request.url.substr(schema.length)
     shell.openExternal(`https${url}`)
+  })
+  protocol.registerFileProtocol('atom', (request, callback) => {
+    const filePath = url.fileURLToPath('file://' + request.url.slice('atom://'.length))
+    callback(filePath)
   })
   // TODO protocol.unregisterProtocol
   app.dock.hide()

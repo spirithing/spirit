@@ -13,10 +13,17 @@ declare module 'spirit' {
     path: string
     icon?: string | null
   }
+  export interface WeChat {
+    icon?: { path?: string }
+    title?: string
+    subTitle?: string
+    arg: string
+  }
   export interface Store {
     display?: boolean
     system?: System
     applications?: Application[]
+    wechats?: WeChat[]
     shortcuts?: Shortcuts
     activeWindow?: ActiveWindow
     'activeWindow:Error'?: string

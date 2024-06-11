@@ -8,4 +8,9 @@ ee.on('act', (type, ...args) => {
     ipcRenderer.send('open', path)
     electronStore.set(keyAtom('display')!, false)
   }
+  if (type === 'wechat') {
+    const [arg] = args
+    ipcRenderer.send('wechat', arg)
+    electronStore.set(keyAtom('display')!, false)
+  }
 })

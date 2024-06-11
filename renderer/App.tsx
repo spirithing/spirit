@@ -54,6 +54,30 @@ export function App() {
       ]
     }))
   }, [applications, sender?.text])
+  const [wechats] = useElectronStore('wechats')
+  const wechatSelections = useMemo<Selection[]>(() => {
+    let keyword = sender?.text.toLowerCase() ?? ''
+    if (keyword.startsWith('wc ')) {
+      keyword = keyword.slice(3)
+    }
+    const filtered = wechats
+      ?.filter(item => (
+        item.title?.toLowerCase().includes(keyword)
+        || item.subTitle?.toLowerCase().includes(keyword)
+      ))
+      ?? []
+    return filtered.map(wechat => ({
+      icon: wechat.icon?.path
+        ? { type: 'image', path: `atom://${wechat.icon.path}` }
+        : { type: 'icon', value: 'person' },
+      title: wechat.title ?? 'Unknown',
+      placeholder: wechat.title !== wechat.subTitle ? wechat.subTitle : undefined,
+      enterAction: ['wechat', wechat.arg],
+      operations: [
+        { type: 'text', value: 'WeChat' }
+      ]
+    }))
+  }, [sender?.text, wechats])
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
     if (!sender?.text.trim().length) {
@@ -61,7 +85,8 @@ export function App() {
       return
     }
     const defaultSelections = [
-      ...applicationSelections
+      ...applicationSelections,
+      ...wechatSelections
     ]
     const selectionsGroups: SelectionGroup[] = [
       {
