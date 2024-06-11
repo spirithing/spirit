@@ -100,7 +100,7 @@ export function App() {
       // }
     ]
     setSelectionsGroups(selectionsGroups.filter(group => group.selections.length))
-  }, [applicationSelections, sender?.text, setSelectionsGroups])
+  }, [applicationSelections, sender?.text, setSelectionsGroups, wechatSelections])
   const senderRef = useRef<SenderContext>(null)
   return <>
     <div className='spirit-main'>
