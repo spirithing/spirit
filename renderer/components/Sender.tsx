@@ -14,7 +14,7 @@ import { useDebouncedValue } from 'foxact/use-debounced-value'
 import { useAtom } from 'jotai'
 import type { ForwardedRef, ReactNode } from 'react'
 import { Fragment } from 'react'
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
 import { Button, Dropdown, Image, ImageViewer, Input, MessagePlugin, Tooltip } from 'tdesign-react'
@@ -201,80 +201,14 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
 
   const highlightTheme = useHighlightTheme()
 
-  const senderBgRef = useRef<HTMLDivElement>(null)
-  const senderRef = useRef<HTMLDivElement>(null)
-  const sync = useCallback(async (type: string, disposedRef: { current: boolean }) => {
-    const sender = senderRef.current
-    const senderBg = senderBgRef.current
-    if (!sender || !senderBg) return
-
-    const isInited = senderBg.dataset.inited === '1'
-    if (!isInited && type !== 'init') return
-    await new Promise(resolve =>
-      setTimeout(
-        resolve,
-        {
-          init: 0,
-          resize: 200,
-          display: 200,
-          observer: 0
-        }[type]
-      )
-    )
-    if (disposedRef.current) return
-    const { x, y, width, height } = sender.getBoundingClientRect()
-    console.debug('sync', { type }, x, y, width, height)
-    if (['init', 'display', 'resize'].includes(type)) {
-      senderBg.style.setProperty('--st', y + 'px')
-      senderBg.style.setProperty('--sl', x + 'px')
-    }
-    if (['init', 'display', 'observer'].includes(type)) {
-      senderBg.style.setProperty('--sw', width + 'px')
-      senderBg.style.setProperty('--sh', height + 'px')
-    }
-    if (!isInited) {
-      senderBg.dataset.inited = '1'
-    }
-  }, [])
-  useEffect(() => {
-    const disposedRef = { current: false }
-    if (display) {
-      const senderBg = senderBgRef.current
-      if (!senderBg) return
-      ;['--sw', '--sh'].forEach(k => senderBg.style.removeProperty(k))
-      sync('display', { current: false })
-    }
-    return () => {
-      disposedRef.current = true
-    }
-  }, [display, sync])
-  useEffect(() => {
-    const sender = senderRef.current
-    const senderBg = senderBgRef.current
-    if (!sender || !senderBg) return
-    const disposedRef = { current: false }
-    sync('init', disposedRef)
-    const syncResize = sync.bind(null, 'resize', disposedRef)
-    window.addEventListener('resize', syncResize)
-    const observer = new ResizeObserver(sync.bind(null, 'observer', disposedRef))
-    observer.observe(sender)
-    return () => {
-      disposedRef.current = true
-      senderBg.dataset.inited = '0'
-      window.removeEventListener('resize', syncResize)
-      observer.disconnect()
-    }
-  }, [sync])
-
   useEventListener('keydown', e => {
     if (isShortcut(e, ['Escape'])) {
       setDisplay(false)
     }
   })
-  return <>
-    <div ref={senderBgRef} className={`${prefix}-bg`} />
+  return <div className={`${prefix}-wrap`}>
+    <div className={`${prefix}-bg`} />
     <div
-      ref={senderRef}
       className={classnames(
         prefix,
         className,
@@ -562,7 +496,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
         message={message}
       />
     </div>
-  </>
+  </div>
 }
 
 Sender.prefix = 'spirit-sender'
