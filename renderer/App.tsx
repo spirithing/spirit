@@ -98,7 +98,7 @@ export function App() {
         onIconClick={ctx => ctx.toggleFooter()}
         message={
           <>
-            This is a status bar...
+            {/* TODO message */}
           </>
         }
         header={<Chatrooms />}
