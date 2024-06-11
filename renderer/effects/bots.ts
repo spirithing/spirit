@@ -6,7 +6,7 @@ import { MessagePlugin } from 'tdesign-react'
 import { editMessage, sendMessage } from '../atoms/chatroom'
 import { openAIAtom } from '../atoms/openAI'
 import { ee } from '../instances/ee'
-import { electronStore, keyAtom } from '../store'
+import { electronStore, getThrowWhenUndefined, keyAtom } from '../store'
 
 function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
   const isBot = m.user?.name === bot.name
@@ -39,6 +39,49 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
   }
 }
 
+interface Adapter {
+  chat(bot: Bot, messages: IMessage[], options?: {
+    model?: string
+  }): AsyncIterable<[string, {
+    status: 'started' | 'running' | 'completed'
+  }]>
+}
+
+const openaiAdapter: Adapter = {
+  chat: async function*(bot, messages, options) {
+    const openai = getThrowWhenUndefined(openAIAtom)
+    const openaiConfig = getThrowWhenUndefined('openaiConfig')
+
+    const model = openaiConfig.defaultModel ?? options?.model
+    if (!model) throw new Error('Model not configured')
+
+    const completions = await openai.chat.completions.create({
+      ...options,
+      model,
+      // eslint-disable-next-line camelcase
+      max_tokens: 4096,
+      messages: [
+        {
+          content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
+          role: 'system'
+        },
+        ...messages?.map(messageTransform.bind(null, bot)).reverse() ?? []
+      ],
+      stream: true
+    })
+    let streamMessage = ''
+    yield [streamMessage, { status: 'started' }]
+    for await (const { choices: [{ delta }] } of completions) {
+      streamMessage += delta.content ?? ''
+      yield [streamMessage, {
+        ...delta,
+        status: 'running'
+      }]
+    }
+    yield [streamMessage, { status: 'completed' }]
+  }
+}
+
 ee.on('addMessage', async (m, { id, messages, options }) => {
   const botAtom = keyAtom('bot')
   if (!botAtom) return
@@ -68,7 +111,6 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     return
   }
 
-  const messageTransformWithBot = messageTransform.bind(null, bot)
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
   if (import.meta.env.DEV && m.text === 'd') {
@@ -82,23 +124,15 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     editTo(0, 'Inputting' + '.'.repeat(count))
     count = (count + 1) % 4
   }, 300)
-  const completions = await openai.chat.completions.create({
-    model,
-    // eslint-disable-next-line camelcase
-    max_tokens: 4096,
-    messages: [
-      {
-        content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
-        role: 'system'
-      },
-      ...messages?.map(messageTransformWithBot).reverse() ?? []
-    ],
-    stream: true
-  }).finally(() => clearInterval(t))
-  editTo(uuid, '')
-  let streamMessage = ''
-  for await (const { choices: [{ delta }] } of completions) {
-    streamMessage += delta.content ?? ''
-    editTo(0, streamMessage)
+  try {
+    for await (
+      const [message, { status }] of openaiAdapter.chat(bot, messages ?? [], { model: options?.model })
+    ) {
+      if (status === 'started') clearInterval(t)
+      editTo(uuid, message)
+    }
+  } catch (e) {
+    // @ts-ignore
+    editTo(uuid, 'message' in e ? e.message : e.toString())
   }
 })
