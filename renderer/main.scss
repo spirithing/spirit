@@ -2,9 +2,6 @@
   0% {
     opacity: 0;
   }
-  50% {
-    opacity: 0;
-  }
   100% {
     opacity: 1;
   }
@@ -42,7 +39,7 @@ body {
 
   height: 100vh;
   opacity: 0;
-  animation: fade-out .1s forwards;
+  animation: fade-out .2s forwards;
   #root {
     --offset-y: 600px;
 
@@ -54,7 +51,7 @@ body {
       color-mix(in srgb, var(--td-text-color-primary), transparent 40%) 0%,
       transparent 100%
     );
-    animation: move-out .1s forwards;
+    animation: move-out .2s forwards;
     &::before {
       content: '';
       position: absolute;
