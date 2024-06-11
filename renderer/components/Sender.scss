@@ -27,10 +27,6 @@
       var(--td-brand-color) 100%
     );
 
-    &:not([data-inited='1']) {
-      left: 50%;
-      transform: translateX(-50%);
-    }
     position: absolute;
     top: 0;
     left: 0;
