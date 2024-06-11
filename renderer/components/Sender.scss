@@ -1,5 +1,5 @@
 .spirit-sender {
-  --icon-size: 32px;
+  --min-height: 32px;
   --bg-color: color-mix(in srgb, var(--bg), #0001 10%);
 
   position: relative;
@@ -38,7 +38,6 @@
     border-radius: var(--td-radius-medium);
   }
   &__input {
-    min-height: var(--icon-size);
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -263,10 +262,10 @@
   }
 }
 .spirit-sender .shikitor {
-  --line-height: var(--icon-size);
+  --line-height: var(--min-height);
 
   flex-grow: 1;
-  min-height: 100% !important;
+  min-height: var(--min-height) !important;
   background-color: transparent !important;
   .shiki {
     background-color: transparent !important;
