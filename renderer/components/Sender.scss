@@ -52,11 +52,13 @@
     flex-direction: column;
     gap: 10px;
 
-    max-height: 250px;
+    max-height: 0;
 
     overflow-y: auto;
+    transition: .3s;
     &:not(:empty) {
       padding: 10px;
+      max-height: 250px;
       border-top: 1px solid var(--td-border-level-1-color);
     }
   }
