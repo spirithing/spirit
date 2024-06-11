@@ -10,6 +10,7 @@
   width: 100%;
   border-radius: var(--td-radius-medium);
   background-color: var(--bg-color);
+  opacity: .9;
   border: 2px solid var(--bg);
   // TODO make shikitor support `position: fixed` broken
   // backdrop-filter: blur(10px);
@@ -32,6 +33,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    opacity: .6;
     background-image: var(--image);
     border-radius: var(--td-radius-medium);
   }
