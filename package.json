@@ -32,6 +32,7 @@
     "i18next": "^23.11.5",
     "lodash-es": "^4.17.21",
     "markdown-it": "^14.1.0",
+    "meshgrad": "^0.0.15",
     "openai": "^4.47.1",
     "react-i18next": "^14.1.2",
     "shiki": "^1.6.2",
