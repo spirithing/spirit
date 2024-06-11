@@ -54,6 +54,7 @@ function createWindow() {
     frame: false,
     hasShadow: false,
     alwaysOnTop: true,
+    enableLargerThanScreen: true,
     icon,
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
@@ -65,8 +66,8 @@ function createWindow() {
   function calcBounds(display: Display) {
     return {
       ...display.bounds,
-      y: -10,
-      height: display.workAreaSize.height
+      y: display.bounds.y - 10,
+      height: display.bounds.height + 20
     }
   }
   async function showInMouseHoverDisplay() {
