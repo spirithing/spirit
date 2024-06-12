@@ -41,5 +41,7 @@
   "startupDesc": "登陆时自动启动",
   "menubar": "菜单条",
   "menubarDesc": "在菜单条展示图标",
-  "recent": "最近使用"
+  "recent": "最近使用",
+  "more": "更多",
+  "compact": "紧凑"
 }

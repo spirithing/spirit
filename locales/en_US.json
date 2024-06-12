@@ -41,5 +41,7 @@
   "startupDesc": "Launch at login",
   "menubar": "Menu bar",
   "menubarDesc": "Show icon in menu bar",
-  "recent": "Recent"
+  "recent": "Recent",
+  "more": "More",
+  "compact": "Compact"
 }
