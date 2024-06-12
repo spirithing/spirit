@@ -61,11 +61,24 @@ function LayoutSwitcher() {
   const prefix = 'spirit-layout-switcher'
   const [common, setCommon] = useElectronStore('common')
   const layout = common?.layout ?? 'auto'
-  return <div className={prefix}>
+  return <div
+    className={prefix}
+    onClick={e => {
+      const target = e.target as HTMLElement
+      const card = target.closest('.t-card')
+      if (!card) return
+      const layout = card.classList.contains('compact')
+        ? 'compact'
+        : card.classList.contains('default')
+        ? 'default'
+        : 'more'
+      setCommon({ ...common!, layout })
+    }}
+  >
     <Card
       size='small'
       hoverShadow
-      className={classnames(layout === 'compact' ? `${prefix}--active` : '')}
+      className={classnames('compact', layout === 'compact' ? `${prefix}--active` : '')}
       header={
         <>
           <span className='s-icon'>grid_view</span>
@@ -87,7 +100,7 @@ function LayoutSwitcher() {
     <Card
       size='small'
       hoverShadow
-      className={classnames(layout === 'default' ? `${prefix}--active` : '', `${prefix}--active`)}
+      className={classnames('default', layout === 'default' ? `${prefix}--active` : '')}
       header={
         <>
           <span className='s-icon'>grid_on</span>
@@ -112,7 +125,7 @@ function LayoutSwitcher() {
     <Card
       size='small'
       hoverShadow
-      className={classnames(layout === 'more' ? `${prefix}--active` : '')}
+      className={classnames('more', layout === 'more' ? `${prefix}--active` : '')}
       header={
         <>
           <span className='s-icon'>view_compact</span>
