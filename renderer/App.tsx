@@ -33,7 +33,9 @@ export function App() {
   useEventListener('keydown', e => {
     if (isShortcut(e, ['meta', ','])) {
       senderRef.current?.toggleFooter()
+      e.stopPropagation()
       e.preventDefault()
+      return
     }
   })
 
