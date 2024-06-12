@@ -27,9 +27,37 @@ function useDisplay() {
   }, [display])
 }
 
+const layouts = ['compact', 'default', 'more'] as const
+
+function useLayoutZoom() {
+  const [common, setCommon] = useElectronStore('common')
+  const layout = (common?.layout ?? 'default') as typeof layouts[number]
+  const zoom = (up: boolean) => {
+    const index = layouts.indexOf(layout)
+    const next = layouts[(index + (up ? 1 : -1) + layouts.length) % layouts.length]
+    setCommon({ ...common!, layout: next })
+  }
+  useEventListener('keydown', e => {
+    if (isShortcut(e, ['metaOrCtrl', '-'])) {
+      zoom(false)
+      e.stopPropagation()
+      e.preventDefault()
+      return
+    }
+    if (isShortcut(e, ['metaOrCtrl', '+'])) {
+      zoom(true)
+      e.stopPropagation()
+      e.preventDefault()
+      return
+    }
+  })
+  return layout
+}
+
 export function App() {
   const { t } = useTranslation()
   useDisplay()
+  const layout = useLayoutZoom()
   useEventListener('keydown', e => {
     if (isShortcut(e, ['meta', ','])) {
       senderRef.current?.toggleFooter()
@@ -41,9 +69,12 @@ export function App() {
 
   const [sender] = useAtom(senderAtom)
   const [applications] = useElectronStore('applications')
+  const keyword = useMemo(() => sender?.text.toLowerCase().trim() ?? '', [sender?.text])
   const applicationSelections = useMemo<Selection[]>(() => {
+    if (keyword === '') return []
+
     const filtered = applications
-      ?.filter(item => item.name.toLowerCase().includes(sender?.text.toLowerCase() ?? ''))
+      ?.filter(item => item.name.toLowerCase().includes(keyword))
       ?? []
     return filtered.map(app => ({
       icon: app.icon
@@ -55,17 +86,19 @@ export function App() {
         { type: 'text', value: 'Application' }
       ]
     }))
-  }, [applications, sender?.text])
+  }, [applications, keyword])
   const [wechats] = useElectronStore('wechats')
   const wechatSelections = useMemo<Selection[]>(() => {
-    let keyword = sender?.text.toLowerCase() ?? ''
+    if (keyword === '') return []
+
+    let matchKeyword = keyword
     if (keyword.startsWith('wc ')) {
-      keyword = keyword.slice(3)
+      matchKeyword = keyword.slice(3)
     }
     const filtered = wechats
       ?.filter(item => (
-        item.title?.toLowerCase().includes(keyword)
-        || item.subTitle?.toLowerCase().includes(keyword)
+        item.title?.toLowerCase().includes(matchKeyword)
+        || item.subTitle?.toLowerCase().includes(matchKeyword)
       ))
       ?? []
     return filtered.map(wechat => ({
@@ -79,10 +112,10 @@ export function App() {
         { type: 'text', value: 'WeChat' }
       ]
     }))
-  }, [sender?.text, wechats])
+  }, [keyword, wechats])
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
-    if (!sender?.text.trim().length) {
+    if (layout !== 'more' && !sender?.text.trim().length) {
       setSelectionsGroups([])
       return
     }
@@ -94,15 +127,24 @@ export function App() {
       {
         title: 'default',
         selections: defaultSelections
+      },
+      {
+        title: 'recent',
+        selections: layout === 'more'
+          ? [
+            /* TODO record history actions */
+          ]
+          : []
       }
-      // TODO display in full mode layout
-      // {
-      //   title: 'recent',
-      //   selections: []
-      // }
     ]
     setSelectionsGroups(selectionsGroups.filter(group => group.selections.length))
-  }, [applicationSelections, sender?.text, setSelectionsGroups, wechatSelections])
+  }, [
+    applicationSelections,
+    layout,
+    sender?.text,
+    setSelectionsGroups,
+    wechatSelections
+  ])
   const senderRef = useRef<SenderContext>(null)
   return <>
     <div className='spirit-main'>
@@ -128,7 +170,7 @@ export function App() {
             {/* TODO message */}
           </>
         }
-        header={<Chatrooms />}
+        header={layout !== 'compact' && <Chatrooms />}
         footer={<Configurer />}
       />
       <Messages />
