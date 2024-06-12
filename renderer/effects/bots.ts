@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es'
-import ollama from 'ollama'
+// import ollama from 'ollama'
 import type OpenAI from 'openai'
 import type { Bot, IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
@@ -83,26 +83,26 @@ const openaiAdapter: Adapter = {
   }
 }
 
-const ollamaAdapter: Adapter = {
-  chat: async function*(bot, messages, options) {
-    const completions = await ollama.chat({
-      model: 'llama2-chinese:13b',
-      messages: messages.map(m => ({
-        role: m.user?.name === bot.name ? 'assistant' : 'user',
-        content: m.text ?? '',
-        images: m.assets?.map(({ url }) => url) ?? []
-      })),
-      stream: true
-    })
-    let streamMessage = ''
-    yield [streamMessage, { status: 'started' }]
-    for await (const { message } of completions) {
-      streamMessage += message.content ?? ''
-      yield [streamMessage, { status: 'running' }]
-    }
-    yield [streamMessage, { status: 'completed' }]
-  }
-}
+// const ollamaAdapter: Adapter = {
+//   chat: async function*(bot, messages, options) {
+//     const completions = await ollama.chat({
+//       model: 'llama2-chinese:13b',
+//       messages: messages.map(m => ({
+//         role: m.user?.name === bot.name ? 'assistant' : 'user',
+//         content: m.text ?? '',
+//         images: m.assets?.map(({ url }) => url) ?? []
+//       })),
+//       stream: true
+//     })
+//     let streamMessage = ''
+//     yield [streamMessage, { status: 'started' }]
+//     for await (const { message } of completions) {
+//       streamMessage += message.content ?? ''
+//       yield [streamMessage, { status: 'running' }]
+//     }
+//     yield [streamMessage, { status: 'completed' }]
+//   }
+// }
 
 ee.on('addMessage', async (m, { id, messages, options }) => {
   const botAtom = keyAtom('bot')
