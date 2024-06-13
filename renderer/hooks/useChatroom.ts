@@ -126,7 +126,6 @@ export const useChatroom = () => {
         const chatroom = typeof chatroomOrGetter === 'function'
           ? chatroomOrGetter(old)
           : chatroomOrGetter
-        console.log('setChatroom', chatroom)
         updateChatroomMeta(chatroom.id, {
           name: chatroom.name,
           description: chatroom.description
