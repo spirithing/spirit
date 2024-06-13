@@ -45,8 +45,8 @@ export function setStore<
   fs.writeFileSync(configPath, JSON.stringify(value ?? {}, null, 2))
   const storeListeners = storeListenersMap.get(key)
   if (!storeListeners || storeListeners.size === 0) return
-  storeListeners.forEach((listener, key) => {
-    if (uuid !== undefined && key === uuid) return
+  storeListeners.forEach((listener, storeUUID) => {
+    if (uuid !== undefined && storeUUID === uuid) return
     listener(value)
   })
 }
