@@ -29,7 +29,6 @@ export function Chatrooms(props: ChatroomsProps) {
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
   const [chatroomMetas] = useElectronStore('chatroomMetas', {})
-  console.log({ chatroomMetas })
   useEventListener('keydown', e => {
     if (chatrooms.length > 1 /* TODO add text is empty check */) {
       if (sender?.text) return
@@ -64,7 +63,6 @@ export function Chatrooms(props: ChatroomsProps) {
       return
     }
   })
-  console.log(chatroomMetas)
   return <Tabs
     style={style}
     className={classnames(prefix, className)}
