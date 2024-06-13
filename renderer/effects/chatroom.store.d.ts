@@ -41,6 +41,9 @@ declare module 'spirit' {
   export interface Store {
     activeChatroom: string
     chatrooms: string[]
+    chatroomMetas: {
+      [k: string]: Pick<ChatRoom, 'name' | 'description'>
+    }
     [k: `chatroom:${string}`]: ChatRoom
     // TODO
     // [k: `messages:${string}`]: IMessage[]

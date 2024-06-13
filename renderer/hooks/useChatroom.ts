@@ -1,11 +1,34 @@
 import { useCallback, useMemo } from 'react'
-import type { ChatRoom, IMessage, IUser } from 'spirit'
+import type { ChatRoom, IMessage, IUser, Store } from 'spirit'
 
 import { ipcRenderer } from '../electron'
 import { useElectronStore } from '../hooks/useStore'
+import { getFromStore } from '../store'
 import { keyUUID } from '../utils/keyUUIDs'
 import { uuid } from '../utils/uuid'
 import { useUser } from './useUser'
+
+function updateChatroomMeta(id: string, chatroom: Pick<ChatRoom, 'name' | 'description'>) {
+  let chatroomMetas: Store['chatroomMetas'] | undefined
+  try {
+    chatroomMetas = getFromStore('chatroomMetas')
+  } catch (e) {
+    console.error(e)
+    chatroomMetas = {}
+  }
+  ipcRenderer.sendSync(
+    'setStore',
+    uuid(),
+    'chatroomMetas',
+    {
+      ...chatroomMetas,
+      [id]: {
+        name: chatroom.name,
+        description: chatroom.description
+      }
+    }
+  )
+}
 
 export const useChatroom = () => {
   const [defaultU] = useUser()
@@ -98,7 +121,19 @@ export const useChatroom = () => {
 
   return [eCR, {
     setActiveChatroom,
-    setChatroom,
+    setChatroom: useCallback<typeof setChatroom>((chatroomOrGetter) => {
+      return setChatroom(old => {
+        const chatroom = typeof chatroomOrGetter === 'function'
+          ? chatroomOrGetter(old)
+          : chatroomOrGetter
+        console.log('setChatroom', chatroom)
+        updateChatroomMeta(chatroom.id, {
+          name: chatroom.name,
+          description: chatroom.description
+        })
+        return chatroom
+      })
+    }, [setChatroom]),
     sendMessage,
     editMessage,
     delMessage,
@@ -143,6 +178,7 @@ export const useChatrooms = () => {
       `chatroom:${id}`,
       chatroom
     )
+    updateChatroomMeta(id, chatroom)
   }, [])
 
   return [chatrooms, {

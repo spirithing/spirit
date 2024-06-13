@@ -3,6 +3,7 @@ import './Chatrooms.scss'
 import { classnames } from '@shikitor/core/utils'
 import { useAtom } from 'jotai'
 import type { CSSProperties, ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { UserIcon } from 'tdesign-icons-react'
 import { Avatar, AvatarGroup, Button, Tabs, Tooltip } from 'tdesign-react'
 
@@ -11,6 +12,7 @@ import { senderAtom } from '../../atoms/sender'
 import { Kbd } from '../../components/Kbd'
 import { useChatroom, useChatrooms } from '../../hooks/useChatroom'
 import { useEventListener } from '../../hooks/useEventListener'
+import { useElectronStore } from '../../hooks/useStore'
 import { isShortcut } from '../../utils/isShortcut'
 import { uuid } from '../../utils/uuid'
 
@@ -20,11 +22,14 @@ export interface ChatroomsProps {
 }
 
 export function Chatrooms(props: ChatroomsProps) {
+  const { t } = useTranslation()
   const { prefix } = Chatrooms
   const { className, style } = props
   const [sender] = useAtom(senderAtom)
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
+  const [chatroomMetas] = useElectronStore('chatroomMetas', {})
+  console.log({ chatroomMetas })
   useEventListener('keydown', e => {
     if (chatrooms.length > 1 /* TODO add text is empty check */) {
       if (sender?.text) return
@@ -59,89 +64,93 @@ export function Chatrooms(props: ChatroomsProps) {
       return
     }
   })
+  console.log(chatroomMetas)
   return <Tabs
     style={style}
     className={classnames(prefix, className)}
-    list={chatrooms.map((c, index) => ({
-      value: c,
-      label: <Tooltip
-        overlayClassName={`${prefix}-tooltip`}
-        content={
-          <>
-            {c}
-            <div className={`${'spirit'}-chatroom-desc`}>
-              No description for now.
-            </div>
-            <div className={`${'spirit'}-chatroom-kbds`}>
-              {[
-                activeChatroom.id !== c && index < 9
-                  ? <Kbd key='k0' keys={['meta', `${index + 1}`]} />
-                  : undefined,
-                activeChatroom.id !== c && index === chatrooms.length - 1
-                  ? <Kbd key='k1' keys={['meta', 'shift', 'right']} />
-                  : undefined,
-                chatrooms[index - 1] === activeChatroom.id
-                  ? <Kbd key='k2' keys={['meta', 'right']} />
-                  : undefined,
-                chatrooms[index + 1] === activeChatroom.id
-                  ? <Kbd key='k3' keys={['meta', 'left']} />
-                  : undefined
-              ]
-                .filter(<T,>(v: T | undefined): v is T => !!v)
-                .reduce(
-                  (acc, curr, currentIndex) =>
-                    acc.length > 0
-                      ? [...acc, <span key={currentIndex}>/</span>, curr]
-                      : [curr],
-                  [] as ReactNode[]
-                )}
-            </div>
-          </>
-        }
-        placement='top-left'
-        popperOptions={{
-          modifiers: [{ name: 'offset', options: { offset: [0, -20] } }]
-        }}
-      >
-        <div className={`${'spirit'}-chatroom`}>
-          <AvatarGroup cascading='left-up'>
-            <Avatar
-              size='18px'
-              shape='circle'
-              icon={<UserIcon />}
-            />
-            <Avatar
-              size='18px'
-              shape='circle'
-              image={chatgptIcon}
-            />
-          </AvatarGroup>
-          <span className={`${'spirit'}-chatroom-label`}>{c}</span>
-          {c !== 'default' && <Tooltip
-            content={
-              <>
-                Archive {c === activeChatroom.id ? 'current' : 'this'} chatroom
-                {c === activeChatroom.id && <Kbd keys={['meta', 'w']} />}
-              </>
-            }
-            placement='bottom'
-          >
-            <Button
-              shape='circle'
-              variant='text'
-              size='small'
-              onClick={e => {
-                e.stopPropagation()
-                setActiveChatroom(chatrooms[index + 1] ?? 'default')
-                delChatroom(c)
-              }}
+    list={chatrooms.map((c, index) => {
+      const meta = chatroomMetas[c] ?? {}
+      return {
+        value: c,
+        label: <Tooltip
+          overlayClassName={`${prefix}-tooltip`}
+          content={
+            <>
+              {meta.name ?? c}
+              <div className={`${'spirit'}-chatroom-desc`}>
+                {meta.description ?? t('noDescription')}
+              </div>
+              <div className={`${'spirit'}-chatroom-kbds`}>
+                {[
+                  activeChatroom.id !== c && index < 9
+                    ? <Kbd key='k0' keys={['meta', `${index + 1}`]} />
+                    : undefined,
+                  activeChatroom.id !== c && index === chatrooms.length - 1
+                    ? <Kbd key='k1' keys={['meta', 'shift', 'right']} />
+                    : undefined,
+                  chatrooms[index - 1] === activeChatroom.id
+                    ? <Kbd key='k2' keys={['meta', 'right']} />
+                    : undefined,
+                  chatrooms[index + 1] === activeChatroom.id
+                    ? <Kbd key='k3' keys={['meta', 'left']} />
+                    : undefined
+                ]
+                  .filter(<T,>(v: T | undefined): v is T => !!v)
+                  .reduce(
+                    (acc, curr, currentIndex) =>
+                      acc.length > 0
+                        ? [...acc, <span key={currentIndex}>/</span>, curr]
+                        : [curr],
+                    [] as ReactNode[]
+                  )}
+              </div>
+            </>
+          }
+          placement='top-left'
+          popperOptions={{
+            modifiers: [{ name: 'offset', options: { offset: [0, -20] } }]
+          }}
+        >
+          <div className={`${'spirit'}-chatroom`}>
+            <AvatarGroup cascading='left-up'>
+              <Avatar
+                size='18px'
+                shape='circle'
+                icon={<UserIcon />}
+              />
+              <Avatar
+                size='18px'
+                shape='circle'
+                image={chatgptIcon}
+              />
+            </AvatarGroup>
+            <span className={`${'spirit'}-chatroom-label`}>{meta.name ?? c}</span>
+            {c !== 'default' && <Tooltip
+              content={
+                <>
+                  Archive {c === activeChatroom.id ? 'current' : 'this'} chatroom
+                  {c === activeChatroom.id && <Kbd keys={['meta', 'w']} />}
+                </>
+              }
+              placement='bottom'
             >
-              <span className='s-icon'>archive</span>
-            </Button>
-          </Tooltip>}
-        </div>
-      </Tooltip>
-    }))}
+              <Button
+                shape='circle'
+                variant='text'
+                size='small'
+                onClick={e => {
+                  e.stopPropagation()
+                  setActiveChatroom(chatrooms[index + 1] ?? 'default')
+                  delChatroom(c)
+                }}
+              >
+                <span className='s-icon'>archive</span>
+              </Button>
+            </Tooltip>}
+          </div>
+        </Tooltip>
+      }
+    })}
     value={activeChatroom.id}
     onChange={v => setActiveChatroom(v as string)}
     action={

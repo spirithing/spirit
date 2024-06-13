@@ -43,5 +43,6 @@
   "menubarDesc": "Show icon in menu bar",
   "recent": "Recent",
   "more": "More",
-  "compact": "Compact"
+  "compact": "Compact",
+  "noDescription": "No description"
 }

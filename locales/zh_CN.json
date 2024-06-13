@@ -43,5 +43,6 @@
   "menubarDesc": "在菜单条展示图标",
   "recent": "最近使用",
   "more": "更多",
-  "compact": "紧凑"
+  "compact": "紧凑",
+  "noDescription": "暂无介绍"
 }
