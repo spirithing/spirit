@@ -6,6 +6,7 @@ import { Translation, useTranslation } from 'react-i18next'
 import type { BundledTheme } from 'shiki'
 import { bundledThemes } from 'shiki'
 import { Col, Input, Link, Row, Select, Tabs, Textarea, Tooltip } from 'tdesign-react'
+import { AIServices } from '../configurers/AIServices'
 
 import { Base } from '../configurers/Base'
 import { useBot } from '../hooks/useBot'
@@ -265,6 +266,12 @@ const tabs = [
     value: 'shortcuts',
     title: <Translation>{t => t('shortcuts')}</Translation>,
     Configurer: Shortcuts
+  },
+  {
+    icon: 'robot',
+    value: 'aiServices',
+    title: 'AI Services',
+    Configurer: AIServices
   },
   {
     icon: 'robot',

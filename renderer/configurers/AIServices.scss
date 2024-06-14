@@ -1,0 +1,155 @@
+.spirit-ai-services {}
+
+.spirit-list-wrap {
+  display: flex;
+  gap: 10px;
+}
+.spirit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 350px;
+  height: 100%;
+  .s-icon {
+    user-select: none;
+  }
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 0 10px 10px;
+    border-bottom: 1px solid var(--td-border-level-1-color);
+    cursor: pointer;
+    &__operations {
+      display: flex;
+    }
+  }
+  &-item {
+    --td-size-3: 25px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px;
+    border-radius: var(--td-radius-medium);
+    border: 2px solid transparent;
+
+    cursor: pointer;
+    transition: .3s;
+    &.active {
+      cursor: unset;
+      border: 2px solid var(--td-brand-color);
+    }
+    &:hover {
+      --td-size-3: 10px;
+
+      box-shadow: var(--td-shadow-1);
+      border: 2px solid var(--td-brand-color-hover);
+    }
+    &:hover &__operations {
+      opacity: 1;
+    }
+    &__content {
+      flex-grow: 1;
+      width: 0;
+    }
+    &__title {
+      color: var(--td-text-color-primary);
+    }
+    &__description {
+      color: var(--td-text-color-placeholder);
+      font-size: 12px;
+    }
+    &__operations {
+      opacity: 0;
+      transition: .3s;
+    }
+    .t-avatar {
+      transition: .3s;
+    }
+  }
+}
+.spirit-list-item-preview {
+  flex-grow: 1;
+  padding: 0 10px;
+  width: 0;
+  border-left: 1px solid var(--td-border-level-1-color);
+  &-header {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid var(--td-border-level-1-color);
+    &__type-selector {
+      --w: 40px;
+      --s: 160px;
+
+      z-index: 10;
+      position: absolute;
+      left: calc(var(--s) - var(--w));
+      top: calc(var(--s) - 40px);
+
+      width: var(--w);
+      transition: .3s;
+      &:hover {
+        --w: 120px;
+      }
+      .t-input {
+        padding: 0 5px;
+        background-color: color-mix(
+          in srgb,
+          var(--td-bg-color-container),
+          transparent 60%
+        );
+        backdrop-filter: blur(16px);
+      }
+      input {
+        mix-blend-mode: difference;
+      }
+      .t-input .t-input__prefix:not(:empty) {
+        margin-right: 5px;
+      }
+      &-option {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        width: 100%;
+      }
+    }
+    &__base {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      flex-grow: 1;
+      width: 0;
+    }
+    &__title {
+      display: flex;
+      align-items: center;
+
+      font-size: 18px;
+      font-weight: bold;
+    }
+    &__operations {
+      display: flex;
+      gap: 10px;
+
+      margin-left: auto;
+      .t-button:hover {
+        box-shadow: var(--td-shadow-1);
+      }
+    }
+    &__description {
+      flex-grow: 1;
+      height: 0;
+
+      color: var(--td-text-color-placeholder);
+      font-size: 12px;
+    }
+  }
+}
