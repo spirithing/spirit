@@ -261,14 +261,31 @@ interface ListProps<T extends ListItem> {
     [key: string]: ListType
   }
   activeUUID: T['uuid'] | undefined
-  onActiveChange: (uuid: T['uuid']) => void
+  onActiveChange: (uuid: T['uuid'] | undefined) => void
 }
 function List(props: ListProps<ListItem>) {
   const { prefix } = List
   const { list, types, activeUUID, onActiveChange } = props
+  const [keywords, setKeywords] = useState('')
+  const filteredList = useMemo(() => {
+    onActiveChange(list?.[0]?.uuid)
+    if (!keywords) return list
+    const keywordArr = keywords.split(' ').filter(Boolean)
+    return list?.filter(item =>
+      keywordArr.every(keyword =>
+        item.name.includes(keyword)
+        || (item.description && item.description.includes(keyword))
+      )
+    )
+  }, [keywords, list, onActiveChange])
   return <div className={prefix}>
     <div className={`${prefix}-header`}>
-      <Input />
+      <Input
+        size='large'
+        placeholder='Search'
+        value={keywords}
+        onChange={v => setKeywords(v)}
+      />
       <div className={`${prefix}-header__operations`}>
         <Button variant='text' shape='square'>
           <span className='s-icon'>add</span>
@@ -278,7 +295,7 @@ function List(props: ListProps<ListItem>) {
         </Button>
       </div>
     </div>
-    {list?.map(item =>
+    {filteredList?.map(item =>
       <div
         key={item.uuid}
         className={classnames(`${prefix}-item`, {
