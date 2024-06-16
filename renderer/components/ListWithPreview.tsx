@@ -9,6 +9,7 @@ import {
   Button,
   DialogPlugin,
   Input,
+  Link,
   MessagePlugin,
   Select,
   Textarea,
@@ -16,6 +17,7 @@ import {
 } from 'tdesign-react'
 import type { UploadFile } from 'tdesign-react/es/upload/type'
 
+import notFound from '../assets/not_found.svg'
 import { useEventCallback } from '../hooks/useEventCallback'
 import type { WithPrefixProps } from '../utils/prefixes'
 import { omitPrefixProps, trimPrefixProps } from '../utils/prefixes'
@@ -436,7 +438,7 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
     list,
     types
   }] = omitPrefixProps(props, 'itemPreview')
-  const [activeUUID, setActiveUUID] = useState<string | undefined>(list?.[0].uuid)
+  const [activeUUID, setActiveUUID] = useState<string | undefined>(list?.[0]?.uuid)
   const activeIndex = useMemo(() => list?.findIndex(item => item.uuid === activeUUID), [activeUUID, list])
   const item = useMemo<T | undefined>(() => {
     if (activeIndex === undefined) return
@@ -464,18 +466,40 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
         setActiveUUID(newItem.uuid)
       }}
     />
-    {item && <ListItemPreview
-      next={() => {
-        let nextItem: T | undefined
-        if (activeIndex === -1 || activeIndex === undefined) {
-          nextItem = list?.[0]
-        } else {
-          nextItem = list?.[activeIndex + 1] ?? list?.[activeIndex - 1] ?? list?.[0]
-        }
-        setActiveUUID(nextItem?.uuid)
-      }}
-      {...{ item, types }}
-      {...trimPrefixProps(itemPreviewProps, 'itemPreview')}
-    />}
+    {item
+      ? <ListItemPreview
+        next={() => {
+          let nextItem: T | undefined
+          if (activeIndex === -1 || activeIndex === undefined) {
+            nextItem = list?.[0]
+          } else {
+            nextItem = list?.[activeIndex + 1] ?? list?.[activeIndex - 1] ?? list?.[0]
+          }
+          setActiveUUID(nextItem?.uuid)
+        }}
+        {...{ item, types }}
+        {...trimPrefixProps(itemPreviewProps, 'itemPreview')}
+      />
+      : <div className='spirit-list-wrap__empty'>
+        <img src={notFound} />
+        <span>
+          暂无可用 AI 服务，<Link
+            theme='primary'
+            onClick={() => {
+              const newItem = {
+                uuid: uuid(),
+                name: t('untitled'),
+                option: {
+                  type: Object.keys(types)[0]
+                }
+              } as T
+              itemPreviewProps['itemPreview:onCreate']?.(newItem)
+              setActiveUUID(newItem.uuid)
+            }}
+          >
+            点击
+          </Link>创建服务商。
+        </span>
+      </div>}
   </div>
 }

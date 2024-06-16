@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 import type { AIService, AIServiceOption, AIServiceOptions } from 'spirit'
 import { Col, Input, Row } from 'tdesign-react'
 
-import selfIcon from '../../resources/icon.svg'
 import chatgptIcon from '../assets/chatgpt.svg'
 import cozeIcon from '../assets/coze.svg'
 import ollamaIcon from '../assets/ollama.svg'
@@ -141,29 +140,7 @@ export interface AIServicesProps {
 export function AIServices(props: AIServicesProps) {
   const { prefix } = AIServices
   const { className, style } = props
-  const [aiServices, setAIServices] = useState<AIService[]>([
-    {
-      uuid: '1',
-      name: 'OpenAI',
-      option: {
-        type: 'openai',
-        apiHost: 'https://api.openai.com',
-        apiKey: 'openai-api',
-        defaultModel: 'gpt-3.5-turbo'
-      }
-    },
-    {
-      uuid: '2',
-      name: 'Self',
-      description: 'Use the local AI service',
-      avatar: selfIcon,
-      option: {
-        type: 'ollama',
-        apiHost: 'https://api.openai.com',
-        defaultModel: 'gpt-3.5-turbo'
-      }
-    }
-  ])
+  const [aiServices, setAIServices] = useState<AIService[]>([])
   return <ListWithPreview
     style={style}
     className={classnames(prefix, className)}
