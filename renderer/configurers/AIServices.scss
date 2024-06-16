@@ -69,6 +69,9 @@
     .t-avatar {
       transition: .3s;
     }
+    .t-avatar .t-image {
+      height: 32px;
+    }
   }
 }
 .spirit-list-item-preview {
