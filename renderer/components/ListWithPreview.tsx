@@ -11,6 +11,7 @@ import {
   Input,
   Link,
   MessagePlugin,
+  Popconfirm,
   Select,
   Textarea,
   Upload
@@ -290,17 +291,23 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
                 >
                   <span className='s-icon'>edit</span>
                 </Button>
-                {item && <Button
-                  variant='outline'
-                  shape='square'
+                {item && <Popconfirm
                   theme='danger'
-                  onClick={() => {
+                  placement='bottom-right'
+                  content={t('confirmDelete', { name: item.name })}
+                  onConfirm={() => {
                     onDelete?.(item.uuid, item)
                     next()
                   }}
                 >
-                  <span className='s-icon'>delete</span>
-                </Button>}
+                  <Button
+                    variant='outline'
+                    shape='square'
+                    theme='danger'
+                  >
+                    <span className='s-icon'>delete</span>
+                  </Button>
+                </Popconfirm>}
               </>}
           </div>
         </div>

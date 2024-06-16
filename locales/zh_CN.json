@@ -54,5 +54,6 @@
   },
   "search": "通过关键词搜索",
   "untitled": "未命名",
-  "dragUploadTooltip": "点击或拖拽到该区域替换图片"
+  "dragUploadTooltip": "点击或拖拽到该区域替换图片",
+  "confirmDelete": "确认删除 {{name}}？"
 }
