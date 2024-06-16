@@ -3,7 +3,9 @@ import './AIServices.scss'
 import { classnames } from '@shikitor/core/utils'
 import type { CSSProperties } from 'react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { AIService } from 'spirit'
+import { Col, Input, Row } from 'tdesign-react'
 
 import selfIcon from '../../resources/icon.svg'
 import chatgptIcon from '../assets/chatgpt.svg'
@@ -18,6 +20,7 @@ export interface AIServicesProps {
 
 export function AIServices(props: AIServicesProps) {
   const { prefix } = AIServices
+  const { t } = useTranslation()
   const { className, style } = props
   const [aiServices, setAIServices] = useState<AIService[]>([
     {
@@ -60,6 +63,55 @@ export function AIServices(props: AIServicesProps) {
         image: cozeIcon
       }
     }}
+    itemPreview:Writer={({ isEditing, value, onChange }) =>
+      <>
+        {value?.type === 'openai' && <>
+          <Row gutter={12}>
+            <Col span={6}>
+              <div className='spirit-field'>
+                <label>{t('apiBaseUrl')}</label>
+                <Input
+                  readonly={!isEditing}
+                  disabled={!isEditing}
+                  placeholder='https://api.openai.com/v1'
+                  value={value.apiHost}
+                  onChange={v => onChange({ ...value, apiHost: v as string })}
+                />
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className='spirit-field'>
+                <label>{t('apiKey')}</label>
+                <Input
+                  readonly={!isEditing}
+                  disabled={!isEditing}
+                  value={value.apiKey}
+                  onChange={v => onChange({ ...value, apiKey: v })}
+                  type='password'
+                  // @ts-ignore
+                  spellCheck={false}
+                />
+              </div>
+            </Col>
+          </Row>
+        </>}
+        {value?.type === 'ollama' && <>
+          <Row gutter={12}>
+            <Col span={6}>
+              <div className='spirit-field'>
+                <label>{t('apiBaseUrl')}</label>
+                <Input
+                  readonly={!isEditing}
+                  disabled={!isEditing}
+                  placeholder='https://api.openai.com/v1'
+                  value={value.apiHost}
+                  onChange={v => onChange({ ...value, apiHost: v as string })}
+                />
+              </div>
+            </Col>
+          </Row>
+        </>}
+      </>}
     itemPreview:onCreate={item => {
       setAIServices([...aiServices, item])
     }}

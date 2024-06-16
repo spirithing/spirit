@@ -30,7 +30,10 @@ export interface ListItemReaderProps<T> {
 }
 
 export interface ListItemWriterProps<T> {
+  isEditing: boolean
   value?: T
+  onChange: (value: T) => void
+  onConfirm?: (value: T) => void
 }
 
 interface ListItemPreviewProps<T extends ListItem> {
@@ -53,9 +56,10 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     item,
     types,
     next,
-    onCreate,
     onDelete,
-    onUpdate
+    onUpdate,
+    Reader,
+    Writer
   } = props
   const [option, setOption] = useState(() => item?.option)
   const type = useMemo(() => option?.type, [option])
@@ -90,6 +94,22 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
       setBase(pickBase())
     }
   }, [base.uuid, item, pickBase])
+  const confirm = useEventCallback(() => {
+    const result = {
+      ...item,
+      ...base,
+      option: { ...item?.option, ...option }
+    }
+    if (result.uuid === undefined) {
+      result.uuid = uuid()
+    }
+    if (result.name === undefined || result.name === '') {
+      MessagePlugin.error(t('required', { name: t('name') }))
+      return
+    }
+    setIsEditing(false)
+    onUpdate?.(result as T)
+  })
   return <div className={prefix}>
     <div className={`${prefix}-header`}>
       <Select
@@ -177,30 +197,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
                   variant='outline'
                   shape='square'
                   theme='success'
-                  onClick={() => {
-                    const result = {
-                      ...item,
-                      ...base,
-                      option: { ...item?.option, ...option }
-                    }
-                    const type = !result.uuid ? 'create' : 'update'
-                    if (result.uuid === undefined) {
-                      result.uuid = uuid()
-                    }
-                    if (result.name === undefined || result.name === '') {
-                      MessagePlugin.error(t('required', { name: t('name') }))
-                      return
-                    }
-                    setIsEditing(false)
-                    switch (type) {
-                      case 'create':
-                        onCreate?.(result as T)
-                        break
-                      case 'update':
-                        onUpdate?.(result as T)
-                        break
-                    }
-                  }}
+                  onClick={confirm}
                 >
                   <span className='s-icon'>check</span>
                 </Button>
@@ -250,6 +247,13 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
       </div>
     </div>
     <div className={`${prefix}-content`}>
+      {isEditing || Reader === undefined
+        ? Writer && <Writer
+          value={option}
+          onChange={setOption}
+          isEditing={isEditing}
+        />
+        : Reader && <Reader value={option} />}
     </div>
   </div>
 }
