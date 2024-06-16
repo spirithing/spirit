@@ -8,7 +8,7 @@ import type { AIService } from 'spirit'
 import selfIcon from '../../resources/icon.svg'
 import chatgptIcon from '../assets/chatgpt.svg'
 import cozeIcon from '../assets/coze.svg'
-import ollamaIcon from '../assets/ollama.png'
+import ollamaIcon from '../assets/ollama.svg'
 import { ListWithPreview } from '../components/ListWithPreview'
 
 export interface AIServicesProps {
