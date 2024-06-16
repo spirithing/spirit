@@ -52,5 +52,6 @@
   "aiService": {
     "confirmChangeType": "修改类型将会清空当前类型配置数据，请确认是否继续切换"
   },
-  "search": "通过关键词搜索"
+  "search": "通过关键词搜索",
+  "untitled": "未命名"
 }

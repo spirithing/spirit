@@ -52,5 +52,6 @@
   "aiService": {
     "confirmChangeType": ""
   },
-  "search": "Search by keywords"
+  "search": "Search by keywords",
+  "untitled": "Untitled"
 }

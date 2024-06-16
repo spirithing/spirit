@@ -260,16 +260,16 @@ interface ListProps<T extends ListItem> {
   types: {
     [key: string]: ListType
   }
+  onAdd: () => void
   activeUUID: T['uuid'] | undefined
   onActiveChange: (uuid: T['uuid'] | undefined) => void
 }
 function List(props: ListProps<ListItem>) {
   const { prefix } = List
   const { t } = useTranslation()
-  const { list, types, activeUUID, onActiveChange } = props
+  const { list, types, activeUUID, onActiveChange, onAdd } = props
   const [keywords, setKeywords] = useState('')
   const filteredList = useMemo(() => {
-    onActiveChange(list?.[0]?.uuid)
     if (!keywords) return list
     const keywordArr = keywords.split(' ').filter(Boolean)
     return list?.filter(item =>
@@ -278,7 +278,7 @@ function List(props: ListProps<ListItem>) {
         || (item.description && item.description.includes(keyword))
       )
     )
-  }, [keywords, list, onActiveChange])
+  }, [keywords, list])
   return <div className={prefix}>
     <div className={`${prefix}-header`}>
       <Input
@@ -287,7 +287,11 @@ function List(props: ListProps<ListItem>) {
         onChange={v => setKeywords(v)}
       />
       <div className={`${prefix}-header__operations`}>
-        <Button variant='text' shape='square'>
+        <Button
+          variant='text'
+          shape='square'
+          onClick={onAdd}
+        >
           <span className='s-icon'>add</span>
         </Button>
         <Button variant='text' shape='square'>
@@ -351,6 +355,7 @@ export type ListWithPreviewProps<T extends ListItem> =
   >
 
 export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<T>) {
+  const { t } = useTranslation()
   const [itemPreviewProps, {
     className,
     style,
@@ -359,7 +364,7 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
   }] = omitPrefixProps(props, 'itemPreview')
   const [activeUUID, setActiveUUID] = useState<string | undefined>(list?.[0].uuid)
   const activeIndex = useMemo(() => list?.findIndex(item => item.uuid === activeUUID), [activeUUID, list])
-  const item = useMemo(() => {
+  const item = useMemo<T | undefined>(() => {
     if (activeIndex === undefined) return
     if (activeIndex === -1) return list![0]
     return list![activeIndex]
@@ -373,6 +378,17 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
       types={types}
       activeUUID={activeUUID}
       onActiveChange={setActiveUUID}
+      onAdd={() => {
+        const newItem = {
+          uuid: uuid(),
+          name: t('untitled'),
+          option: {
+            type: Object.keys(types)[0]
+          }
+        } as T
+        itemPreviewProps['itemPreview:onCreate']?.(newItem)
+        setActiveUUID(newItem.uuid)
+      }}
     />
     {item && <ListItemPreview
       next={() => {
