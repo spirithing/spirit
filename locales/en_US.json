@@ -53,5 +53,6 @@
     "confirmChangeType": ""
   },
   "search": "Search by keywords",
-  "untitled": "Untitled"
+  "untitled": "Untitled",
+  "dragUploadTooltip": "Click or drag and drop to replace the image in this area."
 }

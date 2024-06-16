@@ -53,5 +53,6 @@
     "confirmChangeType": "修改类型将会清空当前类型配置数据，请确认是否继续切换"
   },
   "search": "通过关键词搜索",
-  "untitled": "未命名"
+  "untitled": "未命名",
+  "dragUploadTooltip": "点击或拖拽到该区域替换图片"
 }

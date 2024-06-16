@@ -3,7 +3,18 @@ import { pick } from 'lodash-es'
 import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Avatar, AvatarGroup, Button, DialogPlugin, Input, MessagePlugin, Select, Textarea } from 'tdesign-react'
+import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  DialogPlugin,
+  Input,
+  MessagePlugin,
+  Select,
+  Textarea,
+  Upload
+} from 'tdesign-react'
+import type { UploadFile } from 'tdesign-react/es/upload/type'
 
 import { useEventCallback } from '../hooks/useEventCallback'
 import type { WithPrefixProps } from '../utils/prefixes'
@@ -173,26 +184,69 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
           : undefined}
         suffixIcon={<></>}
       />
-      {item?.avatar
-        ? <Avatar size='160px' image={item.avatar} />
+      {isEditing
+        ? <Upload
+          draggable
+          theme='custom'
+          accept='image/*'
+          files={base.avatar
+            ? [
+              { url: base.avatar }
+            ]
+            : []}
+          onChange={(_, { file }) => {
+            if (file) {
+              setBase({ ...base, avatar: file.response?.url })
+            }
+          }}
+          requestMethod={async (file: UploadFile) => {
+            const base64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader()
+              reader.onload = () => resolve(reader.result as string)
+              reader.onerror = reject
+              reader.readAsDataURL(file.raw!)
+            })
+            return {
+              status: 'success',
+              response: { url: base64 }
+            }
+          }}
+          dragContent={
+            <div className={`${prefix}-header__avatar-upload`}>
+              <Avatar
+                size='164px'
+                image={base.avatar}
+                icon={
+                  <span
+                    className='s-icon'
+                    style={{
+                      fontSize: 36,
+                      userSelect: 'none'
+                    }}
+                  >
+                    upload
+                  </span>
+                }
+              />
+              <div className={`${prefix}-header__avatar-upload-cover`}>
+                {t('dragUploadTooltip')}
+              </div>
+            </div>
+          }
+        />
+        : item?.avatar
+        ? <Avatar size='164px' image={item.avatar} />
         : <Avatar
-          size='160px'
+          size='164px'
           icon={
             <span
               className='s-icon'
               style={{
                 fontSize: 36,
-                userSelect: 'none',
-                cursor: isEditing ? 'pointer' : 'default'
-              }}
-              onClick={e => {
-                if (!isEditing) return
-
-                e.stopPropagation()
-                console.log('upload')
+                userSelect: 'none'
               }}
             >
-              {isEditing ? 'upload' : 'image'}
+              image
             </span>
           }
         />}

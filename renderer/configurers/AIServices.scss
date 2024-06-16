@@ -86,9 +86,35 @@
     padding-bottom: 10px;
 
     border-bottom: 1px solid var(--td-border-level-1-color);
+    &__avatar-upload:hover &__avatar-upload-cover {
+      opacity: 1;
+    }
+    &__avatar-upload-cover {
+      z-index: 10;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      opacity: 0;
+      padding: 0 20px;
+      border-radius: 50%;
+      background-color: color-mix(
+        in srgb,
+        var(--td-bg-color-container),
+        transparent 60%
+      );
+      transition: .3s;
+    }
     &__type-selector {
       --w: 40px;
-      --s: 160px;
+      --s: 164px;
 
       z-index: 10;
       position: absolute;
@@ -154,6 +180,15 @@
 
       color: var(--td-text-color-placeholder);
       font-size: 12px;
+    }
+    .t-upload {
+      height: 164px;
+      width: 164px;
+    }
+    .t-upload__dragger {
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
     }
   }
   &-content {
