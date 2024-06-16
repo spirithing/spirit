@@ -304,7 +304,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
               </>}
           </div>
         </div>
-        <div className={`${prefix}-header__description`}>
+        <pre className={`${prefix}-header__description`}>
           {isEditing
             ? <Textarea
               rows={5}
@@ -314,7 +314,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
               onChange={v => setBase({ ...base, description: v })}
             />
             : item?.description ?? '--'}
-        </div>
+        </pre>
       </div>
     </div>
     <div className={`${prefix}-content`}>
