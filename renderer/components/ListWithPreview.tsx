@@ -47,6 +47,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
   const {
     item,
     types,
+    next,
     onDelete
   } = props
   const type = useMemo(() => item?.option?.type, [item])
@@ -165,6 +166,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
                   theme='danger'
                   onClick={() => {
                     onDelete?.(item.uuid, item)
+                    next()
                   }}
                 >
                   <span className='s-icon'>delete</span>
@@ -274,11 +276,12 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
     types
   }] = omitPrefixProps(props, 'itemPreview')
   const [activeUUID, setActiveUUID] = useState<string | undefined>(list?.[0].uuid)
+  const activeIndex = useMemo(() => list?.findIndex(item => item.uuid === activeUUID), [activeUUID, list])
   const item = useMemo(() => {
-    if (!list) return
-    if (!activeUUID) return list[0]
-    return list?.find(item => item.uuid === activeUUID)
-  }, [activeUUID, list])
+    if (activeIndex === undefined) return
+    if (activeIndex === -1) return list![0]
+    return list![activeIndex]
+  }, [activeIndex, list])
   return <div
     className={classnames('spirit-list-wrap', className)}
     style={style}
@@ -291,12 +294,11 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
     />
     {item && <ListItemPreview
       next={() => {
-        const index = list?.findIndex(item => item.uuid === activeUUID)
         let nextItem: T | undefined
-        if (index === -1 || index === undefined) {
+        if (activeIndex === -1 || activeIndex === undefined) {
           nextItem = list?.[0]
         } else {
-          nextItem = list?.[index + 1] ?? list?.[index - 1] ?? list?.[0]
+          nextItem = list?.[activeIndex + 1] ?? list?.[activeIndex - 1] ?? list?.[0]
         }
         setActiveUUID(nextItem?.uuid)
       }}

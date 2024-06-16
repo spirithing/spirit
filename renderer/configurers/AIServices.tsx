@@ -19,7 +19,7 @@ export interface AIServicesProps {
 export function AIServices(props: AIServicesProps) {
   const { prefix } = AIServices
   const { className, style } = props
-  const [aiServices] = useState<AIService[]>([
+  const [aiServices, setAIServices] = useState<AIService[]>([
     {
       uuid: '1',
       name: 'OpenAI',
@@ -59,6 +59,9 @@ export function AIServices(props: AIServicesProps) {
         label: 'Coze',
         image: cozeIcon
       }
+    }}
+    itemPreview:onDelete={uuid => {
+      setAIServices(aiServices.filter(item => item.uuid !== uuid))
     }}
   />
 }
