@@ -271,7 +271,7 @@ function List(props: ListProps<ListItem>) {
   const [keywords, setKeywords] = useState('')
   const filteredList = useMemo(() => {
     if (!keywords) return list
-    const keywordArr = keywords.split(' ').filter(Boolean)
+    const keywordArr = keywords.toLowerCase().split(' ').filter(Boolean)
     return list?.filter(item =>
       keywordArr.every(keyword =>
         item.name.includes(keyword)
