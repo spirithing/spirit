@@ -2,7 +2,7 @@ import './AIServices.scss'
 
 import { classnames } from '@shikitor/core/utils'
 import type { CSSProperties, ReactNode } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { AIService, AIServiceOption, AIServiceOptions } from 'spirit'
 import { Col, Input, Row } from 'tdesign-react'
@@ -12,6 +12,7 @@ import cozeIcon from '../assets/coze.svg'
 import ollamaIcon from '../assets/ollama.svg'
 import type { ListItemWriterProps, ListWithPreviewProps } from '../components/ListWithPreview'
 import { ListWithPreview } from '../components/ListWithPreview'
+import { useElectronStore } from '../hooks/useStore'
 
 const types: ListWithPreviewProps<AIService>['types'] = {
   openai: {
@@ -140,7 +141,7 @@ export interface AIServicesProps {
 export function AIServices(props: AIServicesProps) {
   const { prefix } = AIServices
   const { className, style } = props
-  const [aiServices, setAIServices] = useState<AIService[]>([])
+  const [aiServices, setAIServices] = useElectronStore('aiServices', [])
   return <ListWithPreview
     style={style}
     className={classnames(prefix, className)}
