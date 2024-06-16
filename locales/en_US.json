@@ -8,7 +8,7 @@
   "name": "Name",
   "desc": "Description",
   "apiKey": "API Key",
-  "apiBaseUrl": "API Base URL",
+  "apiHost": "API Base URL",
   "theme": "Theme",
   "themeLight": "Light",
   "themeDark": "Dark",

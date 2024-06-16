@@ -137,7 +137,7 @@ function OpenAI() {
     <Row gutter={12}>
       <Col span={6}>
         <div className='spirit-field'>
-          <label>{t('apiBaseUrl')}</label>
+          <label>{t('apiHost')}</label>
           <Select
             filterable
             creatable

@@ -23,7 +23,7 @@ declare module 'spirit' {
     name: string
     description?: string
     avatar?: string
-    option?: AIServiceOption
+    option: AIServiceOption
   }
   export interface Store {
     aiServices: AIService[]

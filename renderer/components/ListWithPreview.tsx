@@ -1,7 +1,7 @@
 import { classnames } from '@shikitor/core/utils'
 import { pick } from 'lodash-es'
 import type { CSSProperties, ReactNode } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Avatar, AvatarGroup, Button, DialogPlugin, Input, MessagePlugin, Select, Textarea } from 'tdesign-react'
 
@@ -20,7 +20,7 @@ export interface ListItem {
   name: string
   description?: string
   avatar?: string
-  option?: {
+  option: {
     type: string
   } & Record<string, unknown>
 }
@@ -31,13 +31,13 @@ export interface ListItemReaderProps<T> {
 
 export interface ListItemWriterProps<T> {
   isEditing: boolean
-  value?: T
+  value: T
   onChange: (value: T) => void
-  onConfirm?: (value: T) => void
+  onOnConfirm: (onConfirm: (value: T) => void) => () => void
 }
 
 interface ListItemPreviewProps<T extends ListItem> {
-  item: T | undefined
+  item: T
   types: {
     [key: string]: ListType
   }
@@ -61,7 +61,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     Reader,
     Writer
   } = props
-  const [option, setOption] = useState(() => item?.option)
+  const [option, setOption] = useState(() => item.option)
   const type = useMemo(() => option?.type, [option])
   const changeType = useEventCallback((newType: string) => {
     if (newType === type) return
@@ -94,6 +94,13 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
       setBase(pickBase())
     }
   }, [base.uuid, item, pickBase])
+  const onConfirmRef = useRef<((value: T['option']) => void) | undefined>()
+  const onOnConfirm = useCallback((
+    onConfirm: (value: T['option']) => void
+  ) => {
+    onConfirmRef.current = onConfirm
+    return () => onConfirmRef.current = undefined
+  }, [])
   const confirm = useEventCallback(() => {
     const result = {
       ...item,
@@ -105,6 +112,14 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     }
     if (result.name === undefined || result.name === '') {
       MessagePlugin.error(t('required', { name: t('name') }))
+      return
+    }
+    try {
+      onConfirmRef?.current?.(result.option as T['option'])
+    } catch (e) {
+      // @ts-expect-error
+      MessagePlugin.error(e.message ?? String(e))
+      console.error(e)
       return
     }
     setIsEditing(false)
@@ -249,9 +264,10 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     <div className={`${prefix}-content`}>
       {isEditing || Reader === undefined
         ? Writer && <Writer
+          isEditing={isEditing}
           value={option}
           onChange={setOption}
-          isEditing={isEditing}
+          onOnConfirm={onOnConfirm}
         />
         : Reader && <Reader value={option} />}
     </div>

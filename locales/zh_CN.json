@@ -9,7 +9,7 @@
   "name": "名称",
   "desc": "介绍",
   "apiKey": "API 密钥",
-  "apiBaseUrl": "API 前缀 URL（你的服务商）",
+  "apiHost": "API 前缀 URL（你的服务商）",
   "theme": "主题",
   "themeLight": "亮色",
   "themeDark": "暗色",
