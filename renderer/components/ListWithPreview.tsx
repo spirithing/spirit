@@ -1,7 +1,7 @@
 import { classnames } from '@shikitor/core/utils'
 import type { CSSProperties, ReactNode } from 'react'
 import { useMemo, useState } from 'react'
-import { Avatar, AvatarGroup, Button, Input, Select } from 'tdesign-react'
+import { Avatar, AvatarGroup, Button, Input, Select, Textarea } from 'tdesign-react'
 
 import type { WithPrefixProps } from '../utils/prefixes'
 import { omitPrefixProps, trimPrefixProps } from '../utils/prefixes'
@@ -48,6 +48,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     types
   } = props
   const type = useMemo(() => item?.option?.type, [item])
+  const [isEditing, setIsEditing] = useState(false)
   return <div className={prefix}>
     <div className={`${prefix}-header`}>
       <Select
@@ -106,18 +107,51 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
         />}
       <div className={`${prefix}-header__base`}>
         <div className={`${prefix}-header__title`}>
-          {item?.name}
+          {isEditing
+            ? <Input
+              defaultValue={item?.name}
+            />
+            : item?.name}
           <div className={`${prefix}-header__operations`}>
-            <Button variant='outline' shape='square'>
-              <span className='s-icon'>edit</span>
-            </Button>
-            <Button variant='outline' shape='square' theme='danger'>
-              <span className='s-icon'>delete</span>
-            </Button>
+            {isEditing
+              ? <>
+                <Button
+                  variant='outline'
+                  shape='square'
+                  theme='success'
+                  onClick={() => {
+                    setIsEditing(false)
+                  }}
+                >
+                  <span className='s-icon'>check</span>
+                </Button>
+                <Button
+                  variant='outline'
+                  shape='square'
+                  onClick={() => {
+                    setIsEditing(false)
+                  }}
+                >
+                  <span className='s-icon'>close</span>
+                </Button>
+              </>
+              : <>
+                <Button variant='outline' shape='square' onClick={() => setIsEditing(true)}>
+                  <span className='s-icon'>edit</span>
+                </Button>
+                <Button variant='outline' shape='square' theme='danger'>
+                  <span className='s-icon'>delete</span>
+                </Button>
+              </>}
           </div>
         </div>
         <div className={`${prefix}-header__description`}>
-          {item?.description ?? '--'}
+          {isEditing
+            ? <Textarea
+              defaultValue={item?.description}
+              rows={5}
+            />
+            : item?.description ?? '--'}
         </div>
       </div>
     </div>
