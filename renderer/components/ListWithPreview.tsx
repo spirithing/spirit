@@ -1,10 +1,14 @@
 import { classnames } from '@shikitor/core/utils'
+import { pick } from 'lodash-es'
 import type { CSSProperties, ReactNode } from 'react'
-import { useMemo, useState } from 'react'
-import { Avatar, AvatarGroup, Button, Input, Select, Textarea } from 'tdesign-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Avatar, AvatarGroup, Button, DialogPlugin, Input, MessagePlugin, Select, Textarea } from 'tdesign-react'
 
+import { useEventCallback } from '../hooks/useEventCallback'
 import type { WithPrefixProps } from '../utils/prefixes'
 import { omitPrefixProps, trimPrefixProps } from '../utils/prefixes'
+import { uuid } from '../utils/uuid'
 
 export interface ListType {
   label: string
@@ -44,14 +48,48 @@ interface ListItemPreviewProps<T extends ListItem> {
 
 function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
   const { prefix } = ListItemPreview
+  const { t } = useTranslation()
   const {
     item,
     types,
     next,
-    onDelete
+    onCreate,
+    onDelete,
+    onUpdate
   } = props
-  const type = useMemo(() => item?.option?.type, [item])
+  const [option, setOption] = useState(() => item?.option)
+  const type = useMemo(() => option?.type, [option])
+  const changeType = useEventCallback((newType: string) => {
+    if (newType === type) return
+    const ins = DialogPlugin.confirm({
+      body: t('aiService.confirmChangeType'),
+      onConfirm: () => {
+        setOption({
+          type: newType
+        })
+        ins.destroy()
+      },
+      onClose: () => ins.destroy()
+    })
+  })
   const [isEditing, setIsEditing] = useState(false)
+  const pickBase = useCallback(() =>
+    pick(item, [
+      'uuid',
+      'name',
+      'avatar',
+      'description'
+    ]), [item])
+  const [base, setBase] = useState<
+    Partial<Pick<T, 'uuid' | 'name' | 'avatar' | 'description'>>
+  >(pickBase)
+  useEffect(() => {
+    if (!base.uuid) return
+    if (base.uuid !== item?.uuid) {
+      setOption(item?.option)
+      setBase(pickBase())
+    }
+  }, [base.uuid, item, pickBase])
   return <div className={prefix}>
     <div className={`${prefix}-header`}>
       <Select
@@ -64,6 +102,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
           placement: 'bottom-right'
         }}
         value={type}
+        onChange={v => changeType(v as string)}
         options={[
           ...Object
             .entries(types)
@@ -127,6 +166,8 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
           {isEditing
             ? <Input
               defaultValue={item?.name}
+              value={base.name}
+              onChange={v => setBase({ ...base, name: v })}
             />
             : item?.name}
           <div className={`${prefix}-header__operations`}>
@@ -137,7 +178,28 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
                   shape='square'
                   theme='success'
                   onClick={() => {
+                    const result = {
+                      ...item,
+                      ...base,
+                      option: { ...item?.option, ...option }
+                    }
+                    const type = !result.uuid ? 'create' : 'update'
+                    if (result.uuid === undefined) {
+                      result.uuid = uuid()
+                    }
+                    if (result.name === undefined || result.name === '') {
+                      MessagePlugin.error(t('required', { name: t('name') }))
+                      return
+                    }
                     setIsEditing(false)
+                    switch (type) {
+                      case 'create':
+                        onCreate?.(result as T)
+                        break
+                      case 'update':
+                        onUpdate?.(result as T)
+                        break
+                    }
                   }}
                 >
                   <span className='s-icon'>check</span>
@@ -177,8 +239,11 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
         <div className={`${prefix}-header__description`}>
           {isEditing
             ? <Textarea
-              defaultValue={item?.description}
               rows={5}
+              placeholder={t('placeholder.description')}
+              defaultValue={item?.description}
+              value={base.description}
+              onChange={v => setBase({ ...base, description: v })}
             />
             : item?.description ?? '--'}
         </div>

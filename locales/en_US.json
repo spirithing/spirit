@@ -44,5 +44,12 @@
   "recent": "Recent",
   "more": "More",
   "compact": "Compact",
-  "noDescription": "No description"
+  "noDescription": "No description",
+  "placeholder": {
+    "description": "Please input description"
+  },
+  "required": "{{name}} is required",
+  "aiService": {
+    "confirmChangeType": ""
+  }
 }

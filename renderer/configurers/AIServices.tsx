@@ -60,8 +60,14 @@ export function AIServices(props: AIServicesProps) {
         image: cozeIcon
       }
     }}
+    itemPreview:onCreate={item => {
+      setAIServices([...aiServices, item])
+    }}
     itemPreview:onDelete={uuid => {
       setAIServices(aiServices.filter(item => item.uuid !== uuid))
+    }}
+    itemPreview:onUpdate={item => {
+      setAIServices(aiServices.map(aiService => aiService.uuid === item.uuid ? item : aiService))
     }}
   />
 }

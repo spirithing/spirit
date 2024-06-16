@@ -44,5 +44,12 @@
   "recent": "最近使用",
   "more": "更多",
   "compact": "紧凑",
-  "noDescription": "暂无介绍"
+  "noDescription": "暂无介绍",
+  "placeholder": {
+    "description": "请输入相关介绍"
+  },
+  "required": "{{name}} 是必须的",
+  "aiService": {
+    "confirmChangeType": "修改类型将会清空当前类型配置数据，请确认是否继续切换"
+  }
 }
