@@ -14,6 +14,7 @@ import {
   Popconfirm,
   Select,
   Textarea,
+  Tooltip,
   Upload
 } from 'tdesign-react'
 import type { UploadFile } from 'tdesign-react/es/upload/type'
@@ -343,6 +344,8 @@ interface ListProps<T extends ListItem> {
   types: {
     [key: string]: ListType
   }
+  taggedItemUUID?: T['uuid']
+  onTaggedItemUUIDChange?: (uuid: T['uuid']) => void
   onAdd: () => void
   activeUUID: T['uuid'] | undefined
   onActiveChange: (uuid: T['uuid'] | undefined) => void
@@ -350,7 +353,15 @@ interface ListProps<T extends ListItem> {
 function List(props: ListProps<ListItem>) {
   const { prefix } = List
   const { t } = useTranslation()
-  const { list, types, activeUUID, onActiveChange, onAdd } = props
+  const {
+    list,
+    types,
+    taggedItemUUID,
+    activeUUID,
+    onActiveChange,
+    onAdd,
+    onTaggedItemUUIDChange
+  } = props
   const [keywords, setKeywords] = useState('')
   const filteredList = useMemo(() => {
     if (!keywords) return list
@@ -416,6 +427,20 @@ function List(props: ListProps<ListItem>) {
             <span className='s-icon'>more_vert</span>
           </Button>
         </div>
+        <div
+          className={classnames(
+            `${prefix}-item__tagged`,
+            { active: item.uuid === taggedItemUUID }
+          )}
+          onClick={e => {
+            e.stopPropagation()
+            onTaggedItemUUIDChange?.(item.uuid)
+          }}
+        >
+          <Tooltip content={t('default')}>
+            <span className='s-icon'>sell</span>
+          </Tooltip>
+        </div>
       </div>
     )}
   </div>
@@ -427,6 +452,8 @@ export type ListWithPreviewProps<T extends ListItem> =
   & {
     style?: CSSProperties
     className?: string
+    taggedItemUUID?: T['uuid']
+    onTaggedItemUUIDChange?: (uuid: T['uuid']) => void
     list: T[] | undefined
     types: {
       [key: string]: ListType
@@ -443,6 +470,8 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
     className,
     style,
     list,
+    taggedItemUUID,
+    onTaggedItemUUIDChange,
     types
   }] = omitPrefixProps(props, 'itemPreview')
   const [activeUUID, setActiveUUID] = useState<string | undefined>(list?.[0]?.uuid)
@@ -459,6 +488,8 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
     <List
       list={list}
       types={types}
+      taggedItemUUID={taggedItemUUID}
+      onTaggedItemUUIDChange={onTaggedItemUUIDChange}
       activeUUID={activeUUID}
       onActiveChange={setActiveUUID}
       onAdd={() => {

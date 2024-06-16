@@ -26,6 +26,7 @@ declare module 'spirit' {
     option: AIServiceOption
   }
   export interface Store {
+    defaultAIServiceUUID?: AIService['uuid']
     aiServices: AIService[]
   }
 }

@@ -142,11 +142,14 @@ export function AIServices(props: AIServicesProps) {
   const { prefix } = AIServices
   const { className, style } = props
   const [aiServices, setAIServices] = useElectronStore('aiServices', [])
+  const [defaultAIServiceUUID, setDefaultAIServiceUUID] = useElectronStore('defaultAIServiceUUID')
   return <ListWithPreview
     style={style}
     className={classnames(prefix, className)}
     list={aiServices}
     types={types}
+    taggedItemUUID={defaultAIServiceUUID}
+    onTaggedItemUUIDChange={setDefaultAIServiceUUID}
     itemPreview:Writer={AIServiceOptionConfigurer}
     itemPreview:onCreate={item => {
       setAIServices([item, ...aiServices])

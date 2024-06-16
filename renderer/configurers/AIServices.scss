@@ -38,6 +38,7 @@
   &-item {
     --td-size-3: 25px;
 
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -47,6 +48,7 @@
     border: 2px solid transparent;
 
     cursor: pointer;
+    overflow: hidden;
     transition: .3s;
     &.active {
       cursor: unset;
@@ -75,6 +77,42 @@
     &__operations {
       opacity: 0;
       transition: .3s;
+    }
+    &__tagged {
+      --bc: var(--td-text-color-placeholder);
+      --fc: var(--td-bg-color-component);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+
+      cursor: pointer;
+      transition: .3s;
+      &.active {
+        --bc: var(--td-brand-color);
+        --fc: var(--td-text-color-anti);
+      }
+      &::before {
+        content: '';
+
+        position: absolute;
+        top: 0;
+        left: -15px;
+
+        border-top: 35px solid var(--bc);
+        border-left: 35px solid transparent;
+        border-right: 20px solid var(--bc);
+      }
+      .s-icon {
+        z-index: 1;
+        color: var(--fc);
+      }
     }
     .t-avatar {
       transition: .3s;
