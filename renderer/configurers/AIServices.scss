@@ -97,21 +97,24 @@
       &.active {
         --bc: var(--td-brand-color);
         --fc: var(--td-text-color-anti);
+
+        pointer-events: none;
       }
       &::before {
         content: '';
 
         position: absolute;
         top: 0;
-        left: -15px;
+        left: -10px;
 
-        border-top: 35px solid var(--bc);
-        border-left: 35px solid transparent;
+        border-top: 30px solid var(--bc);
+        border-left: 30px solid transparent;
         border-right: 20px solid var(--bc);
       }
       .s-icon {
         z-index: 1;
         color: var(--fc);
+        font-size: 12px;
       }
     }
     .t-avatar {
