@@ -34,10 +34,11 @@ interface ListItemPreviewProps<T extends ListItem> {
   types: {
     [key: string]: ListType
   }
+  next: () => void
   Reader?: (props: ListItemReaderProps<T['option']>) => ReactNode
   Writer?: (props: ListItemWriterProps<T['option']>) => ReactNode
   onCreate?: (item: T) => void
-  onDelete?: (uuid: T['uuid'], item: T) => void | number
+  onDelete?: (uuid: T['uuid'], item: T) => void
   onUpdate?: (item: T) => void
 }
 
@@ -45,7 +46,8 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
   const { prefix } = ListItemPreview
   const {
     item,
-    types
+    types,
+    onDelete
   } = props
   const type = useMemo(() => item?.option?.type, [item])
   const [isEditing, setIsEditing] = useState(false)
@@ -150,12 +152,23 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
                 </Button>
               </>
               : <>
-                <Button variant='outline' shape='square' onClick={() => setIsEditing(true)}>
+                <Button
+                  variant='outline'
+                  shape='square'
+                  onClick={() => setIsEditing(true)}
+                >
                   <span className='s-icon'>edit</span>
                 </Button>
-                <Button variant='outline' shape='square' theme='danger'>
+                {item && <Button
+                  variant='outline'
+                  shape='square'
+                  theme='danger'
+                  onClick={() => {
+                    onDelete?.(item.uuid, item)
+                  }}
+                >
                   <span className='s-icon'>delete</span>
-                </Button>
+                </Button>}
               </>}
           </div>
         </div>
@@ -249,7 +262,7 @@ export type ListWithPreviewProps<T extends ListItem> =
     }
   }
   & WithPrefixProps<
-    Omit<ListItemPreviewProps<T>, 'item' | 'types'>,
+    Omit<ListItemPreviewProps<T>, 'item' | 'types' | 'next'>,
     'itemPreview'
   >
 
@@ -277,6 +290,16 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
       onActiveChange={setActiveUUID}
     />
     {item && <ListItemPreview
+      next={() => {
+        const index = list?.findIndex(item => item.uuid === activeUUID)
+        let nextItem: T | undefined
+        if (index === -1 || index === undefined) {
+          nextItem = list?.[0]
+        } else {
+          nextItem = list?.[index + 1] ?? list?.[index - 1] ?? list?.[0]
+        }
+        setActiveUUID(nextItem?.uuid)
+      }}
       {...{ item, types }}
       {...trimPrefixProps(itemPreviewProps, 'itemPreview')}
     />}
