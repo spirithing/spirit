@@ -274,8 +274,8 @@ function List(props: ListProps<ListItem>) {
     const keywordArr = keywords.toLowerCase().split(' ').filter(Boolean)
     return list?.filter(item =>
       keywordArr.every(keyword =>
-        item.name.includes(keyword)
-        || (item.description && item.description.includes(keyword))
+        item.name.toLowerCase().includes(keyword)
+        || (item.description && item.description.toLowerCase().includes(keyword))
       )
     )
   }, [keywords, list])
