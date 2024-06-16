@@ -53,6 +53,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     <div className={`${prefix}-header`}>
       <Select
         filterable
+        readonly={!isEditing}
         size='large'
         className={`${prefix}-header__type-selector`}
         popupProps={{
