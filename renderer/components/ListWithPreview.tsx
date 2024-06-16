@@ -101,9 +101,22 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
         : <Avatar
           size='160px'
           icon={
-            <>
-              <span className='s-icon' style={{ fontSize: 36, userSelect: 'none' }}>upload</span>
-            </>
+            <span
+              className='s-icon'
+              style={{
+                fontSize: 36,
+                userSelect: 'none',
+                cursor: isEditing ? 'pointer' : 'default'
+              }}
+              onClick={e => {
+                if (!isEditing) return
+
+                e.stopPropagation()
+                console.log('upload')
+              }}
+            >
+              {isEditing ? 'upload' : 'image'}
+            </span>
           }
         />}
       <div className={`${prefix}-header__base`}>
