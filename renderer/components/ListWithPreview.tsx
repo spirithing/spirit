@@ -265,6 +265,7 @@ interface ListProps<T extends ListItem> {
 }
 function List(props: ListProps<ListItem>) {
   const { prefix } = List
+  const { t } = useTranslation()
   const { list, types, activeUUID, onActiveChange } = props
   const [keywords, setKeywords] = useState('')
   const filteredList = useMemo(() => {
@@ -281,8 +282,7 @@ function List(props: ListProps<ListItem>) {
   return <div className={prefix}>
     <div className={`${prefix}-header`}>
       <Input
-        size='large'
-        placeholder='Search'
+        placeholder={t('search')}
         value={keywords}
         onChange={v => setKeywords(v)}
       />

@@ -51,5 +51,6 @@
   "required": "{{name}} is required",
   "aiService": {
     "confirmChangeType": ""
-  }
+  },
+  "search": "Search by keywords"
 }
