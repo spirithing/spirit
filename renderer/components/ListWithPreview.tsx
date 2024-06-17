@@ -1,3 +1,5 @@
+import './ListWithPreview.scss'
+
 import { classnames } from '@shikitor/core/utils'
 import { pick } from 'lodash-es'
 import type { CSSProperties, ReactNode } from 'react'
