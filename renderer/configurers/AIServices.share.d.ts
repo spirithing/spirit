@@ -1,9 +1,5 @@
 declare module 'spirit' {
   export interface AIServiceOptions {
-    ollama: {
-      apiHost: string
-      defaultModel: string
-    }
   }
   // dprint-ignore
   export type AIServiceOption = keyof AIServiceOptions extends infer K
