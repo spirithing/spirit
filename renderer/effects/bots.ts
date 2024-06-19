@@ -115,24 +115,6 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
   }
   if (isEqual(m.user, bot)) return
 
-  const openai = electronStore.get(openAIAtom)
-  if (!openai) {
-    // TODO prompt user to configure it
-    MessagePlugin.error('OpenAI not initialized')
-    return
-  }
-
-  const openaiConfigAtom = keyAtom('openaiConfig')
-  if (!openaiConfigAtom) return
-  const openaiConfig = electronStore.get(openaiConfigAtom)
-  if (!openaiConfig) return
-  const model = openaiConfig.defaultModel ?? options?.model
-  if (!model) {
-    // TODO prompt user to configure it
-    MessagePlugin.error('Model not configured')
-    return
-  }
-
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
   if (import.meta.env.DEV && m.text === 'd') {
