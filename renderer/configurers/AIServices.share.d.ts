@@ -1,4 +1,21 @@
+import type { Bot, IMessage } from 'spirit'
+
 declare module 'spirit' {
+  export interface AIServiceCreators {
+  }
+  export interface AIServiceAPIOptionsForChat {
+  }
+  export interface AIServiceAPIAdapter<K extends keyof AIServiceOptions> {
+    chat(
+      instance: AIServiceCreators[K],
+      bot: Bot,
+      messages: IMessage[],
+      adapterOptions?: AIServiceOptions[K],
+      options?: AIServiceAPIOptionsForChat[K]
+    ): AsyncIterable<[string, {
+      status: 'started' | 'running' | 'completed'
+    }]>
+  }
   export interface AIServiceOptions {
   }
   // dprint-ignore
@@ -18,6 +35,6 @@ declare module 'spirit' {
   }
   export interface Store {
     defaultAIServiceUUID?: AIService['uuid']
-    aiServices: AIService[]
+    aiServices?: AIService[]
   }
 }

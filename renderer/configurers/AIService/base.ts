@@ -1,20 +1,22 @@
-import type { ReactNode } from 'react'
-import type { AIService, AIServiceOptions } from 'spirit'
-
-import type { ListItemWriterProps, ListWithPreviewProps } from '../../components/ListWithPreview'
 import AdapterOllama from '../../extensions/adapter-ollama'
 import AdapterOpenAI from '../../extensions/adapter-openai'
 
-export const types: ListWithPreviewProps<AIService>['types'] = {
+export const apis = {
+  openai: AdapterOpenAI.api,
+  ollama: AdapterOllama.api
+}
+
+export const creators = {
+  openai: AdapterOpenAI.creator,
+  ollama: AdapterOllama.creator
+}
+
+export const types = {
   openai: AdapterOpenAI.type,
   ollama: AdapterOllama.type
 }
 
-export const aiServiceOptionConfigurerMapping: {
-  [K in keyof AIServiceOptions]: (
-    props: ListItemWriterProps<AIServiceOptions[K]>
-  ) => ReactNode
-} = {
+export const aiServiceOptionConfigurerMapping = {
   openai: AdapterOpenAI.Writer,
   ollama: AdapterOllama.Writer
 }

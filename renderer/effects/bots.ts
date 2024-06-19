@@ -1,44 +1,13 @@
 import { isEqual } from 'lodash-es'
 // import ollama from 'ollama'
-import type OpenAI from 'openai'
-import type { Bot, IMessage } from 'spirit'
+import type { AIService, AIServiceOptions, Bot, IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '../atoms/chatroom'
-import { openAIAtom } from '../atoms/openAI'
+import { apis, creators } from '../configurers/AIService/base'
+import type { AIServiceAdapter } from '../extension'
 import { ee } from '../instances/ee'
 import { electronStore, getThrowWhenUndefined, keyAtom } from '../store'
-
-function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
-  const isBot = m.user?.name === bot.name
-  const name = m.user?.name ?? 'unknown'
-  if (isBot) {
-    return {
-      name,
-      role: 'assistant',
-      content: m.text
-    }
-  }
-  return {
-    name,
-    role: 'user',
-    content: m.assets
-      ? [
-        {
-          type: 'text',
-          text: isBot ? '' : `${m.user?.name}:\n${m.text}`
-        },
-        ...m.assets?.map(({ type, url }) => ({
-          type: {
-            image: 'image_url' as const
-          }[type],
-          // eslint-disable-next-line camelcase
-          image_url: { url }
-        })) ?? []
-      ]
-      : m.text
-  }
-}
 
 interface Adapter {
   chat(bot: Bot, messages: IMessage[], options?: {
@@ -46,41 +15,6 @@ interface Adapter {
   }): AsyncIterable<[string, {
     status: 'started' | 'running' | 'completed'
   }]>
-}
-
-const openaiAdapter: Adapter = {
-  chat: async function*(bot, messages, options) {
-    const openai = getThrowWhenUndefined(openAIAtom)
-    const openaiConfig = getThrowWhenUndefined('openaiConfig')
-
-    const model = openaiConfig.defaultModel ?? options?.model
-    if (!model) throw new Error('Model not configured')
-
-    const completions = await openai.chat.completions.create({
-      ...options,
-      model,
-      // eslint-disable-next-line camelcase
-      max_tokens: 4096,
-      messages: [
-        {
-          content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
-          role: 'system'
-        },
-        ...messages?.map(messageTransform.bind(null, bot)).reverse() ?? []
-      ],
-      stream: true
-    })
-    let streamMessage = ''
-    yield [streamMessage, { status: 'started' }]
-    for await (const { choices: [{ delta }] } of completions) {
-      streamMessage += delta.content ?? ''
-      yield [streamMessage, {
-        ...delta,
-        status: 'running'
-      }]
-    }
-    yield [streamMessage, { status: 'completed' }]
-  }
 }
 
 // const ollamaAdapter: Adapter = {
@@ -103,6 +37,33 @@ const openaiAdapter: Adapter = {
 //     yield [streamMessage, { status: 'completed' }]
 //   }
 // }
+
+function getDefaultAIService() {
+  const aiServiceDefaultUUID = getThrowWhenUndefined('defaultAIServiceUUID')
+  const aiServices = getThrowWhenUndefined('aiServices')
+  return aiServices.find(s => s.uuid === aiServiceDefaultUUID)
+}
+const instances = new WeakMap<
+  AIService['option'],
+  ReturnType<
+    AIServiceAdapter<keyof AIServiceOptions>['creator']
+  >
+>()
+function getOrCreateInstance(aiService: AIService): ReturnType<
+  AIServiceAdapter<AIService['option']['type']>['creator']
+> {
+  const { option } = aiService
+  const instance = instances.get(option)
+  if (instance) {
+    // @ts-ignore
+    return instance
+  }
+  const creator = creators[option.type]
+  if (!creator) throw new Error('Creator not found, please check your configuration')
+  const adapter = creator(option as any)
+  instances.set(option, adapter)
+  return adapter
+}
 
 ee.on('addMessage', async (m, { id, messages, options }) => {
   const botAtom = keyAtom('bot')
@@ -128,15 +89,39 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     editTo(0, 'Inputting' + '.'.repeat(count))
     count = (count + 1) % 4
   }, 300)
+
+  let aiService: AIService | undefined
+  try {
+    aiService = getDefaultAIService()
+    if (!aiService) {
+      throw new Error('AI Service not found')
+    }
+  } catch (e) {
+    // @ts-ignore
+    MessagePlugin.error(e.message ?? String(e))
+    return
+  }
+  const instance = getOrCreateInstance(aiService)
+  const api = apis[aiService.option.type]
+
   try {
     for await (
-      const [message, { status }] of openaiAdapter.chat(bot, messages ?? [], { model: options?.model })
+      const [message, { status }] of api.chat(
+        instance,
+        bot,
+        messages ?? [],
+        // TODO remove any
+        aiService.option as any,
+        options as any
+      )
     ) {
       if (status === 'started') clearInterval(t)
       editTo(uuid, message)
     }
   } catch (e) {
+    clearInterval(t)
     // @ts-ignore
     editTo(uuid, 'message' in e ? e.message : e.toString())
+    console.error(e)
   }
 })
