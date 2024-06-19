@@ -26,7 +26,7 @@ export function useElectronStore<K extends keyof Store>(key: K): [
   (value: Store[K] | ((prev?: Store[K] | null) => Store[K])) => void
 ]
 export function useElectronStore<K extends keyof Store>(key: K, defaultValue: Store[K]): [
-  Store[K],
+  NonNullable<Store[K]>,
   (value: Store[K] | ((prev?: Store[K] | null) => Store[K])) => void
 ]
 export function useElectronStore<K extends keyof Store>(key: K, defaultValue?: Store[K]) {
