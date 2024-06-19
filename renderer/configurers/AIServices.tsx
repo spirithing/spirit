@@ -7,18 +7,15 @@ import { useTranslation } from 'react-i18next'
 import type { AIService, AIServiceOption, AIServiceOptions } from 'spirit'
 import { Col, Input, Row } from 'tdesign-react'
 
-import chatgptIcon from '../assets/chatgpt.svg'
 import cozeIcon from '../assets/coze.svg'
 import ollamaIcon from '../assets/ollama.svg'
 import type { ListItemWriterProps, ListWithPreviewProps } from '../components/ListWithPreview'
 import { ListWithPreview } from '../components/ListWithPreview'
+import AdapterOpenAI from '../extensions/adapter-openai'
 import { useElectronStore } from '../hooks/useStore'
 
 const types: ListWithPreviewProps<AIService>['types'] = {
-  openai: {
-    label: 'OpenAI',
-    image: chatgptIcon
-  },
+  openai: AdapterOpenAI.type,
   ollama: {
     label: 'Ollama',
     image: ollamaIcon
@@ -27,58 +24,6 @@ const types: ListWithPreviewProps<AIService>['types'] = {
     label: 'Coze',
     image: cozeIcon
   }
-}
-
-function AIServiceOptionConfigurerForOpenAI(
-  props: ListItemWriterProps<AIServiceOptions['openai']>
-) {
-  const { t } = useTranslation()
-  const { isEditing, value, onChange, onOnConfirm } = props
-  useEffect(() => {
-    return onOnConfirm?.(value => {
-      if (!value?.apiHost || value?.apiHost === '') {
-        throw new Error(t('required', {
-          name: t('apiHost')
-        }))
-      }
-      if (!value?.apiKey || value?.apiKey === '') {
-        throw new Error(t('required', {
-          name: t('apiKey')
-        }))
-      }
-      console.log('onConfirm', value)
-    })
-  }, [onOnConfirm, t])
-  return <>
-    <Row gutter={12}>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('apiHost')}</label>
-          <Input
-            readonly={!isEditing}
-            disabled={!isEditing}
-            placeholder='https://api.openai.com/v1'
-            value={value.apiHost}
-            onChange={v => onChange({ ...value, apiHost: v as string })}
-          />
-        </div>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('apiKey')}</label>
-          <Input
-            readonly={!isEditing}
-            disabled={!isEditing}
-            value={value.apiKey}
-            onChange={v => onChange({ ...value, apiKey: v })}
-            type='password'
-            // @ts-ignore
-            spellCheck={false}
-          />
-        </div>
-      </Col>
-    </Row>
-  </>
 }
 
 function AIServiceOptionConfigurerForOllama(
@@ -119,7 +64,7 @@ const aiServiceOptionConfigurerMapping: {
     props: ListItemWriterProps<AIServiceOptions[K]>
   ) => ReactNode
 } = {
-  openai: AIServiceOptionConfigurerForOpenAI,
+  openai: AdapterOpenAI.Writer,
   ollama: AIServiceOptionConfigurerForOllama
 }
 

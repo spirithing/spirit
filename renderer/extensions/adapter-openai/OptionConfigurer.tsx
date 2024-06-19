@@ -5,7 +5,7 @@ import { Col, Input, Row } from 'tdesign-react'
 
 import type { ListItemWriterProps } from '../../components/ListWithPreview'
 
-export function AIServiceOptionConfigurerForOpenAI(
+export function OptionConfigurer(
   props: ListItemWriterProps<AIServiceOptions['openai']>
 ) {
   const { t } = useTranslation()

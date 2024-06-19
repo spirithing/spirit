@@ -8,7 +8,7 @@ export type AIServiceAdapter<
 > =
   & { type: ListType }
   & {
-    Writer?: (props: ListItemWriterProps<AIServiceOptions[K]>) => ReactNode
+    Writer: (props: ListItemWriterProps<AIServiceOptions[K]>) => ReactNode
   }
 
 export function defineAIServiceAdapter<K extends keyof AIServiceOptions>(
