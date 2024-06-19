@@ -1,44 +1,13 @@
 import './AIServices.scss'
 
 import { classnames } from '@shikitor/core/utils'
-import type { CSSProperties, ReactNode } from 'react'
-import { useMemo } from 'react'
-import type { AIService, AIServiceOption, AIServiceOptions } from 'spirit'
+import type { CSSProperties } from 'react'
+import { useEffect } from 'react'
 
-import cozeIcon from '../assets/coze.svg'
-import type { ListItemWriterProps, ListWithPreviewProps } from '../components/ListWithPreview'
 import { ListWithPreview } from '../components/ListWithPreview'
-import AdapterOllama from '../extensions/adapter-ollama'
-import AdapterOpenAI from '../extensions/adapter-openai'
 import { useElectronStore } from '../hooks/useStore'
-
-const types: ListWithPreviewProps<AIService>['types'] = {
-  openai: AdapterOpenAI.type,
-  ollama: AdapterOllama.type,
-  coze: {
-    label: 'Coze',
-    image: cozeIcon
-  }
-}
-
-const aiServiceOptionConfigurerMapping: {
-  [K in keyof AIServiceOptions]: (
-    props: ListItemWriterProps<AIServiceOptions[K]>
-  ) => ReactNode
-} = {
-  openai: AdapterOpenAI.Writer,
-  ollama: AdapterOllama.Writer
-}
-
-function AIServiceOptionConfigurer(
-  props: ListItemWriterProps<AIServiceOption>
-) {
-  const Comp = useMemo(() => {
-    return aiServiceOptionConfigurerMapping[props.value.type]
-  }, [props.value.type])
-  // @ts-ignore
-  return <Comp {...props} />
-}
+import { types } from './AIService/base'
+import { AIServiceOptionConfigurer } from './AIService/OptionConfigurer'
 
 export interface AIServicesProps {
   style?: CSSProperties
@@ -50,6 +19,9 @@ export function AIServices(props: AIServicesProps) {
   const { className, style } = props
   const [aiServices, setAIServices] = useElectronStore('aiServices', [])
   const [defaultAIServiceUUID, setDefaultAIServiceUUID] = useElectronStore('defaultAIServiceUUID')
+  useEffect(() => {
+    // TODO clear default ai service uuid when it's not in aiServices
+  }, [])
   return <ListWithPreview
     style={style}
     className={classnames(prefix, className)}
