@@ -7,7 +7,7 @@ export type AIServiceAdapter<
   K extends keyof AIServiceOptions,
 > = {
   creator: (options: AIServiceOptions[K]) => K extends keyof AIServiceCreators ? AIServiceCreators[K] : never
-  api: AIServiceAPIAdapter<'openai'>
+  api: AIServiceAPIAdapter<K>
   type: ListType
   Writer: (props: ListItemWriterProps<AIServiceOptions[K]>) => ReactNode
 }
