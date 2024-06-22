@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es'
-import type { AIService, AIServiceOptions } from 'spirit'
+import { AIService, AIServiceAPIOptionsForChat, AIServiceOptions } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '../atoms/chatroom'
@@ -94,7 +94,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
         bot,
         messages ?? [],
         aiService.option,
-        options
+        options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
       )
     ) {
       if (status === 'started') clearInterval(t)
