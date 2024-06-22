@@ -36,6 +36,18 @@ export default defineAIServiceAdapter('ollama', {
         yield [streamMessage, { status: 'running' }]
       }
       yield [streamMessage, { status: 'completed' }]
+    },
+    models: async instance => {
+      const { models } = await instance.list()
+      return models.map(({
+        name,
+        details: { parent_model: parentModel, families },
+        modified_at: ctime
+      }) => ({
+        id: name,
+        label: [name, parentModel, families.join(', ')].filter(Boolean).join('/'),
+        ctime
+      }))
     }
   },
   type: {

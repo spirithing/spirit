@@ -78,6 +78,22 @@ export default defineAIServiceAdapter('openai', {
         }]
       }
       yield [streamMessage, { status: 'completed' }]
+    },
+    models: async instance => {
+      const { data, hasNextPage: _hasNextPage, getNextPage } = await instance.models.list()
+      let hasNextPage = _hasNextPage()
+      while (hasNextPage) {
+        const { data: nextData, hasNextPage: _hasNextPage } = await getNextPage()
+        hasNextPage = _hasNextPage()
+        data.push(...nextData)
+      }
+      return data.map(({ id }) => ({
+        id,
+        label: id
+          .replace(/^([a-z])/, (_, c) => c.toUpperCase())
+          .replace(/-([a-z])/g, (_, c) => c.toUpperCase())
+          .replace('-', ' ')
+      }))
     }
   },
   type: {

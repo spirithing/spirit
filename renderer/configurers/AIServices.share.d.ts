@@ -15,6 +15,10 @@ declare module 'spirit' {
     ): AsyncIterable<[string, {
       status: 'started' | 'running' | 'completed'
     }]>
+    models(instance: AIServiceCreators[K]): Promise<{
+      id: string
+      label?: string
+    }[]>
   }
   export interface AIServiceOptions {
   }
