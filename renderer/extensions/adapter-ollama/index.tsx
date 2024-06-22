@@ -45,7 +45,7 @@ export default defineAIServiceAdapter('ollama', {
         modified_at: ctime
       }) => ({
         id: name,
-        label: [name, parentModel, families.join(', ')].filter(Boolean).join('/'),
+        label: [name, parentModel, families?.join(', ')].filter(Boolean).join('/'),
         ctime
       }))
     }
