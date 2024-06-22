@@ -130,50 +130,6 @@ function Shortcuts() {
   </>
 }
 
-function OpenAI() {
-  const { t } = useTranslation()
-  const [config, setConfig] = useElectronStore('openaiConfig')
-  return <>
-    <Row gutter={12}>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('apiHost')}</label>
-          <Select
-            filterable
-            creatable
-            options={[
-              { label: 'OpenAI', value: 'https://api.openai.com/v1' },
-              { label: 'AIProxy', value: 'https://api.aiproxy.io/v1' }
-            ]}
-            value={config ? config.baseURL ?? '' : ''}
-            onChange={v => setConfig({ ...config, baseURL: v as string })}
-          />
-        </div>
-        <div className='spirit-field'>
-          <label>{t('openaiConfig.defaultModel')}</label>
-          <ModelSelector
-            value={config ? config.defaultModel : undefined}
-            onChange={v => setConfig({ ...config, defaultModel: v })}
-          />
-          <div className='spirit-field__desc'>{t('openaiConfig.defaultModelTooltip')}</div>
-        </div>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('apiKey')}</label>
-          <Input
-            value={config ? config.apiKey : ''}
-            onChange={v => setConfig({ ...config, apiKey: v })}
-            type='password'
-            // @ts-ignore
-            spellCheck={false}
-          />
-        </div>
-      </Col>
-    </Row>
-  </>
-}
-
 function Chatroom() {
   const { t } = useTranslation()
   const [chatroom, { setChatroom }] = useChatroom()
@@ -272,12 +228,6 @@ const tabs = [
     value: 'aiServices',
     title: 'AI Services',
     Configurer: AIServices
-  },
-  {
-    icon: 'robot',
-    value: 'openAI',
-    title: 'OpenAI',
-    Configurer: OpenAI
   },
   {
     icon: 'forum',
