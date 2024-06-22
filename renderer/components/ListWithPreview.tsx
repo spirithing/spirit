@@ -42,11 +42,11 @@ export interface ListItem {
   } & Record<string, unknown>
 }
 
-export interface ListItemReaderProps<T> {
+export interface ListItemReaderProps<T extends ListItem['option']> {
   value?: T
 }
 
-export interface ListItemWriterProps<T> {
+export interface ListItemWriterProps<T extends ListItem['option']> {
   isEditing: boolean
   value: T
   onChange: (value: T) => void
