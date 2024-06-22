@@ -43,7 +43,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     MessagePlugin.error(e.message ?? String(e))
     return
   }
-  const [instance, api] = getOrCreateInstanceAndAPI(aiService)
+  const [instance, api] = getOrCreateInstanceAndAPI(aiService.option)
 
   try {
     for await (

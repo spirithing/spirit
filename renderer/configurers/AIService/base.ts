@@ -16,10 +16,9 @@ const instances = new WeakMap<
     AIServiceAdapter<keyof AIServiceOptions>['creator']
   >
 >()
-function getOrCreateInstance(aiService: AIService): ReturnType<
+function getOrCreateInstance(option: AIService['option']): ReturnType<
   AIServiceAdapter<AIService['option']['type']>['creator']
 > {
-  const { option } = aiService
   const instance = instances.get(option)
   if (instance) {
     // @ts-ignore
@@ -35,10 +34,10 @@ export function getOrCreateInstanceAndAPI<
   K extends keyof AIServiceOptions,
   A extends AIServiceAdapter<K>,
 >(
-  aiService: AIService
+  option: AIService['option']
 ): [ReturnType<A['creator']>, A['api']] {
-  const instance = getOrCreateInstance(aiService)
-  const api = apis[aiService.option.type]
+  const instance = getOrCreateInstance(option)
+  const api = apis[option.type]
   if (!api) throw new Error('API not found, please check your configuration')
   return [
     instance as ReturnType<A['creator']>,
