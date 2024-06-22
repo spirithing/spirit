@@ -1,5 +1,50 @@
+import type { AIService, AIServiceOptions } from 'spirit'
+
+import type { AIServiceAdapter } from '../../extension'
 import AdapterOllama from '../../extensions/adapter-ollama'
 import AdapterOpenAI from '../../extensions/adapter-openai'
+import { getThrowWhenUndefined } from '../../store'
+
+export function getDefaultAIService() {
+  const aiServiceDefaultUUID = getThrowWhenUndefined('defaultAIServiceUUID')
+  const aiServices = getThrowWhenUndefined('aiServices')
+  return aiServices.find(s => s.uuid === aiServiceDefaultUUID)
+}
+const instances = new WeakMap<
+  AIService['option'],
+  ReturnType<
+    AIServiceAdapter<keyof AIServiceOptions>['creator']
+  >
+>()
+function getOrCreateInstance(aiService: AIService): ReturnType<
+  AIServiceAdapter<AIService['option']['type']>['creator']
+> {
+  const { option } = aiService
+  const instance = instances.get(option)
+  if (instance) {
+    // @ts-ignore
+    return instance
+  }
+  const creator = creators[option.type]
+  if (!creator) throw new Error('Creator not found, please check your configuration')
+  const adapter = creator(option as any)
+  instances.set(option, adapter)
+  return adapter
+}
+export function getOrCreateInstanceAndAPI<
+  K extends keyof AIServiceOptions,
+  A extends AIServiceAdapter<K>,
+>(
+  aiService: AIService
+): [ReturnType<A['creator']>, A['api']] {
+  const instance = getOrCreateInstance(aiService)
+  const api = apis[aiService.option.type]
+  if (!api) throw new Error('API not found, please check your configuration')
+  return [
+    instance as ReturnType<A['creator']>,
+    api as A['api']
+  ]
+}
 
 export const apis = {
   openai: AdapterOpenAI.api,

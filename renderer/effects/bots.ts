@@ -1,53 +1,11 @@
 import { isEqual } from 'lodash-es'
-import { AIService, AIServiceAPIOptionsForChat, AIServiceOptions } from 'spirit'
+import type { AIService, AIServiceAPIOptionsForChat } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '../atoms/chatroom'
-import { apis, creators } from '../configurers/AIService/base'
-import type { AIServiceAdapter } from '../extension'
+import { getDefaultAIService, getOrCreateInstanceAndAPI } from '../configurers/AIService/base'
 import { ee } from '../instances/ee'
-import { electronStore, getThrowWhenUndefined, keyAtom } from '../store'
-
-function getDefaultAIService() {
-  const aiServiceDefaultUUID = getThrowWhenUndefined('defaultAIServiceUUID')
-  const aiServices = getThrowWhenUndefined('aiServices')
-  return aiServices.find(s => s.uuid === aiServiceDefaultUUID)
-}
-const instances = new WeakMap<
-  AIService['option'],
-  ReturnType<
-    AIServiceAdapter<keyof AIServiceOptions>['creator']
-  >
->()
-function getOrCreateInstance(aiService: AIService): ReturnType<
-  AIServiceAdapter<AIService['option']['type']>['creator']
-> {
-  const { option } = aiService
-  const instance = instances.get(option)
-  if (instance) {
-    // @ts-ignore
-    return instance
-  }
-  const creator = creators[option.type]
-  if (!creator) throw new Error('Creator not found, please check your configuration')
-  const adapter = creator(option as any)
-  instances.set(option, adapter)
-  return adapter
-}
-function getOrCreateInstanceAndAPI<
-  K extends keyof AIServiceOptions,
-  A extends AIServiceAdapter<K>,
->(
-  aiService: AIService
-): [ReturnType<A['creator']>, A['api']] {
-  const instance = getOrCreateInstance(aiService)
-  const api = apis[aiService.option.type]
-  if (!api) throw new Error('API not found, please check your configuration')
-  return [
-    instance as ReturnType<A['creator']>,
-    api as A['api']
-  ]
-}
+import { electronStore, keyAtom } from '../store'
 
 ee.on('addMessage', async (m, { id, messages, options }) => {
   const botAtom = keyAtom('bot')
