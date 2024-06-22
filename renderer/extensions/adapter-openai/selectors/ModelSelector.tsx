@@ -10,6 +10,8 @@ import ChatModel = OpenAI.ChatModel
 
 export interface ModelSelectorProps {
   style?: CSSProperties
+  readonly?: boolean
+  disabled?: boolean
   value?: (string & {}) | ChatModel
   defaultValue?: (string & {}) | ChatModel
   onChange?(value: NonNullable<ModelSelectorProps['value']>): void
@@ -17,6 +19,8 @@ export interface ModelSelectorProps {
 
 export function ModelSelector({
   style,
+  readonly,
+  disabled,
   value,
   defaultValue,
   onChange
@@ -29,6 +33,8 @@ export function ModelSelector({
   return <Select
     filterable
     creatable
+    readonly={readonly}
+    disabled={disabled}
     style={style}
     value={value}
     defaultValue={defaultValue}

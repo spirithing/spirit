@@ -45,6 +45,8 @@ export function OptionConfigurer(
         <div className='spirit-field'>
           <label>{t('openaiConfig.defaultModel')}</label>
           <ModelSelector
+            readonly={!isEditing}
+            disabled={!isEditing}
             value={value.defaultModel}
             onChange={v => onChange({ ...value, defaultModel: v as string })}
           />
