@@ -1,6 +1,5 @@
 import { isEqual } from 'lodash-es'
-// import ollama from 'ollama'
-import type { AIService, AIServiceOptions, Bot, IMessage } from 'spirit'
+import type { AIService, AIServiceOptions } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '../atoms/chatroom'
@@ -8,35 +7,6 @@ import { apis, creators } from '../configurers/AIService/base'
 import type { AIServiceAdapter } from '../extension'
 import { ee } from '../instances/ee'
 import { electronStore, getThrowWhenUndefined, keyAtom } from '../store'
-
-interface Adapter {
-  chat(bot: Bot, messages: IMessage[], options?: {
-    model?: string
-  }): AsyncIterable<[string, {
-    status: 'started' | 'running' | 'completed'
-  }]>
-}
-
-// const ollamaAdapter: Adapter = {
-//   chat: async function*(bot, messages, options) {
-//     const completions = await ollama.chat({
-//       model: 'llama2-chinese:13b',
-//       messages: messages.map(m => ({
-//         role: m.user?.name === bot.name ? 'assistant' : 'user',
-//         content: m.text ?? '',
-//         images: m.assets?.map(({ url }) => url) ?? []
-//       })),
-//       stream: true
-//     })
-//     let streamMessage = ''
-//     yield [streamMessage, { status: 'started' }]
-//     for await (const { message } of completions) {
-//       streamMessage += message.content ?? ''
-//       yield [streamMessage, { status: 'running' }]
-//     }
-//     yield [streamMessage, { status: 'completed' }]
-//   }
-// }
 
 function getDefaultAIService() {
   const aiServiceDefaultUUID = getThrowWhenUndefined('defaultAIServiceUUID')
@@ -63,6 +33,20 @@ function getOrCreateInstance(aiService: AIService): ReturnType<
   const adapter = creator(option as any)
   instances.set(option, adapter)
   return adapter
+}
+function getOrCreateInstanceAndAPI<
+  K extends keyof AIServiceOptions,
+  A extends AIServiceAdapter<K>,
+>(
+  aiService: AIService
+): [ReturnType<A['creator']>, A['api']] {
+  const instance = getOrCreateInstance(aiService)
+  const api = apis[aiService.option.type]
+  if (!api) throw new Error('API not found, please check your configuration')
+  return [
+    instance as ReturnType<A['creator']>,
+    api as A['api']
+  ]
 }
 
 ee.on('addMessage', async (m, { id, messages, options }) => {
@@ -101,8 +85,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     MessagePlugin.error(e.message ?? String(e))
     return
   }
-  const instance = getOrCreateInstance(aiService)
-  const api = apis[aiService.option.type]
+  const [instance, api] = getOrCreateInstanceAndAPI(aiService)
 
   try {
     for await (
@@ -110,9 +93,8 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
         instance,
         bot,
         messages ?? [],
-        // TODO remove any
-        aiService.option as any,
-        options as any
+        aiService.option,
+        options
       )
     ) {
       if (status === 'started') clearInterval(t)
