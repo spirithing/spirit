@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { AIServiceOptions } from 'spirit'
+import type { AIServiceOption } from 'spirit'
 import { Col, Input, Row } from 'tdesign-react'
 
 import type { ListItemWriterProps } from '../../components/ListWithPreview'
 
 export function OptionConfigurer(
-  props: ListItemWriterProps<AIServiceOptions['ollama']>
+  props: ListItemWriterProps<AIServiceOption & { type: 'ollama' }>
 ) {
   const { t } = useTranslation()
   const { isEditing, value, onChange, onOnConfirm } = props

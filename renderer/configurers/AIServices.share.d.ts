@@ -18,6 +18,7 @@ declare module 'spirit' {
     models(instance: AIServiceCreators[K]): Promise<{
       id: string
       label?: string
+      created?: number
     }[]>
   }
   export interface AIServiceOptions {
