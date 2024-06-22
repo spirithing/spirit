@@ -146,8 +146,15 @@ function Chatroom() {
         <div className='spirit-field'>
           <label>{t('model')}</label>
           <ModelSelector
-            value={chatroom?.options?.model}
-            onChange={v => setChatroom({ ...chatroom!, options: { ...chatroom?.options, model: v } })}
+            value={{
+              aiServiceUUID: chatroom?.options?.aiServiceUUID,
+              model: chatroom?.options?.model
+            }}
+            onChange={v =>
+              setChatroom({
+                ...chatroom!,
+                options: { ...chatroom?.options, ...v }
+              })}
           />
         </div>
       </Col>

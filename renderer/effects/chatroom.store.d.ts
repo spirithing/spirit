@@ -1,7 +1,4 @@
 declare module 'spirit' {
-  import OpenAI from 'openai'
-  import ChatModel = OpenAI.ChatModel
-
   export type Asset = {
     type: 'image'
     url: string
@@ -27,7 +24,8 @@ declare module 'spirit' {
       }
     )
   export interface ChatRoomOptions {
-    model?: (string & {}) | ChatModel
+    aiServiceUUID?: string
+    model?: string
     sessionLength?: number
     maxMessages?: number
   }

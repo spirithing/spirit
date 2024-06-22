@@ -56,5 +56,7 @@
   "untitled": "Untitled",
   "dragUploadTooltip": "Click or drag and drop to replace the image in this area.",
   "confirmDelete": "Confirm delete {{name}}?",
-  "defaultModel": "Default model"
+  "defaultModel": "Default model",
+  "Please select an AI service": "Please select an AI service",
+  "Please select a model": "Please select a model"
 }

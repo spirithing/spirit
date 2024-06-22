@@ -20,6 +20,20 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
 
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
+
+  let aiService: AIService | undefined
+  try {
+    aiService = getDefaultAIService(options?.aiServiceUUID)
+    if (!aiService) {
+      throw new Error('AI Service not found')
+    }
+  } catch (e) {
+    // @ts-ignore
+    MessagePlugin.error(e.message ?? String(e))
+    return
+  }
+  const [instance, api] = getOrCreateInstanceAndAPI(aiService.option)
+
   if (import.meta.env.DEV && m.text === 'd') {
     setTimeout(() => sendTo('pong', bot), 500)
     return
@@ -31,19 +45,6 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     editTo(0, 'Inputting' + '.'.repeat(count))
     count = (count + 1) % 4
   }, 300)
-
-  let aiService: AIService | undefined
-  try {
-    aiService = getDefaultAIService()
-    if (!aiService) {
-      throw new Error('AI Service not found')
-    }
-  } catch (e) {
-    // @ts-ignore
-    MessagePlugin.error(e.message ?? String(e))
-    return
-  }
-  const [instance, api] = getOrCreateInstanceAndAPI(aiService.option)
 
   try {
     for await (

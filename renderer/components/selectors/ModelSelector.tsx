@@ -1,16 +1,24 @@
-import OpenAI from 'openai'
+import './ModelSelector.scss'
+
 import type { CSSProperties } from 'react'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import useSWR from 'swr'
 import { LoadingIcon } from 'tdesign-icons-react'
 import { Select } from 'tdesign-react'
 
-import { useOpenAI } from '../../hooks/useOpenAI'
-import ChatModel = OpenAI.ChatModel
+import { getOrCreateInstanceAndAPI } from '../../configurers/AIService/base'
+import { useElectronStore } from '../../hooks/useStore'
+
+interface Value {
+  aiServiceUUID?: string
+  model?: string
+}
 
 export interface ModelSelectorProps {
   style?: CSSProperties
-  value?: (string & {}) | ChatModel
-  defaultValue?: (string & {}) | ChatModel
+  value?: Value
+  defaultValue?: Value
   onChange?(value: NonNullable<ModelSelectorProps['value']>): void
 }
 
@@ -20,29 +28,80 @@ export function ModelSelector({
   defaultValue,
   onChange
 }: ModelSelectorProps) {
-  const openAI = useOpenAI()
-  const { data: { data: models = [] } = {}, isLoading, isValidating } = useSWR(
-    ['chatroom', openAI],
-    () => openAI?.models.list()
+  const { prefix } = ModelSelector
+  const { t } = useTranslation()
+  const [aiServices] = useElectronStore('aiServices', [])
+  const aiService = useMemo(() => {
+    let mapped = aiServices.find(
+      aiService => aiService.uuid === value?.aiServiceUUID
+    )
+    if (!mapped) {
+      mapped = aiServices.find(
+        aiService => aiService.uuid === defaultValue?.aiServiceUUID
+      )
+    }
+    return mapped
+  }, [aiServices, defaultValue?.aiServiceUUID, value?.aiServiceUUID])
+  const [instance, api] = useMemo(
+    () => aiService?.option ? getOrCreateInstanceAndAPI(aiService.option) : [],
+    [
+      aiService?.option
+    ]
   )
-  return <Select
-    filterable
-    creatable
-    style={style}
-    value={value}
-    defaultValue={defaultValue}
-    onChange={v => onChange?.(v as NonNullable<ModelSelectorProps['value']>)}
-    suffixIcon={isLoading || isValidating ? <LoadingIcon /> : undefined}
-    options={models
-      .sort((a, b) => b.created - a.created)
-      .map(model => ({
-        group: 'OpenAI',
-        label: model.id,
-        title: `${model.id} (${new Date(model.created * 1000).toLocaleString()})`,
-        value: model.id
+  const { data: models, isLoading, isValidating } = useSWR(
+    [`${aiService?.option.type}.models`, instance, api],
+    () => instance && api?.models(instance)
+  )
+  return <div className={prefix}>
+    <Select
+      filterable
+      creatable
+      clearable
+      style={style}
+      placeholder={t('Please select an AI service')}
+      value={value?.aiServiceUUID}
+      defaultValue={defaultValue?.aiServiceUUID}
+      onChange={v =>
+        onChange?.({
+          aiServiceUUID: v as string,
+          model: undefined
+        })}
+      options={aiServices.map(aiService => ({
+        group: 'AI Service',
+        label: aiService.name,
+        title: aiService.description,
+        value: aiService.uuid
       }))}
-    inputProps={{
-      onClick: ({ e }) => e.stopPropagation()
-    }}
-  />
+    />
+    {(
+      value?.aiServiceUUID
+      || defaultValue?.aiServiceUUID
+    ) && <Select
+      filterable
+      creatable
+      clearable
+      style={style}
+      placeholder={t('Please select a model')}
+      value={value?.model}
+      defaultValue={defaultValue?.model}
+      onChange={v =>
+        onChange?.({
+          ...value,
+          model: v as string
+        })}
+      suffixIcon={isLoading || isValidating ? <LoadingIcon /> : undefined}
+      options={models
+        ?.sort((a, b) => (b?.created ?? 0) - (a?.created ?? 0))
+        .map(model => ({
+          label: model.label,
+          title: model.label,
+          value: model.id
+        }))}
+      inputProps={{
+        onClick: ({ e }) => e.stopPropagation()
+      }}
+    />}
+  </div>
 }
+
+ModelSelector.prefix = `${'spirit'}-model-selector`

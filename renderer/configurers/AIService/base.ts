@@ -5,8 +5,8 @@ import AdapterOllama from '../../extensions/adapter-ollama'
 import AdapterOpenAI from '../../extensions/adapter-openai'
 import { getThrowWhenUndefined } from '../../store'
 
-export function getDefaultAIService() {
-  const aiServiceDefaultUUID = getThrowWhenUndefined('defaultAIServiceUUID')
+export function getDefaultAIService(uuid?: string) {
+  const aiServiceDefaultUUID = uuid ?? getThrowWhenUndefined('defaultAIServiceUUID')
   const aiServices = getThrowWhenUndefined('aiServices')
   return aiServices.find(s => s.uuid === aiServiceDefaultUUID)
 }
