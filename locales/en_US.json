@@ -55,5 +55,6 @@
   "search": "Search by keywords",
   "untitled": "Untitled",
   "dragUploadTooltip": "Click or drag and drop to replace the image in this area.",
-  "confirmDelete": "Confirm delete {{name}}?"
+  "confirmDelete": "Confirm delete {{name}}?",
+  "defaultModel": "Default model"
 }

@@ -21,6 +21,11 @@ export function OptionConfigurer(
           name: t('apiHost')
         }))
       }
+      if (!value?.defaultModel || value?.defaultModel === '') {
+        throw new Error(t('required', {
+          name: t('defaultModel')
+        }))
+      }
     })
   }, [onOnConfirm, t])
   return <OllamaProvider value={{ instance, api }}>
