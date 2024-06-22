@@ -34,7 +34,7 @@ export function getOrCreateInstanceAndAPI<
   K extends keyof AIServiceOptions,
   A extends AIServiceAdapter<K>,
 >(
-  option: AIService['option']
+  option: AIService['option'] & { type: K }
 ): [ReturnType<A['creator']>, A['api']] {
   const instance = getOrCreateInstance(option)
   const api = apis[option.type]
