@@ -1,4 +1,3 @@
-import OpenAI from 'openai'
 import type { CSSProperties } from 'react'
 import useSWR from 'swr'
 import { LoadingIcon } from 'tdesign-icons-react'
@@ -6,14 +5,12 @@ import { Select } from 'tdesign-react'
 
 import { useOllama } from '../Provider'
 
-import ChatModel = OpenAI.ChatModel
-
 export interface ModelSelectorProps {
   style?: CSSProperties
   readonly?: boolean
   disabled?: boolean
-  value?: (string & {}) | ChatModel
-  defaultValue?: (string & {}) | ChatModel
+  value?: string
+  defaultValue?: string
   onChange?(value: NonNullable<ModelSelectorProps['value']>): void
 }
 
