@@ -41,7 +41,7 @@ export default defineAIServiceAdapter('openai', {
     return new OpenAI({
       dangerouslyAllowBrowser: true,
       baseURL: options.apiHost,
-      apiKey: options.apiKey
+      apiKey: options.apiKey ?? ''
     })
   },
   api: {
