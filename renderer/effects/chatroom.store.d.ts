@@ -7,6 +7,8 @@ declare module 'spirit' {
     & {
       uuid: string
       user?: IUser
+      // TODO add message type
+      // type?: string
       text?: string
       assets?: Asset[]
       hidden?: boolean
