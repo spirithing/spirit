@@ -5,12 +5,21 @@ export interface CozeQuesterConfig {
   bearerToken: string
 }
 
-export interface CozeQuesterMessage {
-  role: 'assistant' | 'user'
-  type: 'answer' | 'function_call' | 'tool_response' | 'follow_up'
-  content: string
-  content_type?: 'text'
-}
+export type CozeQuesterMessage =
+  & {
+    content: string
+    contentType?: 'text'
+    extraInfo?: object | null
+  }
+  & (
+    | {
+      role: 'user'
+    }
+    | {
+      role: 'assistant'
+      type: 'answer' | 'function_call' | 'tool_response' | 'follow_up'
+    }
+  )
 
 export interface CozeQuesterChatReq {
   botID: string
@@ -126,7 +135,24 @@ export default class CozeQuester {
         conversation_id: req.conversationID,
         user: req.user,
         query: req.query,
-        chat_history: req.chatHistory,
+        chat_history: req.chatHistory?.map(m => {
+          const common = {
+            role: m.role,
+            content: m.content,
+            content_type: m.contentType,
+            extra_info: m.extraInfo
+          }
+          if (m.role === 'user') {
+            return common
+          }
+          if (m.role === 'assistant') {
+            return {
+              ...common,
+              type: m.type
+            }
+          }
+          throw new Error('Invalid role')
+        }),
         stream: req.stream,
         custom_variables: req.customVariables
         /* eslint-enable camelcase */

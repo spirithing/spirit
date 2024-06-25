@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, test, vi } from 'vitest'
 
-import type { CozeQuesterChatResp, CozeQuesterChatRespIterItem } from '../Quester'
+import type { CozeQuesterChatResp, CozeQuesterChatRespIterItem, CozeQuesterMessage } from '../Quester'
 import CozeQuester from '../Quester'
 
 const botID = process.env.COZE_BOT_ID as string
@@ -35,6 +35,37 @@ describe('Quester', () => {
         expect(e).instanceOf(Error)
         expect(e).property('message').eq('[702242001] 参数传递错误，请查阅对应 API 文档')
       }
+    })
+    test('with history', { timeout: 10000 }, async () => {
+      const { messages: m0 } = await q.chat({
+        botID,
+        user: 'yiijie',
+        query: '你好',
+        stream: false,
+        chatHistory: [
+          {
+            role: 'user',
+            content: '你好',
+            contentType: 'text'
+          }
+        ]
+      })
+      expect(m0).not.empty
+      const { messages: m1 } = await q.chat({
+        botID,
+        user: 'yijie',
+        query: '我刚刚说了什么',
+        stream: false,
+        chatHistory: [
+          {
+            role: 'user',
+            content: '你好',
+            contentType: 'text'
+          },
+          ...(m0 as CozeQuesterMessage[])
+        ]
+      })
+      expect(m1).not.empty
     })
   })
   describe('stream', () => {
