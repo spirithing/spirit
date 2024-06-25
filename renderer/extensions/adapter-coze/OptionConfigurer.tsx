@@ -16,14 +16,9 @@ export function OptionConfigurer(
   const [instance, api] = useMemo(() => getOrCreateInstanceAndAPI(value), [value])
   useEffect(() => {
     return onOnConfirm?.(value => {
-      if (!value?.apiHost || value?.apiHost === '') {
+      if (!value?.defaultBotID || value?.defaultBotID === '') {
         throw new Error(t('required', {
-          name: t('apiHost')
-        }))
-      }
-      if (!value?.defaultModel || value?.defaultModel === '') {
-        throw new Error(t('required', {
-          name: t('defaultModel')
+          name: t('defaultBotID')
         }))
       }
     })
@@ -36,18 +31,30 @@ export function OptionConfigurer(
           <Input
             readonly={!isEditing}
             disabled={!isEditing}
-            placeholder='https://api.openai.com/v1'
+            placeholder='https://api.coze.cn/open_api/v2'
             value={value.apiHost}
             onChange={v => onChange({ ...value, apiHost: v as string })}
           />
         </div>
         <div className='spirit-field'>
-          <label>{t('apiHost')}</label>
+          <label>{t('defaultBotID')}</label>
           <ModelSelector
             readonly={!isEditing}
             disabled={!isEditing}
-            value={value.defaultModel}
-            onChange={v => onChange({ ...value, defaultModel: v as string })}
+            value={value.defaultBotID}
+            onChange={v => onChange({ ...value, defaultBotID: v as string })}
+          />
+        </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('bearerToken')}</label>
+          <Input
+            type='password'
+            readonly={!isEditing}
+            disabled={!isEditing}
+            value={value.bearerToken}
+            onChange={v => onChange({ ...value, bearerToken: v as string })}
           />
         </div>
       </Col>

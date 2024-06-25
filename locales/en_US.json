@@ -58,5 +58,7 @@
   "confirmDelete": "Confirm delete {{name}}?",
   "defaultModel": "Default model",
   "Please select an AI service": "Please select an AI service",
-  "Please select a model": "Please select a model"
+  "Please select a model": "Please select a model",
+  "defaultBotID": "Default bot ID",
+  "bearerToken": "Bearer token"
 }

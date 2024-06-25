@@ -1,16 +1,19 @@
+import type CozeQuester from './Quester'
+
 declare module 'spirit' {
   export interface AIServiceCreators {
-    coze: {}
+    coze: CozeQuester
   }
   export interface AIServiceAPIOptionsForChat {
     coze: {
-      model: string
+      botID: string
     }
   }
   export interface AIServiceOptions {
     coze: {
-      apiHost: string
-      defaultModel: string
+      apiHost?: string
+      bearerToken: string
+      defaultBotID: string
     }
   }
 }

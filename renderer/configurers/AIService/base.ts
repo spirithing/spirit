@@ -1,6 +1,7 @@
 import type { AIService, AIServiceOptions } from 'spirit'
 
 import type { AIServiceAdapter } from '../../extension'
+import AdapterCoze from '../../extensions/adapter-coze'
 import AdapterOllama from '../../extensions/adapter-ollama'
 import AdapterOpenAI from '../../extensions/adapter-openai'
 import { getThrowWhenUndefined } from '../../store'
@@ -47,20 +48,24 @@ export function getOrCreateInstanceAndAPI<
 
 export const apis = {
   openai: AdapterOpenAI.api,
-  ollama: AdapterOllama.api
+  ollama: AdapterOllama.api,
+  coze: AdapterCoze.api
 }
 
 export const creators = {
   openai: AdapterOpenAI.creator,
-  ollama: AdapterOllama.creator
+  ollama: AdapterOllama.creator,
+  coze: AdapterCoze.creator
 }
 
 export const types = {
   openai: AdapterOpenAI.type,
-  ollama: AdapterOllama.type
+  ollama: AdapterOllama.type,
+  coze: AdapterCoze.type
 }
 
 export const aiServiceOptionConfigurerMapping = {
   openai: AdapterOpenAI.Writer,
-  ollama: AdapterOllama.Writer
+  ollama: AdapterOllama.Writer,
+  coze: AdapterCoze.Writer
 }

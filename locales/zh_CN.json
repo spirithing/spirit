@@ -58,5 +58,7 @@
   "confirmDelete": "确认删除 {{name}}？",
   "defaultModel": "默认模型",
   "Please select an AI service": "请选择一个 AI 服务商",
-  "Please select a model": "请选择模型"
+  "Please select a model": "请选择模型",
+  "defaultBotID": "默认机器人 ID",
+  "bearerToken": "个人访问令牌"
 }
