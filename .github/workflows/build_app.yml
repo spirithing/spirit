@@ -11,14 +11,14 @@ jobs:
         os: [ macOS-latest, macos-latest-large ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Install pnpm
-        run: corepack enable
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'pnpm'
+
+      - name: Install pnpm
+        run: corepack enable
 
       - name: Install dependencies
         run:  pnpm install --no-frozen-lockfile && node scripts/bootstrap.mjs
