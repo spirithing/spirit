@@ -23,10 +23,11 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
 
+      - name: Setup node-gyp dependent tools
+        run: brew install python-setuptools
+
       - name: Install dependencies
-        run: |
-          brew install python-setuptools
-          pnpm i
+        run: pnpm i
 
       - name: Build
         id: build
