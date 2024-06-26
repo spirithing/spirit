@@ -29,6 +29,7 @@ jobs:
           pnpm i
 
       - name: Build
+        id: build
         run: |
           pnpm build:mac
           declare -A os_to_suffix
@@ -40,11 +41,13 @@ jobs:
           suffix=${os_to_suffix[$platform]}
           for file in dist/spirit-*
           do
-            mv "$file" "${file%.dmg}$suffix"
+            new_file_name="${file%.dmg}-${{ github.sha }}$suffix"
+            mv "$file" "$new_file_name"
+            echo "::set-output name=file_name::$new_file_name"
           done
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.os }}
-          path: dist/spirit-*.dmg
+          path: ${{ steps.build.outputs.file_name }}
