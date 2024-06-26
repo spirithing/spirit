@@ -2,6 +2,7 @@
   "name": "spirit",
   "description": "Spirit is a startup ai app.",
   "version": "0.0.1",
+  "packageManager": "pnpm@8.12.1",
   "main": "out/main/index.js",
   "type": "module",
   "scripts": {
