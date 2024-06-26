@@ -2,6 +2,7 @@ import './Messages.scss'
 
 import { classnames } from '@shikitor/core/utils'
 import type { CSSProperties } from 'react'
+import { MessagePlugin } from 'tdesign-react'
 
 import { Message } from '../../components/Message'
 import { useChatroom } from '../../hooks/useChatroom'
@@ -47,6 +48,20 @@ export function Messages(props: MessagesProps) {
               className='s-md'
               dangerouslySetInnerHTML={{
                 __html: mdr.render(text) ?? ''
+              }}
+              onClick={async e => {
+                if (e.target instanceof HTMLElement) {
+                  const ele = e.target.closest('.s-md-code-operators .s-icon.copy')
+                  if (ele) {
+                    try {
+                      await navigator.clipboard
+                        .writeText(ele.getAttribute('data-code') ?? '')
+                      await MessagePlugin.success('已复制')
+                    } catch (e) {
+                      await MessagePlugin.error('复制失败')
+                    }
+                  }
+                }
               }}
             />
           </div>
