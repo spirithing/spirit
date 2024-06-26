@@ -1,19 +1,15 @@
-import { spawn } from 'node:child_process'
 import fs from 'node:fs'
-import path from 'node:path'
 
 const tag = process.env.GITHUB_TAG
 const matrixOSName = process.env.GITHUB_MATRIX_OS_NAME
 
 const suffixes = {
-  'macOS-latest': '.apple.dmg',
-  'macOS-latest-large': '.intel.dmg'
+  'macOS-latest': '.apple.dmg'
 }
 const suffix = suffixes[matrixOSName]
 
 const installers = {
-  'macOS-latest': /spirit-.*.dmg/,
-  'macOS-latest-large': /spirit-.*.dmg/
+  'macOS-latest': /spirit-.*.dmg/
 }
 const installer = installers[matrixOSName]
 

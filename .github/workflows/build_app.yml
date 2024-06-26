@@ -10,7 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners
-        os: [ macOS-latest, macOS-latest-large ]
+        os:
+          - macOS-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
