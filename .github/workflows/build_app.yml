@@ -6,6 +6,7 @@ on:
 
 jobs:
   build_on_mac:
+    fail-fast: false
     strategy:
       matrix:
         os: [ macOS-latest, macos-latest-large ]
