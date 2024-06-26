@@ -1,6 +1,4 @@
-# name of your github action
-name: CI
-# this will help you specify where to run
+name: Build Application
 on:
   push:
     branches:
