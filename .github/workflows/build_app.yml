@@ -47,3 +47,11 @@ jobs:
         with:
           name: ${{ matrix.os }}
           path: ${{ steps.build.outputs.file_name }}
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ${{ steps.build.outputs.file_name }}
+          overwrite: true
+          prerelease: true
+          make_latest: false
