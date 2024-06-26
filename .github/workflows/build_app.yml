@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew install python-setuptools
-          pnpm install --no-frozen-lockfile && node scripts/bootstrap.mjs
+          pnpm i
 
       - name: Build
         run: pnpm build:mac
