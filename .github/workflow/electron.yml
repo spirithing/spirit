@@ -1,0 +1,35 @@
+# name of your github action
+name: CI
+# this will help you specify where to run
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_on_mac:
+    strategy:
+      matrix:
+        os: [ macOS-latest, macos-latest-large ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install pnpm
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run:  pnpm install --no-frozen-lockfile && node scripts/bootstrap.mjs
+
+      - name: Build
+        run: pnpm build:mac
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac-${{ matrix.os }}
+          path: dist/spirit-*.dmg
