@@ -37,7 +37,8 @@ jobs:
           GITHUB_MATRIX_OS_NAME: ${{ matrix.os }}
         run: |
           pnpm build:mac
-          node ./scripts/publish_prepare.js
+          new_file_name=`node ./scripts/publish_prepare.js`
+          echo "::set-output name=file_name::$new_file_name"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2

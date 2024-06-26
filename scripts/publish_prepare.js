@@ -26,6 +26,4 @@ const installerPath = `dist/${installerFile}`
 const newInstallerPath = `spirit-${tag}${suffix}`
 
 fs.cpSync(installerPath, newInstallerPath)
-spawn('echo', [
-  `"::set-output name=file_name::${newInstallerPath}"`
-])
+console.log(newInstallerPath)
