@@ -39,6 +39,7 @@ jobs:
           pnpm build:mac
           new_file_name=`node ./scripts/publish_prepare.js`
           echo "::set-output name=file_name::$new_file_name"
+          echo $new_file_name
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
