@@ -29,10 +29,22 @@ jobs:
           pnpm i
 
       - name: Build
-        run: pnpm build:mac
+        run: |
+          pnpm build:mac
+          declare -A os_to_suffix
+          os_to_suffix=(
+            ["macOS-latest"]=".apple.dmg"
+            ["macOS-latest-large"]=".intel.dmg"
+          )
+          platform=${{ matrix.os }}
+          suffix=${os_to_suffix[$platform]}
+          for file in dist/spirit-*
+          do
+            mv "$file" "${file%.dmg}$suffix"
+          done
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: mac-${{ matrix.os }}
+          name: ${{ matrix.os }}
           path: dist/spirit-*.dmg
