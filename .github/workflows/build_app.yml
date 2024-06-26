@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macOS-latest, macos-latest-large ]
+        os: [ macOS-latest, macOS-latest-large ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
