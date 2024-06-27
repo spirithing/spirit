@@ -25,11 +25,16 @@ export default defineConfig({
   },
   renderer: {
     root: 'renderer',
+    esbuild: {
+      jsx: 'automatic'
+    },
     build: {
       rollupOptions: {
         input: 'renderer/index.html'
       }
     },
-    plugins: [react()]
+    plugins: [react({
+      jsxRuntime: 'automatic'
+    })]
   }
 })

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 
 import { useHighlightTheme } from '../providers/theme'
+import { Operators } from './useMDRender.operators'
 
 const mdit = MarkdownIt()
 
@@ -19,25 +20,11 @@ export const useMDRender = () => {
           {
             name: 'operators',
             pre(hast) {
-              hast.children.unshift({
-                type: 'element',
-                tagName: 'div',
-                properties: { class: 's-md-code-operators' },
-                children: [
-                  {
-                    type: 'element',
-                    tagName: 'div',
-                    properties: {
-                      class: 's-icon copy',
-                      title: 'Copy code',
-                      'data-code': this.source
-                    },
-                    children: [
-                      { type: 'text', value: 'content_copy' }
-                    ]
-                  }
-                ]
-              })
+              hast.children.unshift(
+                // TODO
+                // @ts-ignore
+                Operators({ code: this.source })
+              )
             }
           }
         ]
