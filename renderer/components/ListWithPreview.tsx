@@ -378,6 +378,7 @@ function List(props: ListProps<ListItem>) {
   return <div className={prefix}>
     <div className={`${prefix}-header`}>
       <Input
+        clearable
         placeholder={t('search')}
         value={keywords}
         onChange={v => setKeywords(v)}
