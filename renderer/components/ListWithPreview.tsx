@@ -21,6 +21,7 @@ import {
 } from 'tdesign-react'
 import type { UploadFile } from 'tdesign-react/es/upload/type'
 
+import { SearchIcon } from 'tdesign-icons-react'
 import notFound from '../assets/not_found.svg'
 import { useEventCallback } from '../hooks/useEventCallback'
 import type { WithPrefixProps } from '../utils/prefixes'
@@ -379,6 +380,7 @@ function List(props: ListProps<ListItem>) {
     <div className={`${prefix}-header`}>
       <Input
         clearable
+        prefixIcon={<SearchIcon />}
         placeholder={t('search')}
         value={keywords}
         onChange={v => setKeywords(v)}
