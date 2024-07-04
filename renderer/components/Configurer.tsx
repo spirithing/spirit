@@ -233,7 +233,7 @@ const tabs = [
   {
     icon: 'robot',
     value: 'aiServices',
-    title: 'AI Services',
+    title: <Translation>{t => t('aiServices')}</Translation>,
     Configurer: AIServices
   },
   {

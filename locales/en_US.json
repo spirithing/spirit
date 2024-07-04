@@ -60,5 +60,6 @@
   "Please select an AI service": "Please select an AI service",
   "Please select a model": "Please select a model",
   "defaultBotID": "Default bot ID",
-  "bearerToken": "Bearer token"
+  "bearerToken": "Bearer token",
+  "aiServices": "AI services"
 }
