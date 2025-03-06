@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es'
-import type { AIService, AIServiceAPIOptionsForChat } from 'spirit'
+import type { AIService, AIServiceAPIOptionsForChat, IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '../atoms/chatroom'
@@ -47,11 +47,23 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
   }, 300)
 
   try {
+    const resolvedMessages: IMessage[] = messages
+      ?.toReversed()
+      ?.map(m => ({
+        ...m,
+        text: m.text
+          ? m.text.replace(
+            /^\n*<think[^>]*>[\s\S]*?<\/think>\n*/,
+            ''
+          )
+          : undefined
+      } as IMessage))
+      ?? []
     for await (
       const [message, { status }] of api.chat(
         instance,
         bot,
-        messages ?? [],
+        resolvedMessages,
         aiService.option,
         options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
       )

@@ -64,7 +64,7 @@ export default defineAIServiceAdapter('openai', {
             content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
             role: 'system'
           },
-          ...messages?.map(messageTransform.bind(null, bot)).reverse() ?? []
+          ...messages?.map(messageTransform.bind(null, bot)) ?? []
         ],
         stream: true
       })

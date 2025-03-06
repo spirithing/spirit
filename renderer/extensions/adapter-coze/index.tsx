@@ -28,7 +28,7 @@ export default defineAIServiceAdapter('coze', {
         user: 'unknown',
         stream: true,
         query: question.text ?? '',
-        chatHistory: old.reverse().map(m => {
+        chatHistory: old.map(m => {
           const role = m.user?.name === bot.name ? 'assistant' : 'user'
           const common = {
             role,
