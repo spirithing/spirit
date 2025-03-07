@@ -22,11 +22,17 @@ export default defineAIServiceAdapter('ollama', {
 
       const completions = await instance.chat({
         model,
-        messages: messages.map(m => ({
-          role: m.user?.name === bot.name ? 'assistant' : 'user',
-          content: m.text ?? '',
-          images: m.assets?.map(({ url }) => url) ?? []
-        })),
+        messages: [
+          {
+            content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
+            role: 'system'
+          },
+          ...messages.map(m => ({
+            role: m.user?.name === bot.name ? 'assistant' : 'user',
+            content: m.text ?? '',
+            images: m.assets?.map(({ url }) => url) ?? []
+          }))
+        ],
         stream: true
       })
       let streamMessage = ''

@@ -42,6 +42,23 @@
       );
     }
   }
+  .message-text {
+    > .think-state {
+      display: flex;
+      align-items: center;
+      padding: 5px 0;
+      opacity: .5;
+      font-size: 12px;
+      user-select: none;
+      cursor: pointer;
+      > svg {
+        transition: .3s;
+      }
+      &.open > svg {
+        transform: rotate(90deg);
+      }
+    }
+  }
   .s-md pre:hover .s-md-code-operators {
     opacity: 1;
   }

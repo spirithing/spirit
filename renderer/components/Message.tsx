@@ -5,8 +5,7 @@ import type { EditorProps } from '@shikitor/react'
 import { Editor } from '@shikitor/react'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
-import { useMemo } from 'react'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { IMessage, IUser } from 'spirit'
 import { Avatar, Button } from 'tdesign-react'
 
@@ -28,11 +27,11 @@ export type MessageProps = NestedPropsGenerator<'onClick', OnClicks> & {
   value: IMessage
   onTextChange?(text: string): void
   onDelete?(): void
-  textRender?(text: string): ReactNode
+  TextRender?(props: { text: string }): ReactNode
 }
 
 export function Message(props: MessageProps) {
-  const { className, value, textRender } = props
+  const { className, value, TextRender } = props
   const callFunc = <P extends keyof MessageProps & (`onClick:${string}`)>(
     key: P,
     ...args: Parameters<NonNullable<MessageProps[P]>>
@@ -84,7 +83,9 @@ export function Message(props: MessageProps) {
             options={editorOptions}
           />
           : <>
-            {value.text ? textRender?.(value.text) ?? value.text : ''}
+            {value.text && TextRender
+              ? <TextRender text={value.text} />
+              : value.text}
             {value.assets?.map(({ type, url }) => {
               switch (type) {
                 case 'image':
