@@ -33,11 +33,31 @@ export default defineAIServiceAdapter('ollama', {
             images: m.assets?.map(({ url }) => url) ?? []
           }))
         ],
+        tools: [
+          {
+            type: 'function',
+            function: {
+              name: 'open_application',
+              description: 'Open an application',
+              parameters: {
+                type: 'object',
+                required: ['appName'],
+                properties: {
+                  appName: {
+                    type: 'string',
+                    description: 'The app name'
+                  }
+                }
+              }
+            }
+          }
+        ],
         stream: true
       })
       let streamMessage = ''
       yield [streamMessage, { status: 'started' }]
       for await (const { message } of completions) {
+        console.log(message)
         streamMessage += message.content ?? ''
         yield [streamMessage, { status: 'running' }]
       }
