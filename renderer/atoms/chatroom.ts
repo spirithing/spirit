@@ -34,13 +34,17 @@ export const setChatroom = (id: string, chatroomOrSetter: ChatRoom | ((chatroom:
     : chatroomOrSetter
   electronStore.set(chatroomAtom, chatroom)
 }
-export const sendMessage = (id: string, text: string, user: IUser) => {
-  const message = {
+export const sendMessage = (id: string, text: string, user: IUser, options?: {
+  type?: IMessage['type']
+}) => {
+  const message: IMessage = {
     uuid: uuid(),
-    ctime: Date.now(),
+    type: options?.type ?? 'user',
     text,
-    user
-  } as IMessage
+    user,
+    ctime: Date.now(),
+    assets: []
+  }
   setChatroom(id, chatroom => ({
     ...chatroom,
     messages: [message, ...(chatroom.messages ?? [])]

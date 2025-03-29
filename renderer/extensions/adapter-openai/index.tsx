@@ -15,6 +15,25 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
       content: m.text
     }
   }
+  if (m.type) {
+    switch (m.type) {
+      case 'system':
+      case 'developer':
+        return {
+          name,
+          role: m.type,
+          content: m.text ?? ''
+        }
+      case 'tool':
+        return {
+          // TODO: tool_call_id
+          // eslint-disable-next-line camelcase
+          tool_call_id: '',
+          role: 'tool',
+          content: m.text ?? ''
+        }
+    }
+  }
   return {
     name,
     role: 'user',
@@ -59,13 +78,7 @@ export default defineAIServiceAdapter('openai', {
         model,
         // eslint-disable-next-line camelcase
         max_tokens: 4096,
-        messages: [
-          {
-            content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
-            role: 'system'
-          },
-          ...messages?.map(messageTransform.bind(null, bot)) ?? []
-        ],
+        messages: messages?.map(messageTransform.bind(null, bot)) ?? [],
         stream: true
       })
       let streamMessage = ''

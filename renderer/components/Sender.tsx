@@ -35,27 +35,6 @@ import { imgBlob2base64 } from '../utils/imgBlob2base64'
 import { isShortcut } from '../utils/isShortcut'
 import { Kbd } from './Kbd'
 
-const useYiyanPlaceholder = () => {
-  const { t } = useTranslation()
-  const yiyan = useMemo(() => [
-    // TODO
-    '来聊点什么？',
-    '人生没有彩排，每天都是现场直播。',
-    '人生不如意十之八九，剩下的一二分，也未必如意。',
-    '人生就是起起落落，落落又起起。',
-    '机器人的人生也不容易，每天充电，还要听人吹牛。',
-    '这是由 AI 生成的一句话。'
-  ], [t])
-  const [yiyanIndex, setYiyanIndex] = useState(0)
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setYiyanIndex(i => (i + 1) % yiyan.length)
-    }, 30000)
-    return () => clearInterval(timer)
-  }, [])
-  return useMemo(() => yiyan[yiyanIndex], [yiyanIndex])
-}
-
 const plugins = [
   providePopup,
   provideCompletions({
@@ -179,15 +158,9 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
     const [act, ...args] = Array.isArray(action)
       ? action
       : [action]
-    ee.emit(
-      'act',
-      act,
-      // @ts-expect-error
-      ...args
-    )
+    // @ts-ignore
+    ee.emit('act', act, ...args)
   })
-
-  const placeholder = useYiyanPlaceholder()
 
   const [display, setDisplay] = useElectronStore('display')
   const shikitorRef = useRef<Shikitor>(null)
@@ -230,9 +203,8 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
             autoSize: { maxRows: 6 }
           }}
           options={useMemo(() => ({
-            placeholder,
             theme: highlightTheme
-          }), [placeholder, highlightTheme])}
+          }), [highlightTheme])}
           plugins={plugins}
           onColorChange={setColor}
           onMounted={shikitor => shikitor.focus()}

@@ -1,4 +1,5 @@
 import { Ollama } from 'ollama/browser'
+import type { IToolCall } from 'spirit'
 
 import ollamaIcon from '../../assets/ollama.svg'
 import { defineAIServiceAdapter } from '../../extension'
@@ -22,46 +23,35 @@ export default defineAIServiceAdapter('ollama', {
 
       const completions = await instance.chat({
         model,
-        messages: [
-          {
-            content: `Your name is "${bot.name}" and your description is "${bot.description}".`,
-            role: 'system'
-          },
-          ...messages.map(m => ({
-            role: m.user?.name === bot.name ? 'assistant' : 'user',
-            content: m.text ?? '',
-            images: m.assets?.map(({ url }) => url) ?? []
-          }))
-        ],
-        tools: [
-          {
-            type: 'function',
-            function: {
-              name: 'open_application',
-              description: 'Open an application',
-              parameters: {
-                type: 'object',
-                required: ['appName'],
-                properties: {
-                  appName: {
-                    type: 'string',
-                    description: 'The app name'
-                  }
-                }
-              }
-            }
-          }
-        ],
+        messages: messages.map(m => ({
+          role: m.type === undefined
+            ? m.user?.name === bot.name ? 'assistant' : 'user'
+            : m.type,
+          content: m.text ?? '',
+          images: m.assets?.map(({ url }) => url) ?? []
+        })),
+        tools: options?.tools,
         stream: true
       })
       let streamMessage = ''
+      const toolCalls: IToolCall[] = []
       yield [streamMessage, { status: 'started' }]
       for await (const { message } of completions) {
-        console.log(message)
         streamMessage += message.content ?? ''
-        yield [streamMessage, { status: 'running' }]
+        if (message.tool_calls) {
+          toolCalls.push(
+            ...message.tool_calls.map((rest, index) => ({ id: `${index}`, ...rest }))
+          )
+        }
+        yield [streamMessage, {
+          toolCalls,
+          status: 'running'
+        }]
       }
-      yield [streamMessage, { status: 'completed' }]
+      yield [streamMessage, {
+        toolCalls,
+        status: 'completed'
+      }]
     },
     models: async instance => {
       const { models } = await instance.list()

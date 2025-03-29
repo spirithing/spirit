@@ -5,7 +5,45 @@ import { MessagePlugin } from 'tdesign-react'
 import { editMessage, sendMessage } from '../atoms/chatroom'
 import { getDefaultAIService, getOrCreateInstanceAndAPI } from '../configurers/AIService/base'
 import { ee } from '../instances/ee'
-import { electronStore, keyAtom } from '../store'
+import { electronStore, getFromStore, keyAtom } from '../store'
+
+const tools = [
+  {
+    type: 'function',
+    function: {
+      name: 'open_application',
+      description: 'Open an application',
+      parameters: {
+        type: 'object',
+        required: ['appName'],
+        properties: {
+          appName: {
+            type: 'string',
+            description: 'The app name'
+          }
+        }
+      }
+    },
+    async run({ appName }: { appName: string }) {
+      const applications = getFromStore('applications')
+      const app = applications?.find(({ name }) => name.includes(appName))
+      if (!app) {
+        return `Application "${appName}" not found`
+      }
+      ee.emit('act', 'open', app.path)
+      return 'Opening application...'
+    }
+  }
+]
+
+const runTool = async (name: string, parameters: unknown): Promise<string> => {
+  const tool = tools.find(tool => tool.function.name === name)
+  if (!tool) {
+    throw new Error('Tool not found')
+  }
+  // @ts-ignore
+  return tool.run(parameters)
+}
 
 ee.on('addMessage', async (m, { id, messages, options }) => {
   const botAtom = keyAtom('bot')
@@ -39,10 +77,10 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     return
   }
 
-  const { uuid } = sendTo('Inputting', bot)
+  const { uuid } = sendTo('Thinking', bot)
   let count = 0
   const t = setInterval(() => {
-    editTo(0, 'Inputting' + '.'.repeat(count))
+    editTo(0, 'Thinking' + '.'.repeat(count))
     count = (count + 1) % 4
   }, 300)
 
@@ -51,25 +89,45 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
       ?.toReversed()
       ?.map(m => ({
         ...m,
-        text: m.text
-          ? m.text.replace(
-            /^\n*<think[^>]*>[\s\S]*?<\/think>\n*/,
-            ''
-          )
-          : undefined
+        text: m.text && m.user?.name === bot.name
+          ? m.text
+            .replace(/^\n*<think[^>]*>[\s\S]*?<\/think>\n*/, '')
+            .replace(/^\n*<\/think>\n*/, '')
+          : m.text
       } as IMessage))
       ?? []
+    const allMessages: IMessage[] = [
+      {
+        uuid: 'system',
+        type: 'system',
+        text: `Your name is "${bot.name}" and your description is "${bot.description}".`,
+        ctime: Date.now(),
+        assets: []
+      },
+      ...resolvedMessages
+    ]
     for await (
-      const [message, { status }] of api.chat(
+      const [message, { toolCalls, status }] of api.chat(
         instance,
         bot,
-        resolvedMessages,
+        allMessages,
         aiService.option,
-        options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
+        Object.assign(
+          {},
+          { tools },
+          options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
+        )
       )
     ) {
       if (status === 'started') clearInterval(t)
-      editTo(uuid, message)
+      if (status === 'completed') {
+        editTo(uuid, message)
+        if (toolCalls?.length && toolCalls.length > 0) {
+          for (const { function: { name, arguments: parameters } } of toolCalls) {
+            sendTo(await runTool(name, parameters), m.user!, { type: 'tool' })
+          }
+        }
+      }
     }
   } catch (e) {
     clearInterval(t)

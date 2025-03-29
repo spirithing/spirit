@@ -1,4 +1,13 @@
 declare module 'spirit' {
+  export type IToolCall = {
+    id: string
+    function: {
+      name: string
+      arguments: {
+        [key: string]: any
+      }
+    }
+  }
   export type Asset = {
     type: 'image'
     url: string
@@ -7,8 +16,7 @@ declare module 'spirit' {
     & {
       uuid: string
       user?: IUser
-      // TODO add message type
-      // type?: string
+      type?: 'system' | 'tool' | 'developer' | 'assistant' | 'user' | (string & {})
       text?: string
       assets?: Asset[]
       hidden?: boolean

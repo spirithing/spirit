@@ -1,11 +1,12 @@
 import './store'
 import './external'
 
+import * as url from 'node:url'
+
 // TODO listen language change by os-locale
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, clipboard, type Display, globalShortcut, protocol, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'
-import * as url from 'node:url'
 import { join } from 'path'
 import type { WeChat } from 'spirit'
 
@@ -79,6 +80,8 @@ function createWindow() {
     icon,
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
+      webSecurity: false,
+      allowRunningInsecureContent: true,
       sandbox: false,
       nodeIntegration: true,
       contextIsolation: false

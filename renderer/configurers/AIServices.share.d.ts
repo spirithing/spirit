@@ -1,4 +1,4 @@
-import type { Bot, IMessage } from 'spirit'
+import type { Bot, IMessage, IToolCall } from 'spirit'
 
 declare module 'spirit' {
   export interface AIServiceCreators {
@@ -11,8 +11,29 @@ declare module 'spirit' {
       bot: Bot,
       messages: IMessage[],
       adapterOptions?: AIServiceOptions[K],
-      options?: AIServiceAPIOptionsForChat[K]
+      options?: AIServiceAPIOptionsForChat[K] & {
+        tools?: {
+          type: string
+          function: {
+            name: string
+            description: string
+            parameters: {
+              type: string
+              required: string[]
+              properties: {
+                [key: string]: {
+                  type: string
+                  description: string
+                  enum?: string[]
+                }
+              }
+            }
+            strict?: boolean
+          }
+        }[]
+      }
     ): AsyncIterable<[string, {
+      toolCalls?: IToolCall[]
       status: 'started' | 'running' | 'completed'
     }]>
     models(instance: AIServiceCreators[K]): Promise<{
