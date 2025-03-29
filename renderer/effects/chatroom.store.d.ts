@@ -1,4 +1,23 @@
 declare module 'spirit' {
+  export type ITool = {
+    type: 'function' | (string & {})
+    function: {
+      name: string
+      description: string
+      parameters: {
+        type: string
+        required: string[]
+        properties: {
+          [key: string]: {
+            type: string
+            description: string
+            enum?: string[]
+          }
+        }
+      }
+      strict?: boolean
+    }
+  }
   export type IToolCall = {
     id?: string
     function?: {

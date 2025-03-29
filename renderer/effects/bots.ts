@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es'
-import type { AIService, AIServiceAPIOptionsForChat, IMessage } from 'spirit'
+import type { AIService, AIServiceAPIOptionsForChat, IMessage, ITool } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '../atoms/chatroom'
@@ -7,7 +7,9 @@ import { getDefaultAIService, getOrCreateInstanceAndAPI } from '../configurers/A
 import { ee } from '../instances/ee'
 import { electronStore, getFromStore, keyAtom } from '../store'
 
-const tools = [
+const tools: (ITool & {
+  run: (parameters: any) => Promise<string>
+})[] = [
   {
     type: 'function',
     function: {
@@ -33,13 +35,32 @@ const tools = [
       ee.emit('act', 'open', app.path)
       return 'Opening application...'
     }
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'list_application',
+      description: 'List all applications',
+      parameters: {
+        type: 'object',
+        required: [],
+        properties: {}
+      }
+    },
+    async run() {
+      const applications = getFromStore('applications')
+      if (!applications) {
+        return 'No applications found'
+      }
+      return applications.map(({ name }) => `- ${name}`).join('\n')
+    }
   }
 ]
 
 const runTool = async (name: string, parameters: unknown): Promise<string> => {
   const tool = tools.find(tool => tool.function.name === name)
   if (!tool) {
-    throw new Error('Tool not found')
+    throw new Error(`Tool "${name}" not found`)
   }
   // @ts-ignore
   return tool.run(parameters)
@@ -114,7 +135,9 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
         aiService.option,
         Object.assign(
           {},
-          { tools },
+          {
+            tools: tools.map(({ run: _, ...t }) => t)
+          },
           options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
         )
       )
