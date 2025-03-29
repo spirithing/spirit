@@ -13,7 +13,7 @@ declare module 'spirit' {
       adapterOptions?: AIServiceOptions[K],
       options?: AIServiceAPIOptionsForChat[K] & {
         tools?: {
-          type: string
+          type: 'function' | (string & {})
           function: {
             name: string
             description: string

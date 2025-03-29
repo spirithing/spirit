@@ -1,9 +1,9 @@
 declare module 'spirit' {
   export type IToolCall = {
-    id: string
-    function: {
-      name: string
-      arguments: {
+    id?: string
+    function?: {
+      name?: string
+      arguments?: {
         [key: string]: any
       }
     }

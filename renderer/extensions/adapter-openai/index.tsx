@@ -1,5 +1,5 @@
 import OpenAI from 'openai'
-import type { Bot, IMessage } from 'spirit'
+import type { Bot, IMessage, IToolCall } from 'spirit'
 
 import chatgptIcon from '../../assets/chatgpt.svg'
 import { defineAIServiceAdapter } from '../../extension'
@@ -21,7 +21,7 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
       case 'developer':
         return {
           name,
-          role: m.type,
+          role: m.type as 'system' | 'developer',
           content: m.text ?? ''
         }
       case 'tool':
@@ -79,18 +79,36 @@ export default defineAIServiceAdapter('openai', {
         // eslint-disable-next-line camelcase
         max_tokens: 4096,
         messages: messages?.map(messageTransform.bind(null, bot)) ?? [],
-        stream: true
+        stream: true,
+        tools: options?.tools?.map((tool) => ({
+          ...tool
+        } as OpenAI.ChatCompletionTool))
       })
       let streamMessage = ''
+      const toolCalls: IToolCall[] = []
       yield [streamMessage, { status: 'started' }]
       for await (const { choices: [{ delta }] } of completions) {
         streamMessage += delta.content ?? ''
+        if (delta.tool_calls) {
+          toolCalls.push(...delta.tool_calls.map(rest => ({
+            ...rest,
+            function: {
+              name: rest.function?.name ?? undefined,
+              arguments: rest.function?.arguments
+                ? JSON.parse(rest.function.arguments)
+                : undefined
+            }
+          })))
+        }
         yield [streamMessage, {
-          ...delta,
+          toolCalls,
           status: 'running'
         }]
       }
-      yield [streamMessage, { status: 'completed' }]
+      yield [streamMessage, {
+        toolCalls,
+        status: 'completed'
+      }]
     },
     models: async instance => {
       const { data } = await instance.models.list()

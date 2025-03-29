@@ -120,10 +120,12 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
       )
     ) {
       if (status === 'started') clearInterval(t)
+      editTo(uuid, message)
       if (status === 'completed') {
-        editTo(uuid, message)
         if (toolCalls?.length && toolCalls.length > 0) {
-          for (const { function: { name, arguments: parameters } } of toolCalls) {
+          for (const { function: { name = undefined, arguments: parameters = {} } = {} } of toolCalls) {
+            if (!name) continue
+
             sendTo(await runTool(name, parameters), m.user!, { type: 'tool' })
           }
         }
