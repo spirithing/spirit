@@ -83,6 +83,16 @@ export function Message(props: MessageProps) {
             options={editorOptions}
           />
           : <>
+            {value.toolCalls?.length && <>
+              {value.toolCalls.map(c =>
+                <pre
+                  key={c.id}
+                  className={classnames('message-tool-call')}
+                >{`${c.function?.name ?? 'anonymous'}${
+                    c.function?.arguments ? `(${JSON.stringify(c.function?.arguments, null, 2)})` : ''
+                }`}</pre>
+              )}
+            </>}
             {value.text && TextRender
               ? <TextRender text={value.text} />
               : value.text}

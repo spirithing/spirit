@@ -96,6 +96,9 @@
       font-size: 18px;
     }
   }
+  &-tool-call {
+    margin: 0;
+  }
 
   &:hover &-time {
     opacity: 1;

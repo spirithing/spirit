@@ -106,7 +106,11 @@ export function Messages(props: MessagesProps) {
     {messages?.map(message => (
       <Message
         key={message.uuid}
-        className={message.user?.name === user.name ? 'self' : 'other'}
+        className={classnames(
+          message.user?.name === user.name ? 'self' : 'other',
+          message.type === 'tool' && 'tool',
+          (message.toolCalls?.length ?? 0) > 0 && 'tool-call'
+        )}
         value={message}
         onTextChange={text => editMessage(message.uuid, text)}
         onDelete={() => delMessage(message.uuid)}

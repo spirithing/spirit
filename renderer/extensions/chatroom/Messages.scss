@@ -8,7 +8,7 @@
   margin-top: 20px;
 
   overflow-y: auto;
-  .self {
+  .self:not(.tool) {
     --bg-cr: color-mix(
       in srgb,
       var(--td-brand-color),
@@ -40,6 +40,22 @@
         var(--td-brand-color),
         var(--td-text-color-primary) 80%
       );
+    }
+  }
+  > .message + .self.tool {
+    &::after {
+      display: none;
+    }
+    > .message-header {
+      display: none;
+    }
+  }
+  > .self.tool + .message {
+    &::after {
+      display: none;
+    }
+    > .message-header {
+      display: none;
     }
   }
   .message-text {

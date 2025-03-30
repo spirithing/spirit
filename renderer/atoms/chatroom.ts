@@ -1,4 +1,4 @@
-import type { ChatRoom, IMessage, IUser } from 'spirit'
+import type { ChatRoom, IMessage, IToolCall, IUser } from 'spirit'
 
 import { electronStore, keyAtom } from '../store'
 import { uuid } from '../utils/uuid'
@@ -51,7 +51,9 @@ export const sendMessage = (id: string, text: string, user: IUser, options?: {
   }))
   return message
 }
-export const editMessage = (id: string, index: number | string, text: string) => {
+export const editMessage = (id: string, index: number | string, text: string, attach?: {
+  toolCalls: IToolCall[]
+}) => {
   setChatroom(id, chatroom => {
     const { messages } = chatroom
     if (!messages) {
@@ -66,7 +68,11 @@ export const editMessage = (id: string, index: number | string, text: string) =>
         throw new Error('Message not found')
       }
     }
-    messages[index] = { ...messages[index], text }
+    messages[index] = {
+      ...messages[index],
+      ...attach,
+      text
+    }
     return { ...chatroom, messages }
   })
 }

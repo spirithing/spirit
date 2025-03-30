@@ -121,7 +121,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
       {
         uuid: 'system',
         type: 'system',
-        text: `Your name is "${bot.name}" and your description is "${bot.description}".`,
+        text: `Your name is "${bot.name}"${bot.description ? ` and your description is "${bot.description}"` : ''}.`,
         ctime: Date.now(),
         assets: []
       },
@@ -146,6 +146,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
       editTo(uuid, message)
       if (status === 'completed') {
         if (toolCalls?.length && toolCalls.length > 0) {
+          editTo(uuid, message, { toolCalls })
           for (const { function: { name = undefined, arguments: parameters = {} } = {} } of toolCalls) {
             if (!name) continue
 
