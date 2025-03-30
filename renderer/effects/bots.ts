@@ -6,6 +6,7 @@ import { editMessage, sendMessage } from '../atoms/chatroom'
 import { getDefaultAIService, getOrCreateInstanceAndAPI } from '../configurers/AIService/base'
 import { ee } from '../instances/ee'
 import { electronStore, getFromStore, keyAtom } from '../store'
+import { bridge } from './actions'
 
 const tools: (ITool & {
   run: (parameters: any) => Promise<string>
@@ -32,8 +33,8 @@ const tools: (ITool & {
       if (!app) {
         return `Application "${appName}" not found`
       }
-      ee.emit('act', 'open', app.path)
-      return 'Opening application...'
+      await bridge.open(app.path)
+      return 'Application opened'
     }
   },
   {

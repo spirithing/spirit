@@ -1,6 +1,26 @@
 import { type Result as ActiveWindow } from 'get-windows'
 
 declare module 'spirit' {
+  export interface BridgeContext {
+    method: string
+  }
+  export interface BridgeCalledContext extends BridgeContext {
+    traceID: string
+  }
+  export interface SyncMethodRtn {
+    type: 'promise' | 'success' | 'error'
+    resp: any
+  }
+  export interface BridgeMethods {
+    open(path: string): Promise<void>
+  }
+  export interface BridgeSyncMethods {
+  }
+  export type Bridge =
+    & BridgeMethods
+    & {
+      sync: BridgeSyncMethods
+    }
   export interface System {
     os: string
     username: string
