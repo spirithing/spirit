@@ -1,5 +1,5 @@
 import { bridge } from '../bridge'
-import { getFromStore } from '../store'
+import { electronStore, getFromStore, keyAtom } from '../store'
 import { defineTool, t } from './core/defineTool'
 
 export const openApplication = defineTool(
@@ -16,6 +16,7 @@ export const openApplication = defineTool(
       return `Application "${appName}" not found`
     }
     await bridge.openApplication(app.path)
+    electronStore.set(keyAtom('display')!, false)
     return 'Application opened'
   }
 )
