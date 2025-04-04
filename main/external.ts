@@ -3,21 +3,11 @@ import { exec } from 'node:child_process'
 import { ipcMain } from 'electron'
 import type { BridgeCalledContext, BridgeMethods, SyncMethodRtn } from 'spirit'
 
+import * as apis from './apis'
 import { isMac } from './utils/system'
 
-const bridgeMethods: BridgeMethods = {
-  async open(path: string): Promise<void> {
-    if (isMac) {
-      await new Promise<void>((ok, no) =>
-        exec(`open -a "${path}" && osascript -e 'tell application "${path}" to activate'`, error => {
-          error ? no(error) : ok()
-        })
-      )
-      return
-    }
-    throw new Error('Unsupported platform')
-  }
-}
+const bridgeMethods = {} as BridgeMethods
+Object.assign(bridgeMethods, apis)
 
 ipcMain.handle('call', async (_, ctx: BridgeCalledContext, ...args: unknown[]) => {
   try {

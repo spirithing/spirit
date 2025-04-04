@@ -12,7 +12,7 @@ declare module 'spirit' {
     resp: any
   }
   export interface BridgeMethods {
-    open(path: string): Promise<void>
+    openApplication(path: string): Promise<void>
   }
   export interface BridgeSyncMethods {
   }

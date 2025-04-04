@@ -9,8 +9,8 @@ declare module 'spirit' {
         required: string[]
         properties: {
           [key: string]: {
-            type: string
-            description: string
+            type?: string
+            description?: string
             enum?: string[]
           }
         }

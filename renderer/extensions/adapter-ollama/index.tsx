@@ -30,6 +30,8 @@ export default defineAIServiceAdapter('ollama', {
           content: m.text ?? '',
           images: m.assets?.map(({ url }) => url) ?? []
         })),
+        // TODO
+        // @ts-ignore
         tools: options?.tools,
         stream: true
       })

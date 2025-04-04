@@ -26,6 +26,7 @@
     "@mapbox/node-pre-gyp": "^1.0.11",
     "@shikitor/core": "^0.0.9",
     "@shikitor/react": "^0.1.5",
+    "@sinclair/typebox": "^0.34.33",
     "@uiw/react-color": "^2.3.0",
     "foxact": "^0.2.33",
     "framer-motion": "^11.2.10",

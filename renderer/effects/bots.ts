@@ -1,70 +1,18 @@
 import { isEqual } from 'lodash-es'
-import type { AIService, AIServiceAPIOptionsForChat, IMessage, ITool } from 'spirit'
+import type { AIService, AIServiceAPIOptionsForChat, IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '../atoms/chatroom'
 import { getDefaultAIService, getOrCreateInstanceAndAPI } from '../configurers/AIService/base'
 import { ee } from '../instances/ee'
-import { electronStore, getFromStore, keyAtom } from '../store'
-import { bridge } from './actions'
-
-const tools: (ITool & {
-  run: (parameters: any) => Promise<string>
-})[] = [
-  {
-    type: 'function',
-    function: {
-      name: 'open_application',
-      description: 'Open an application',
-      parameters: {
-        type: 'object',
-        required: ['appName'],
-        properties: {
-          appName: {
-            type: 'string',
-            description: 'The app name'
-          }
-        }
-      }
-    },
-    async run({ appName }: { appName: string }) {
-      const applications = getFromStore('applications')
-      const app = applications?.find(({ name }) => name.includes(appName))
-      if (!app) {
-        return `Application "${appName}" not found`
-      }
-      await bridge.open(app.path)
-      return 'Application opened'
-    }
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'list_application',
-      description: 'List all applications',
-      parameters: {
-        type: 'object',
-        required: [],
-        properties: {}
-      }
-    },
-    async run() {
-      const applications = getFromStore('applications')
-      if (!applications) {
-        return 'No applications found'
-      }
-      return applications.map(({ name }) => `- ${name}`).join('\n')
-    }
-  }
-]
+import { electronStore, keyAtom } from '../store'
+import { tools } from '../tools'
 
 const runTool = async (name: string, parameters: unknown): Promise<string> => {
-  const tool = tools.find(tool => tool.function.name === name)
-  if (!tool) {
+  if (!tools[name]) {
     throw new Error(`Tool "${name}" not found`)
   }
-  // @ts-ignore
-  return tool.run(parameters)
+  return tools[name].call(parameters)
 }
 
 ee.on('addMessage', async (m, { id, messages, options }) => {
@@ -137,7 +85,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
         Object.assign(
           {},
           {
-            tools: tools.map(({ run: _, ...t }) => t)
+            tools: Object.values(tools).map(({ call: _, ...t }) => t)
           },
           options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
         )
