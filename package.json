@@ -57,7 +57,7 @@
     "@vitejs/plugin-react": "^4.3.0",
     "dotenv": "^16.4.5",
     "dprint": "^0.46.1",
-    "electron": "^28.2.0",
+    "electron": "^35.1.4",
     "electron-builder": "^24.9.1",
     "electron-vite": "^2.2.0",
     "eslint": "^8.56.0",
