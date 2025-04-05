@@ -5,7 +5,7 @@ import type { FC, ReactNode } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
 import type { BundledTheme } from 'shiki'
 import { bundledThemes } from 'shiki'
-import { Col, Input, Link, Row, Select, Tabs, Textarea, Tooltip } from 'tdesign-react'
+import { Col, Input, Link, Row, Select, Switch, Tabs, Textarea, Tooltip } from 'tdesign-react'
 
 import { AIServices } from '../configurers/AIServices'
 import { Base } from '../configurers/Base'
@@ -156,6 +156,20 @@ function Chatroom() {
                 options: { ...chatroom?.options, ...v }
               })}
           />
+        </div>
+        <div className='spirit-field'>
+          <label>工具</label>
+          <div>
+            <Switch
+              value={chatroom.options?.enableTools}
+              onChange={v =>
+                setChatroom({
+                  ...chatroom!,
+                  options: { ...chatroom.options, enableTools: v }
+                })}
+              label={['启用', '停用']}
+            />
+          </div>
         </div>
       </Col>
       <Col span={6}>

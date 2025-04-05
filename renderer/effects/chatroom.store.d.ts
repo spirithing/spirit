@@ -58,6 +58,7 @@ declare module 'spirit' {
     model?: string
     sessionLength?: number
     maxMessages?: number
+    enableTools?: boolean
   }
   export interface ChatRoom {
     id: string
