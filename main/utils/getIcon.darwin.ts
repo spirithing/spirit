@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+
 import { nativeImage } from 'electron'
 import plist from 'simple-plist'
 
@@ -9,12 +11,21 @@ export default async function(path: string, { size = 32 } = {}) {
     return icon.toDataURL()
   } else {
     let CFBundleIconFile: string | null | undefined
+    let plistFilePath = `${path}/Contents/Info.plist`
     try {
+      if (!fs.existsSync(plistFilePath)) {
+        if (fs.existsSync(`${path}/Wrapper`)) {
+          const file = (await fs.promises.readdir(`${path}/Wrapper`)).find(f => f.endsWith('.app'))
+          if (file) {
+            plistFilePath = `${path}/Wrapper/${file}/Info.plist`
+          }
+        }
+      }
       CFBundleIconFile = plist.readFileSync<{
         CFBundleIconFile?: string | null
-      }>(`${path}/Contents/Info.plist`).CFBundleIconFile
-    } catch (e) {
-      console.error(e)
+      }>(plistFilePath).CFBundleIconFile
+    } catch (e0) {
+      console.error(e0)
       return null
     }
 
