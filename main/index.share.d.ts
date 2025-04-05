@@ -48,4 +48,7 @@ declare module 'spirit' {
     activeWindow?: ActiveWindow
     'activeWindow:Error'?: string
   }
+  export interface Lifecycle {
+    appReady: []
+  }
 }

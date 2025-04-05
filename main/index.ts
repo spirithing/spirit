@@ -1,16 +1,17 @@
 import './store'
-import './external'
+import './bridge'
 
 import * as url from 'node:url'
 
 // TODO listen language change by os-locale
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, clipboard, type Display, globalShortcut, protocol, screen, shell } from 'electron'
+import { app, BrowserWindow, type Display, globalShortcut, protocol, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'
 import { join } from 'path'
 import type { WeChat } from 'spirit'
 
 import icon from '../resources/icon.png?asset'
+import { ee } from './ee'
 import { getStore, setStore, watch } from './store'
 import { applications } from './utils/applications'
 import getIcon from './utils/getIcon'
@@ -214,10 +215,8 @@ async function main() {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   await app.whenReady()
-  const clipboardFormats = ['Text', 'HTML', 'RTF', 'Image', 'Bookmark']
-  clipboardFormats.forEach(format => {
-    console.log(format, clipboard[`read${format}`]('selection'))
-  })
+  ee.emit('appReady')
+
   // open external link in default browser
   const schema = 'spirit-oe'
   protocol.registerHttpProtocol(schema, request => {
@@ -229,9 +228,9 @@ async function main() {
     callback(filePath)
   })
   // TODO protocol.unregisterProtocol
-  app.dock.hide()
+  app.dock?.hide()
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('yij.ie.spirit')
 
   setStore('system', {
     os,

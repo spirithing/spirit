@@ -1,1 +1,2 @@
-export { openApplication } from './openApplication'
+export { openApplication } from './application'
+export * from './clipboard'
