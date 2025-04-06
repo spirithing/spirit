@@ -1,10 +1,8 @@
 import EventEmitter from 'node:events'
 
-import type { Lifecycle } from 'spirit'
-
-class EE<T extends Record<keyof T, any[]>> {
+export class EE<T extends Record<keyof T, any[]>> {
   #ee = new EventEmitter()
-  globalListeners = new Set<(...args: any[]) => void>()
+  #globalListeners = new Set<(...args: any[]) => void>()
 
   on<K extends keyof T>(eventName: K, listener: (...args: T[K]) => void): this
   on(listener: <K extends keyof T>(event: K, ...args: T[K]) => void): this
@@ -12,7 +10,7 @@ class EE<T extends Record<keyof T, any[]>> {
     if (typeof nameOrListener === 'string') {
       this.#ee.on(nameOrListener, listener)
     } else {
-      this.globalListeners.add(nameOrListener)
+      this.#globalListeners.add(nameOrListener)
     }
     return this
   }
@@ -22,7 +20,7 @@ class EE<T extends Record<keyof T, any[]>> {
     if (typeof nameOrListener === 'string') {
       this.#ee.once(nameOrListener, listener)
     } else {
-      this.globalListeners.add(nameOrListener)
+      this.#globalListeners.add(nameOrListener)
     }
     return this
   }
@@ -32,17 +30,15 @@ class EE<T extends Record<keyof T, any[]>> {
     if (typeof nameOrListener === 'string') {
       this.#ee.off(nameOrListener, listener)
     } else {
-      this.globalListeners.delete(nameOrListener)
+      this.#globalListeners.delete(nameOrListener)
     }
     return this
   }
 
   emit<K extends keyof T & (string | symbol)>(eventName: K, ...args: T[K]): boolean {
-    if (this.globalListeners.size > 0) {
-      this.globalListeners.forEach(listener => listener(eventName, ...args))
+    if (this.#globalListeners.size > 0) {
+      this.#globalListeners.forEach(listener => listener(eventName, ...args))
     }
     return this.#ee.emit(eventName, ...args)
   }
 }
-
-export const ee = new EE<Lifecycle>()

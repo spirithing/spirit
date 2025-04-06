@@ -8,10 +8,10 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, type Display, globalShortcut, protocol, screen, shell } from 'electron'
 import { activeWindow } from 'get-windows'
 import { join } from 'path'
-import type { WeChat } from 'spirit'
+import type { Shortcuts, WeChat } from 'spirit'
 
 import icon from '../resources/icon.png?asset'
-import { ee } from './ee'
+import { ee } from './lifecycle'
 import { getStore, setStore, watch } from './store'
 import { applications } from './utils/applications'
 import getIcon from './utils/getIcon'
@@ -30,16 +30,6 @@ const VARIOUS_PUNCTUATION = {
   backquote: '`',
   minus: '-',
   equal: '='
-}
-
-async function storeActiveWindowMessage() {
-  try {
-    setStore('activeWindow', await activeWindow())
-    setStore('activeWindow:Error', undefined)
-  } catch (e) {
-    console.error(e)
-    setStore('activeWindow:Error', String(e))
-  }
 }
 
 function refreshStoreWhenOpen() {
@@ -61,12 +51,15 @@ function refreshStoreWhenOpen() {
   ).then(({ items }) => setStore('wechats', items))
 }
 
+function calcBounds(display: Display) {
+  return {
+    ...display.bounds,
+    y: display.bounds.y - 10,
+    height: display.bounds.height + 20
+  }
+}
+
 function createWindow() {
-  const displayStoreUUID = Math.random().toString(36).slice(2)
-  setTimeout(function loop() {
-    storeActiveWindowMessage()
-      .then(() => setTimeout(loop, 3000))
-  }, 0)
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     title: 'Spirit',
@@ -88,13 +81,13 @@ function createWindow() {
       contextIsolation: false
     }
   })
-  function calcBounds(display: Display) {
-    return {
-      ...display.bounds,
-      y: display.bounds.y - 10,
-      height: display.bounds.height + 20
-    }
-  }
+  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+
+  const displayStoreUUID = Math.random().toString(36).slice(2)
   async function showInMouseHoverDisplay() {
     const displays = screen.getAllDisplays()
     const mousePoint = screen.getCursorScreenPoint()
@@ -107,23 +100,6 @@ function createWindow() {
     mainWindow.show()
     setStore('display', true, displayStoreUUID)
   }
-  setStore('display', false, displayStoreUUID)
-  const display = screen.getPrimaryDisplay()
-  mainWindow.setBounds(calcBounds(display))
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   function toggleDisplay(b = !mainWindow.isVisible()) {
     if (b) {
       showInMouseHoverDisplay()
@@ -136,60 +112,72 @@ function createWindow() {
       }, 200)
     }
   }
+  watch('display', toggleDisplay, displayStoreUUID)
+  ee.on('shortcut', key => key === 'start' && toggleDisplay())
+
+  setStore('display', false, displayStoreUUID)
+  const display = screen.getPrimaryDisplay()
+  mainWindow.setBounds(calcBounds(display))
+
+  // HMR for renderer base on electron-vite cli.
+  // Load the remote URL for development or the local html file for production.
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+
   const shortcutsUUID = Math.random().toString(36).slice(2)
-  let accelerators: Record<string, string> = {}
-  function addGlobalShortcuts() {
-    const { start } = getStore('shortcuts') ?? {
+  const accelerators: Record<string, string> = {}
+  function registerGlobalShortcuts() {
+    const globalShortcutKeys = [
+      'start'
+    ]
+    const shortcuts = getStore('shortcuts') ?? {
       start: ['Alt', 'Space']
     }
-    // https://www.electronjs.org/docs/latest/api/accelerator
-    const startAccelerator = start.map(k =>
-      ({
-        ...VARIOUS_PUNCTUATION,
-        opt: 'Alt',
-        meta: 'Command',
-        ctrl: 'Control',
-        shift: 'Shift'
-      })[k.toLowerCase()] ?? (
-        k
-          .replace(/^Numpad/, 'Num')
-          .replace(/Decimal$/, 'Dec')
-          .replace(/Multiply$/, 'Mult')
-          .replace(/Add$/, 'Add')
-          .replace(/Subtract$/, 'Sub')
-          .replace(/Divide$/, 'Div')
-          .replace(/^Arrow/, '')
-          .replace(/^Key/, '')
-      )
-    ).join('+')
-    accelerators.start
-      && globalShortcut.unregister(accelerators.start)
-    globalShortcut.register(startAccelerator, () => toggleDisplay())
-    return {
-      start: startAccelerator
-    }
+    ;(Object.entries(shortcuts) as [keyof Shortcuts, string[]][])
+      .forEach(([key, shortcut]) => {
+        if (!globalShortcutKeys.includes(key)) return
+        // https://www.electronjs.org/docs/latest/api/accelerator
+        const accelerator = shortcut.map(k =>
+          ({
+            ...VARIOUS_PUNCTUATION,
+            opt: 'Alt',
+            meta: 'Command',
+            ctrl: 'Control',
+            shift: 'Shift'
+          })[k.toLowerCase()] ?? (
+            k
+              .replace(/^Numpad/, 'Num')
+              .replace(/Decimal$/, 'Dec')
+              .replace(/Multiply$/, 'Mult')
+              .replace(/Add$/, 'Add')
+              .replace(/Subtract$/, 'Sub')
+              .replace(/Divide$/, 'Div')
+              .replace(/^Arrow/, '')
+              .replace(/^Key/, '')
+          )
+        ).join('+')
+        accelerators[key]
+          && globalShortcut.unregister(accelerators[key])
+        globalShortcut.register(accelerator, () => ee.emit('shortcut', key))
+        accelerators[key] = accelerator
+      })
   }
-  accelerators = addGlobalShortcuts()
-  watch('shortcuts', () => {
-    accelerators = addGlobalShortcuts()
-  }, shortcutsUUID)
+  registerGlobalShortcuts()
+  watch('shortcuts', () => registerGlobalShortcuts(), shortcutsUUID)
+
   const bossAccelerator = isWindows
     ? 'Control+W'
     : 'Command+W'
   watch('display', () => {
-    const display = getStore('display')
-    if (display) {
-      const ret = globalShortcut.register(bossAccelerator, () => {
-        // TODO send message to renderer
-      })
-      if (!ret) {
-        // TODO store shortcut register error message
-      }
+    if (getStore('display')) {
+      globalShortcut.register(bossAccelerator, () => void 0)
     } else {
       globalShortcut.unregister(bossAccelerator)
     }
   }, 'temp')
-  watch('display', toggleDisplay, displayStoreUUID)
 }
 
 app.on('window-all-closed', () => {
@@ -209,6 +197,16 @@ app.on('browser-window-created', (_, window) => {
 app.on('will-quit', () => {
   globalShortcut.unregisterAll()
 })
+
+async function storeActiveWindowMessage() {
+  try {
+    setStore('activeWindow', await activeWindow())
+    setStore('activeWindow:Error', undefined)
+  } catch (e) {
+    console.error(e)
+    setStore('activeWindow:Error', String(e))
+  }
+}
 
 async function main() {
   // This method will be called when Electron has finished
@@ -236,6 +234,10 @@ async function main() {
     os,
     username
   })
+  setTimeout(function loop() {
+    storeActiveWindowMessage()
+      .then(() => setTimeout(loop, 3000))
+  }, 0)
   createWindow()
   app.on('activate', function() {
     // On macOS, it's common to re-create a window in the app when the
@@ -245,3 +247,7 @@ async function main() {
 }
 main()
   .catch(console.error)
+
+process.on('unhandledRejection', reason => {
+  console.error(reason)
+})
