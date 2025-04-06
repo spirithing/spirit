@@ -85,7 +85,9 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
         Object.assign(
           {},
           {
-            tools: options?.enableTools ? Object.values(tools).map(({ call: _, ...t }) => t) : []
+            tools: options?.enableTools
+              ? Object.values(tools).map(({ call: _, ...t }) => t)
+              : []
           },
           options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
         )
