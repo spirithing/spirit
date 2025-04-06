@@ -4,16 +4,9 @@ import * as path from 'node:path'
 import { BrowserWindow, ipcMain } from 'electron'
 import type { Store } from 'spirit'
 
-import { userDataPath } from './utils/system'
+import { getOrCreateUserSubDir } from './utils/system'
 
-const appPath = userDataPath
-if (!fs.existsSync(appPath)) {
-  fs.mkdirSync(appPath)
-}
-const configsPath = path.resolve(userDataPath, 'configs')
-if (!fs.existsSync(configsPath)) {
-  fs.mkdirSync(configsPath)
-}
+const configsPath = getOrCreateUserSubDir('configs')
 const configs = fs
   .readdirSync(configsPath)
   .filter(file => file.endsWith('.json'))
