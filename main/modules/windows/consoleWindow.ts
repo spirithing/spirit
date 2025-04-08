@@ -95,8 +95,7 @@ export function createConsoleWindow() {
   ee.on('shortcut', key => key === 'start' && toggleDisplay())
 
   setStore('display', false, displayStoreUUID)
-  const display = screen.getPrimaryDisplay()
-  mainWindow.setBounds(calcBounds(display))
+  mainWindow.setBounds(calcBounds(screen.getPrimaryDisplay()))
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
