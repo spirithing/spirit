@@ -1,6 +1,6 @@
 import { clipboard } from 'electron'
 
-import { ee } from '../ee'
+import { ee } from '../lifecycle'
 import { getStore, setStore } from '../store'
 import { defineAPI } from './core/defineAPI'
 
@@ -172,3 +172,5 @@ export const getClipboards = defineAPI('getClipboards', async (query, options) =
     value: filtered.slice(start, end) as any[]
   }
 })
+
+// listen cmd c+v

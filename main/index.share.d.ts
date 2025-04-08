@@ -53,6 +53,7 @@ declare module 'spirit' {
 }
 declare module 'spirit' {
   export interface Lifecycle {
+    processStart: []
     appReady: []
     shortcut: [key: keyof Shortcuts]
   }
