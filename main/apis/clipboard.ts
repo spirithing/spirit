@@ -98,6 +98,7 @@ ee.on('appReady', () => {
     ? undefined
     : image.toPNG().toString('base64')
 })
+// TODO 使用原生方法监听剪切板和选择内容
 
 export const appendClipboard = defineAPI('appendToClipboard', async (itemOrText) => {
   const item = typeof itemOrText === 'string'
@@ -172,5 +173,3 @@ export const getClipboards = defineAPI('getClipboards', async (query, options) =
     value: filtered.slice(start, end) as any[]
   }
 })
-
-// listen cmd c+v
