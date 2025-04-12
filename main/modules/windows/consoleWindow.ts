@@ -4,11 +4,11 @@ import { app, BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 import type { WeChat } from 'spirit'
 
+import icon from '../../../resources/icon.png?asset'
 import { ee } from '../../lifecycle'
 import { setStore, watch } from '../../store'
 import { applications } from '../../utils/applications'
 import getIcon from '../../utils/getIcon'
-import icon from '../resources/icon.png?asset'
 
 function refreshStoreWhenOpen() {
   applications().then(async applications => {
