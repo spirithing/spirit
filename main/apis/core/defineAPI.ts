@@ -1,4 +1,7 @@
-import type { BridgeMethods } from 'spirit'
+import type { BridgeMethods, BridgeSyncMethods } from 'spirit'
 
-// @ts-ignore
-export const defineAPI = <K extends keyof BridgeMethods>(k: K, v: BridgeMethods[K]) => v
+export const defineAPI = <K extends keyof BridgeMethods | keyof BridgeSyncMethods>(
+  // @ts-ignore
+  k: K,
+  v: (BridgeMethods & BridgeSyncMethods)[K]
+) => v
