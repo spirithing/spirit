@@ -36,6 +36,7 @@
     "markdown-it": "^14.1.0",
     "meshgrad": "^0.0.15",
     "ollama": "^0.5.14",
+    "open": "^10.1.0",
     "openai": "^4.89.0",
     "react-i18next": "^14.1.2",
     "shiki": "^1.6.2",
