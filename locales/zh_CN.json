@@ -69,5 +69,11 @@
 
   "application": {
     "self": "应用"
-  }
+  },
+
+  "calculator": "计算器",
+  "binary": "二进制",
+  "hexadecimal": "十六进制",
+  "chineseLower": "中文小写",
+  "chineseUpper": "中文大写"
 }

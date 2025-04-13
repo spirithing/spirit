@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useSelectionsGroupsForApp } from '#renderer/extensions/applications/selectionsGroups.tsx'
+import { useSelectionsGroupsForCalc } from '#renderer/extensions/calc/selectionsGroups.tsx'
 import { useSelectionsForWechat } from '#renderer/extensions/im/wechat/selectionsGroups.ts'
 
 import favicon from '../resources/icon.png'
@@ -75,6 +76,7 @@ export function App() {
 
   const selsGroupsForApp = useSelectionsGroupsForApp(keyword)
   const selsGroupsForWechat = useSelectionsForWechat(keyword)
+  const selsGroupsForCalc = useSelectionsGroupsForCalc(keyword)
 
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
@@ -90,7 +92,11 @@ export function App() {
       commander: []
     }
     const restSelectionsGroups: SelectionsGroup[] = []
-    selsGroupsForApp.forEach(group => {
+    ;[
+      ...selsGroupsForApp,
+      ...selsGroupsForWechat,
+      ...selsGroupsForCalc
+    ].forEach(group => {
       const selections = selectionsMap[group.title]
       if (selections) {
         selections.push(...group.selections)
@@ -127,11 +133,12 @@ export function App() {
         .filter(group => group.selections.length)
     )
   }, [
-    selsGroupsForApp,
     layout,
     sender?.text,
     setSelectionsGroups,
-    selsGroupsForWechat
+    selsGroupsForApp,
+    selsGroupsForWechat,
+    selsGroupsForCalc
   ])
   const senderRef = useRef<SenderContext>(null)
   return <>

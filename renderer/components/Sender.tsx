@@ -414,20 +414,10 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                   </div>
                   <div className={`${prefix}__selection-content`}>
                     <div className={`${prefix}__selection-title`}>
-                      {typeof title === 'string'
-                        ? t(
-                          // @ts-expect-error
-                          title
-                        )
-                        : title}
+                      {title}
                     </div>
                     {placeholder && <div className={`${prefix}__selection-placeholder`}>
-                      {typeof placeholder === 'string'
-                        ? t(
-                          // @ts-expect-error
-                          placeholder
-                        )
-                        : placeholder}
+                      {placeholder}
                     </div>}
                   </div>
                   <div className={`${prefix}__selection-operations`}>

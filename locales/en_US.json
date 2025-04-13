@@ -69,5 +69,11 @@
 
   "application": {
     "self": "Application"
-  }
+  },
+
+  "calculator": "Calculator",
+  "binary": "Binary",
+  "hexadecimal": "Hexadecimal",
+  "chineseLower": "Chinese lower case",
+  "chineseUpper": "Chinese upper case"
 }
