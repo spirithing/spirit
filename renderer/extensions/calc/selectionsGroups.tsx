@@ -16,7 +16,12 @@ export const useSelectionsGroupsForCalc = createUseSelectionsGroups(keyword => {
     }
 
     try {
-      setResult(String(evaluate(keyword)))
+      const temp = evaluate(keyword)
+      if (typeof temp === 'function') {
+        setResult(undefined)
+      } else {
+        setResult(String(temp))
+      }
     } catch { /* empty */ }
   }, [keyword])
   return useMemo<SelectionsGroup[]>(() => {
