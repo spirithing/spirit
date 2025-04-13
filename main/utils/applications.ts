@@ -1,25 +1,32 @@
-import * as fs from 'node:fs'
-import * as path from 'node:path'
+import { exec } from 'node:child_process'
 
-import { app } from 'electron'
 import type { Application } from 'spirit'
 
 import { isMac } from './system'
 
 async function getApplicationsForDarwin(): Promise<Application[]> {
-  const homePath = app.getPath('home')
-  const userApplicationsPath = path.resolve(homePath, 'Applications')
-  const userApplicationsDirs = await fs.promises.readdir(userApplicationsPath)
-  const applicationsDirs = await fs.promises.readdir('/Applications')
-  return userApplicationsDirs.map(name => ({
-    name,
-    path: path.resolve(userApplicationsPath, name)
-  })).concat(
-    applicationsDirs.map(name => ({
-      name,
-      path: path.resolve('/Applications', name)
-    }))
-  ).filter(({ name }) => name.endsWith('.app'))
+  const apps = await new Promise<{
+    _name: string
+    path: string
+    info?: string
+    version?: string
+    lastModified: string
+  }[]>((ok, no) => {
+    exec(`system_profiler SPApplicationsDataType -json`, { encoding: 'utf-8' }, (error, stdout) => {
+      if (error) {
+        no(error)
+        return
+      }
+      try {
+        ok(JSON.parse(stdout).SPApplicationsDataType)
+      } catch (e) {
+        no(e)
+      }
+    })
+  })
+  return apps
+    .filter(app => app.path && app.path.endsWith('.app'))
+    .map(({ _name: name, ...app }) => ({ name, ...app }))
 }
 
 export async function applications(): Promise<Application[]> {

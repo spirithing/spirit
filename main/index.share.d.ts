@@ -11,7 +11,10 @@ declare module 'spirit' {
   export interface Application {
     name: string
     path: string
+    info?: string
     icon?: string | null
+    version?: string
+    lastModified: string
   }
   export interface WeChat {
     icon?: { path?: string }
@@ -56,5 +59,6 @@ declare module 'spirit' {
     processStart: []
     appReady: []
     shortcut: [key: keyof Shortcuts]
+    consoleWindowShow: []
   }
 }

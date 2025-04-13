@@ -6,6 +6,8 @@ import { activeWindow } from 'get-windows'
 
 import { ee } from '../../lifecycle'
 import { setStore } from '../../store'
+import { applications } from '../../utils/applications'
+import getIcon from '../../utils/getIcon'
 import { os, username } from '../../utils/system'
 
 ee.on('processStart', () => {
@@ -56,4 +58,25 @@ ee.on('appReady', () => {
     callback(filePath)
   })
   // TODO protocol.unregisterProtocol
+})
+
+ee.on('consoleWindowShow', () => {
+  applications()
+    .then(async applications => {
+      setStore('applications', applications)
+      setStore(
+        'applications',
+        // TODO performance it
+        await Promise.all(applications.map(async app => {
+          return app.icon
+            ? app
+            // TODO 128 may be not exist
+            : { ...app, icon: await getIcon(app.path, { size: 128 }) }
+        }))
+      )
+    })
+  // TODO
+  // fetch('http://localhost:48065/wechat/search')
+  //   .then(res => res.json())
+  //   .then(({ items }) => setStore('wechats', items))
 })

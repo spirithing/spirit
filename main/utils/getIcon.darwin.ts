@@ -24,8 +24,8 @@ export default async function(path: string, { size = 32 } = {}) {
       CFBundleIconFile = plist.readFileSync<{
         CFBundleIconFile?: string | null
       }>(plistFilePath).CFBundleIconFile
-    } catch (e0) {
-      console.error(e0)
+    } catch (e) {
+      console.error(`${import.meta.url}:`, { path, plistFilePath, e })
       return null
     }
 
@@ -33,11 +33,16 @@ export default async function(path: string, { size = 32 } = {}) {
       return null
     }
 
-    const iconFileName = CFBundleIconFile.endsWith('.icns')
+    const iconFileName = /\.(icns|tiff|png|jpg|jpeg|gif)$/.test(CFBundleIconFile)
       ? CFBundleIconFile
       : `${CFBundleIconFile}.icns`
-    const icon = await nativeImage
-      .createThumbnailFromPath(`${path}/Contents/Resources/${iconFileName}`, s)
-    return icon.toDataURL()
+    const iconFilePath = `${path}/Contents/Resources/${iconFileName}`
+    try {
+      const icon = await nativeImage.createThumbnailFromPath(iconFilePath, s)
+      return icon.toDataURL()
+    } catch (e) {
+      console.error(`${import.meta.url}:`, { path, iconFilePath, e })
+      return null
+    }
   }
 }

@@ -2,32 +2,10 @@ import { is } from '@electron-toolkit/utils'
 import type { Display } from 'electron'
 import { app, BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
-import type { WeChat } from 'spirit'
 
 import icon from '../../../resources/icon.png?asset'
 import { ee } from '../../lifecycle'
 import { setStore, watch } from '../../store'
-import { applications } from '../../utils/applications'
-import getIcon from '../../utils/getIcon'
-
-function refreshStoreWhenOpen() {
-  applications().then(async applications => {
-    setStore('applications', applications)
-    setStore(
-      'applications',
-      await Promise.all(applications.map(async app => {
-        return app.icon
-          ? app
-          : { ...app, icon: await getIcon(app.path) }
-      }))
-    )
-  })
-  fetch('http://localhost:48065/wechat/search').then(res =>
-    res.json() as unknown as {
-      items: WeChat[]
-    }
-  ).then(({ items }) => setStore('wechats', items))
-}
 
 function calcBounds(display: Display) {
   return {
@@ -78,11 +56,11 @@ export function createConsoleWindow() {
     mainWindow.setBounds(calcBounds(display))
     mainWindow.show()
     setStore('display', true, displayStoreUUID)
+    ee.emit('consoleWindowShow')
   }
   function toggleDisplay(b = !mainWindow.isVisible()) {
     if (b) {
       showInMouseHoverDisplay()
-      refreshStoreWhenOpen()
     } else {
       setStore('display', false, displayStoreUUID)
       setTimeout(() => {
