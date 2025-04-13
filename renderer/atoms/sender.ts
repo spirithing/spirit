@@ -1,8 +1,9 @@
 import { atom } from 'jotai'
 import type { Asset } from 'spirit'
 
-export type SelectionGroup = {
+export type SelectionsGroup = {
   title: string
+  order?: number
   operations?: {
     type: 'icon' | 'text'
     value: string
@@ -11,7 +12,7 @@ export type SelectionGroup = {
   selections: Selection[]
 }
 
-export const selectionsGroupsAtom = atom<SelectionGroup[]>([
+export const selectionsGroupsAtom = atom<SelectionsGroup[]>([
   {
     title: 'default',
     selections: []

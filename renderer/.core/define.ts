@@ -1,3 +1,3 @@
-import type { Selection } from '#renderer/atoms/sender.ts'
+import type { SelectionsGroup } from '#renderer/atoms/sender.ts'
 
-export const defineSelectionsProviderHook = (hook: (keyword: string) => Selection[]) => hook
+export const createUseSelectionsGroups = (hook: (keyword: string) => SelectionsGroup[]) => hook

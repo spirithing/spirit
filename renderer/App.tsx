@@ -4,11 +4,11 @@ import { useAtom } from 'jotai'
 import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useSelectionsOfApplications } from '#renderer/extensions/applications/selections.ts'
-import { useSelectionsOfWechat } from '#renderer/extensions/im/wechat/selections.ts'
+import { useSelectionsGroupsForApp } from '#renderer/extensions/applications/selectionsGroups.ts'
+import { useSelectionsForWechat } from '#renderer/extensions/im/wechat/selectionsGroups.ts'
 
 import favicon from '../resources/icon.png'
-import type { SelectionGroup } from './atoms/sender'
+import type { Selection, SelectionsGroup } from './atoms/sender'
 import { selectionsGroupsAtom, senderAtom } from './atoms/sender'
 import { Configurer } from './components/Configurer'
 import { Kbd } from './components/Kbd'
@@ -73,8 +73,8 @@ export function App() {
   const [sender] = useAtom(senderAtom)
   const keyword = useMemo(() => sender?.text.toLowerCase().trim() ?? '', [sender?.text])
 
-  const applicationSelections = useSelectionsOfApplications(keyword)
-  const wechatSelections = useSelectionsOfWechat(keyword)
+  const selsGroupsForApp = useSelectionsGroupsForApp(keyword)
+  const selsGroupsForWechat = useSelectionsForWechat(keyword)
 
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
@@ -82,31 +82,56 @@ export function App() {
       setSelectionsGroups([])
       return
     }
-    const defaultSelections = [
-      ...applicationSelections,
-      ...wechatSelections
-    ]
-    const selectionsGroups: SelectionGroup[] = [
-      {
-        title: 'default',
-        selections: defaultSelections
-      },
-      {
-        title: 'recent',
-        selections: layout === 'more'
-          ? [
-            /* TODO record history actions */
-          ]
-          : []
+    const selectionsMap: Record<string, Selection[]> = {
+      result: [],
+      default: [],
+      recent: [],
+      suggestion: [],
+      commander: []
+    }
+    const restSelectionsGroups: SelectionsGroup[] = []
+    selsGroupsForApp.forEach(group => {
+      const selections = selectionsMap[group.title]
+      if (selections) {
+        selections.push(...group.selections)
+      } else {
+        restSelectionsGroups.push(group)
       }
+    })
+    const defaultOrder = [
+      'default',
+      'result',
+      'recent',
+      'suggestion',
+      'commander'
     ]
-    setSelectionsGroups(selectionsGroups.filter(group => group.selections.length))
+    const selectionsGroups: SelectionsGroup[] = []
+    defaultOrder.forEach(title => {
+      const selections = selectionsMap[title]
+      if (selections) {
+        selectionsGroups.push({
+          title,
+          order: defaultOrder.indexOf(title),
+          selections
+        })
+        delete selectionsMap[title]
+      }
+    })
+    selectionsGroups.push(...restSelectionsGroups)
+    setSelectionsGroups(
+      selectionsGroups
+        .sort((a, b) => {
+          if (a.order === undefined && b.order === undefined) return 0
+          return (a.order ?? 0) - (b.order ?? 0)
+        })
+        .filter(group => group.selections.length)
+    )
   }, [
-    applicationSelections,
+    selsGroupsForApp,
     layout,
     sender?.text,
     setSelectionsGroups,
-    wechatSelections
+    selsGroupsForWechat
   ])
   const senderRef = useRef<SenderContext>(null)
   return <>
