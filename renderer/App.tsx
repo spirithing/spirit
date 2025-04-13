@@ -120,7 +120,6 @@ export function App() {
       if (selections) {
         selectionsGroups.push({
           title,
-          order: defaultOrder.indexOf(title),
           selections
         })
         delete selectionsMap[title]
