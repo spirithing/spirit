@@ -4,7 +4,7 @@ import { useAtom } from 'jotai'
 import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useSelectionsGroupsForApp } from '#renderer/extensions/applications/selectionsGroups.ts'
+import { useSelectionsGroupsForApp } from '#renderer/extensions/applications/selectionsGroups.tsx'
 import { useSelectionsForWechat } from '#renderer/extensions/im/wechat/selectionsGroups.ts'
 
 import favicon from '../resources/icon.png'

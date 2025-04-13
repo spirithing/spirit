@@ -1,4 +1,5 @@
 import { atom } from 'jotai'
+import type { ReactNode } from 'react'
 import type { Asset } from 'spirit'
 
 export type SelectionsGroup = {
@@ -23,9 +24,9 @@ export type Selection = {
   icon:
     | { type: 'icon'; value: string }
     | { type: 'image'; path: string }
-  title: string
+  title: ReactNode
   group?: string
-  placeholder?: string
+  placeholder?: ReactNode
   operations?: {
     type: 'icon' | 'text'
     value: string
