@@ -35,13 +35,11 @@
   "filteredApplications": "Filtered applications",
   "primaryColor": "Primary color",
   "linearGradient": "Linear gradient",
-  "default": "Default",
   "layout": "Layout",
   "startup": "Startup",
   "startupDesc": "Launch at login",
   "menubar": "Menu bar",
   "menubarDesc": "Show icon in menu bar",
-  "recent": "Recent",
   "more": "More",
   "compact": "Compact",
   "noDescription": "No description",
@@ -61,5 +59,15 @@
   "Please select a model": "Please select a model",
   "defaultBotID": "Default bot ID",
   "bearerToken": "Bearer token",
-  "aiServices": "AI services"
+  "aiServices": "AI services",
+
+  "default": "Default",
+  "result": "Result",
+  "recent": "Recent",
+  "suggestion": "Suggestion",
+  "commander": "As parameter",
+
+  "application": {
+    "self": "Application"
+  }
 }

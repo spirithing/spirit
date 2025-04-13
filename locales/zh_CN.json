@@ -35,13 +35,11 @@
   "filteredApplications": "过滤的应用",
   "primaryColor": "主题色",
   "linearGradient": "线性渐变",
-  "default": "默认",
   "layout": "布局",
   "startup": "开机自启",
   "startupDesc": "登陆时自动启动",
   "menubar": "菜单条",
   "menubarDesc": "在菜单条展示图标",
-  "recent": "最近使用",
   "more": "更多",
   "compact": "紧凑",
   "noDescription": "暂无介绍",
@@ -61,5 +59,15 @@
   "Please select a model": "请选择模型",
   "defaultBotID": "默认机器人 ID",
   "bearerToken": "个人访问令牌",
-  "aiServices": "AI 服务商"
+  "aiServices": "AI 服务商",
+
+  "default": "默认",
+  "result": "搜索结果",
+  "recent": "最近使用",
+  "suggestion": "建议",
+  "commander": "作为参数使用",
+
+  "application": {
+    "self": "应用"
+  }
 }
