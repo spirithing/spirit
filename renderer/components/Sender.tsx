@@ -148,18 +148,11 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
     i: number,
     j: number
   ) => {
-    const action = selectionsGroups[i]?.selections[j][type + 'Action']
-      ?? (
-        type === 'click'
-          ? selectionsGroups[i]?.selections[j].enterAction
-          : undefined
-      )
+    const selection = selectionsGroups[i]?.selections[j]
+    const action = selection.actions?.[type] ?? selection.actions?.default
     if (!action) return
-    const [act, ...args] = Array.isArray(action)
-      ? action
-      : [action]
     // @ts-ignore
-    ee.emit('act', act, ...args)
+    ee.emit('act', ...action)
   })
 
   const [display, setDisplay] = useElectronStore('display')

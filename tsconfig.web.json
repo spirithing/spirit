@@ -2,8 +2,12 @@
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
     "main/*.share.d.ts",
+    "main/**/*.share.d.ts",
+
     "sharing/*.d.ts",
+
     "preload/*.d.ts",
+
     "renderer/**/*",
     "renderer/env.d.ts",
     "renderer/**/*.tsx",

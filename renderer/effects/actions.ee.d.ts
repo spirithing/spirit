@@ -1,6 +1,5 @@
 declare module 'spirit' {
   export interface Actions {
-    open: [path: string]
     wechat: [id: string]
   }
   export interface Events {

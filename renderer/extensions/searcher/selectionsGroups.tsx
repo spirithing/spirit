@@ -4,7 +4,16 @@ import useSWR from 'swr'
 
 import { createUseSelectionsGroups } from '#renderer/.core/define.ts'
 import type { Selection, SelectionsGroup } from '#renderer/atoms/sender.ts'
+import { bridge } from '#renderer/bridge.ts'
+import { useAct } from '#renderer/effects/actions.ts'
+import { electronStore, keyAtom } from '#renderer/store.ts'
 import { hightlightKeywords } from '#renderer/utils/hightlightKeywords.tsx'
+
+declare module 'spirit' {
+  export interface Actions {
+    openBrowser: [url: string]
+  }
+}
 
 const googleSearchCompletionUrl = (lang: string, q: string) =>
   `https://suggestqueries.google.com/complete/search?output=toolbar&hl=${lang}&q=${encodeURIComponent(q)}`
@@ -28,20 +37,29 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
     }
   )
 
+  useAct('openBrowser', async url => {
+    await bridge.openBrowser(url)
+    electronStore.set(keyAtom('display')!, false)
+  })
   return useMemo<SelectionsGroup[]>(() => {
     if (keyword === '') return []
 
-    const filtered = completions
-      .map(completion =>
-        ({
-          title: hightlightKeywords(completion, keyword),
-          icon: { type: 'icon', value: 'search' }
-        }) as Selection
-      )
     return [
       {
         title: 'searcher.google',
-        selections: filtered ?? []
+        selections: completions
+          .map(completion =>
+            ({
+              title: hightlightKeywords(completion, keyword),
+              icon: { type: 'icon', value: 'search' },
+              actions: {
+                default: [
+                  'openBrowser',
+                  `https://www.google.com/search?q=${encodeURIComponent(completion)}`
+                ]
+              }
+            }) as Selection
+          )
       }
     ]
   }, [completions, keyword])

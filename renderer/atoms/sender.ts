@@ -32,8 +32,11 @@ export type Selection = {
     value: string
     tooltip?: string
   }[]
-  enterAction?: string | [string, ...args: unknown[]]
-  clickAction?: string | [string, ...args: unknown[]]
+  actions?: {
+    enter?: [string, ...args: unknown[]]
+    click?: [string, ...args: unknown[]]
+    default?: [string, ...args: unknown[]]
+  }
 }
 
 export const senderAtom = atom<
