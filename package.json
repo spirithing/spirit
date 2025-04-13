@@ -4,6 +4,11 @@
   "version": "0.0.1",
   "packageManager": "pnpm@8.12.1",
   "main": "out/main/index.js",
+  "imports": {
+    "#main/*": "./main/*",
+    "#preload/*": "./preload/*",
+    "#renderer/*": "./renderer/*"
+  },
   "type": "module",
   "scripts": {
     "prepare": "rm -rf node_modules/electron/dist && node node_modules/electron/install.js",

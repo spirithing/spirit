@@ -13,6 +13,10 @@ export default defineConfig({
         entry: 'main/index.ts'
       }
     },
+    envPrefix: [
+      'VITE_',
+      'VITE_MAIN_'
+    ],
     plugins: [externalizeDepsPlugin()]
   },
   preload: {

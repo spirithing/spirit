@@ -3,10 +3,11 @@
   "include": [
     "main/*.share.d.ts",
     "sharing/*.d.ts",
+    "preload/*.d.ts",
     "renderer/**/*",
     "renderer/env.d.ts",
     "renderer/**/*.tsx",
-    "preload/*.d.ts"
+    "renderer/.core/**/*"
   ],
   "compilerOptions": {
     "composite": true,

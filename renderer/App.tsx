@@ -4,8 +4,11 @@ import { useAtom } from 'jotai'
 import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useSelectionsOfApplications } from '#renderer/extensions/applications/selections.ts'
+import { useSelectionsOfWechat } from '#renderer/extensions/im/wechat/selections.ts'
+
 import favicon from '../resources/icon.png'
-import type { Selection, SelectionGroup } from './atoms/sender'
+import type { SelectionGroup } from './atoms/sender'
 import { selectionsGroupsAtom, senderAtom } from './atoms/sender'
 import { Configurer } from './components/Configurer'
 import { Kbd } from './components/Kbd'
@@ -68,51 +71,11 @@ export function App() {
   })
 
   const [sender] = useAtom(senderAtom)
-  const [applications] = useElectronStore('applications')
   const keyword = useMemo(() => sender?.text.toLowerCase().trim() ?? '', [sender?.text])
-  const applicationSelections = useMemo<Selection[]>(() => {
-    if (keyword === '') return []
 
-    const filtered = applications
-      ?.filter(item => item.name.toLowerCase().includes(keyword))
-      ?? []
-    return filtered.map(app => ({
-      icon: app.icon
-        ? { type: 'image', path: app.icon }
-        : { type: 'icon', value: '🚀' },
-      title: app.name.replace(/\.app$/, ''),
-      enterAction: ['open', app.path],
-      operations: [
-        { type: 'text', value: 'Application' }
-      ]
-    }))
-  }, [applications, keyword])
-  const [wechats] = useElectronStore('wechats')
-  const wechatSelections = useMemo<Selection[]>(() => {
-    if (keyword === '') return []
+  const applicationSelections = useSelectionsOfApplications(keyword)
+  const wechatSelections = useSelectionsOfWechat(keyword)
 
-    let matchKeyword = keyword
-    if (keyword.startsWith('wc ')) {
-      matchKeyword = keyword.slice(3)
-    }
-    const filtered = wechats
-      ?.filter(item => (
-        item.title?.toLowerCase().includes(matchKeyword)
-        || item.subTitle?.toLowerCase().includes(matchKeyword)
-      ))
-      ?? []
-    return filtered.map(wechat => ({
-      icon: wechat.icon?.path
-        ? { type: 'image', path: `atom://${wechat.icon.path}` }
-        : { type: 'icon', value: 'person' },
-      title: wechat.title ?? 'Unknown',
-      placeholder: wechat.title !== wechat.subTitle ? wechat.subTitle : undefined,
-      enterAction: ['wechat', wechat.arg],
-      operations: [
-        { type: 'text', value: 'WeChat' }
-      ]
-    }))
-  }, [keyword, wechats])
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
     if (layout !== 'more' && !sender?.text.trim().length) {
