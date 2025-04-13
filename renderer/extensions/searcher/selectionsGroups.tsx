@@ -4,6 +4,7 @@ import useSWR from 'swr'
 
 import { createUseSelectionsGroups } from '#renderer/.core/define.ts'
 import type { Selection, SelectionsGroup } from '#renderer/atoms/sender.ts'
+import { hightlightKeywords } from '#renderer/utils/hightlightKeywords.tsx'
 
 const googleSearchCompletionUrl = (lang: string, q: string) =>
   `https://suggestqueries.google.com/complete/search?output=toolbar&hl=${lang}&q=${encodeURIComponent(q)}`
@@ -33,7 +34,7 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
     const filtered = completions
       .map(completion =>
         ({
-          title: completion,
+          title: hightlightKeywords(completion, keyword),
           icon: { type: 'icon', value: 'search' }
         }) as Selection
       )
