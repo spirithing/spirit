@@ -60,6 +60,35 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
               }
             }) as Selection
           )
+      },
+      {
+        title: 'chrome.tools',
+        order: -1,
+        selections: (
+          [
+            {
+              title: 'chrome inspect',
+              icon: { type: 'icon', value: 'link' },
+              actions: {
+                default: ['openBrowser', 'chrome://inspect/#devices']
+              }
+            },
+            {
+              title: 'chrome settings',
+              icon: { type: 'icon', value: 'link' },
+              actions: {
+                default: ['openBrowser', 'chrome://settings']
+              }
+            },
+            {
+              title: 'chrome history',
+              icon: { type: 'icon', value: 'link' },
+              actions: {
+                default: ['openBrowser', 'chrome://history']
+              }
+            }
+          ] satisfies Selection[]
+        ).filter(s => s.title.toLowerCase().includes(keyword))
       }
     ]
   }, [completions, keyword])
