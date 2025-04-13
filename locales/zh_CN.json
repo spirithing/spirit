@@ -75,5 +75,14 @@
   "binary": "二进制",
   "hexadecimal": "十六进制",
   "chineseLower": "中文小写",
-  "chineseUpper": "中文大写"
+  "chineseUpper": "中文大写",
+
+  "searcher": {
+    "google": "谷歌",
+    "baidu": "百度",
+    "bing": "必应",
+    "duckduckgo": "DuckDuckGo",
+    "sogou": "搜狗",
+    "youdao": "有道"
+  }
 }

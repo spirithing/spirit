@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useSelectionsGroupsForApp } from '#renderer/extensions/applications/selectionsGroups.tsx'
 import { useSelectionsGroupsForCalc } from '#renderer/extensions/calc/selectionsGroups.tsx'
 import { useSelectionsForWechat } from '#renderer/extensions/im/wechat/selectionsGroups.ts'
+import { useSelectionsGroupsForSearcherCompletions } from '#renderer/extensions/searcher/selectionsGroups.tsx'
 
 import favicon from '../resources/icon.png'
 import type { Selection, SelectionsGroup } from './atoms/sender'
@@ -74,9 +75,10 @@ export function App() {
   const [sender] = useAtom(senderAtom)
   const keyword = useMemo(() => sender?.text.toLowerCase().trim() ?? '', [sender?.text])
 
-  const selsGroupsForApp = useSelectionsGroupsForApp(keyword)
-  const selsGroupsForWechat = useSelectionsForWechat(keyword)
-  const selsGroupsForCalc = useSelectionsGroupsForCalc(keyword)
+  const sel0 = useSelectionsGroupsForApp(keyword)
+  const sel1 = useSelectionsForWechat(keyword)
+  const sel2 = useSelectionsGroupsForCalc(keyword)
+  const sel3 = useSelectionsGroupsForSearcherCompletions(keyword)
 
   const [, setSelectionsGroups] = useAtom(selectionsGroupsAtom)
   useEffect(() => {
@@ -92,10 +94,11 @@ export function App() {
       commander: []
     }
     const restSelectionsGroups: SelectionsGroup[] = []
-    ;[
-      ...selsGroupsForApp,
-      ...selsGroupsForWechat,
-      ...selsGroupsForCalc
+    void [
+      ...sel0,
+      ...sel1,
+      ...sel2,
+      ...sel3
     ].forEach(group => {
       const selections = selectionsMap[group.title]
       if (selections) {
@@ -136,9 +139,10 @@ export function App() {
     layout,
     sender?.text,
     setSelectionsGroups,
-    selsGroupsForApp,
-    selsGroupsForWechat,
-    selsGroupsForCalc
+    sel0,
+    sel1,
+    sel2,
+    sel3
   ])
   const senderRef = useRef<SenderContext>(null)
   return <>

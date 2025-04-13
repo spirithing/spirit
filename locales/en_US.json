@@ -75,5 +75,14 @@
   "binary": "Binary",
   "hexadecimal": "Hexadecimal",
   "chineseLower": "Chinese lower case",
-  "chineseUpper": "Chinese upper case"
+  "chineseUpper": "Chinese upper case",
+
+  "searcher": {
+    "google": "Google",
+    "baidu": "Baidu",
+    "bing": "Bing",
+    "duckduckgo": "DuckDuckGo",
+    "sogou": "Sogou",
+    "youdao": "Youdao"
+  }
 }
