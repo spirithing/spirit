@@ -12,7 +12,7 @@ export const useSelectionsGroupsForApp = createUseSelectionsGroups(keyword => {
   return useMemo<SelectionsGroup[]>(() => {
     if (!applications || keyword === '') return []
 
-    const hightlight = (text: string, keyword: string) => {
+    const highlight = (text: string, keyword: string) => {
       const reg = new RegExp(`(${keyword})`, 'i')
       return text.split(reg).map((part, index) => (
         <span
@@ -43,10 +43,10 @@ export const useSelectionsGroupsForApp = createUseSelectionsGroups(keyword => {
       .map(app =>
         ({
           title: <>
-            {hightlight(app.name, keyword)}
+            {highlight(app.name, keyword)}
           </>,
           placeholder: <>
-            {hightlight(app.info ?? '', keyword)}
+            {highlight(app.info ?? '', keyword)}
           </>,
           icon: app.icon
             ? { type: 'image', path: app.icon }
