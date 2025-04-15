@@ -70,10 +70,10 @@ export function createConsoleWindow() {
     } else {
       setDisplay(false)
       setTimeout(() => {
-        if (isShowing) {
-          isShowing = false
+        if (!isShowing) {
           return
         }
+        isShowing = false
         mainWindow.hide()
         app.hide()
       }, 200)
