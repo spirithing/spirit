@@ -4,8 +4,17 @@ import { app, BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 
 import icon from '../../../resources/icon.png?asset'
-import { ee } from '../../lifecycle'
-import { setStore, watch } from '../../store'
+import {ee} from '../../lifecycle'
+import {setStore, watch} from '../../store'
+
+function getMouseHoverDisplay() {
+  const displays = screen.getAllDisplays()
+  const mousePoint = screen.getCursorScreenPoint()
+  return displays.find(display => {
+    const {x, y, width, height} = display.bounds
+    return x <= mousePoint.x && mousePoint.x <= x + width && y <= mousePoint.y && mousePoint.y <= y + height
+  })!
+}
 
 function calcBounds(display: Display) {
   return {
@@ -45,35 +54,38 @@ export function createConsoleWindow() {
   // mainWindow.webContents.debugger.sendCommand()
 
   const displayStoreUUID = Math.random().toString(36).slice(2)
-  async function showInMouseHoverDisplay() {
-    const displays = screen.getAllDisplays()
-    const mousePoint = screen.getCursorScreenPoint()
-    const display = displays.find(display => {
-      const { x, y, width, height } = display.bounds
-      return x <= mousePoint.x && mousePoint.x <= x + width && y <= mousePoint.y && mousePoint.y <= y + height
-    })
-    if (!display) return
-    mainWindow.setBounds(calcBounds(display))
-    mainWindow.show()
-    setStore('display', true, displayStoreUUID)
-    ee.emit('consoleWindowShow')
+  const setDisplay = (display: boolean) => {
+    setStore('display', display, displayStoreUUID)
   }
+  let isShowing = false
   function toggleDisplay(b = !mainWindow.isVisible()) {
+    if (b === isShowing) return
+
     if (b) {
-      showInMouseHoverDisplay()
+      mainWindow.setBounds(calcBounds(getMouseHoverDisplay()))
+      mainWindow.show()
+      setDisplay(true)
+      ee.emit('consoleWindowShow')
+      isShowing = true
     } else {
-      setStore('display', false, displayStoreUUID)
+      setDisplay(false)
       setTimeout(() => {
+        if (isShowing) {
+          isShowing = false
+          return
+        }
         mainWindow.hide()
         app.hide()
       }, 200)
     }
   }
-  watch('display', toggleDisplay, displayStoreUUID)
-  ee.on('shortcut', key => key === 'start' && toggleDisplay())
+  mainWindow.setBounds(calcBounds(getMouseHoverDisplay()))
+  setDisplay(false)
 
-  setStore('display', false, displayStoreUUID)
-  mainWindow.setBounds(calcBounds(screen.getPrimaryDisplay()))
+  ee.on('shortcut', key => key === 'start' && toggleDisplay())
+  watch('display', value => {
+    toggleDisplay(value)
+  }, displayStoreUUID)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.

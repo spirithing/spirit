@@ -65,8 +65,8 @@ ee.on('appReady', () => {
   const bossAccelerator = isWindows
     ? 'Control+W'
     : 'Command+W'
-  watch('display', () => {
-    if (getStore('display')) {
+  watch('display', value => {
+    if (value) {
       globalShortcut.register(bossAccelerator, () => void 0)
     } else {
       globalShortcut.unregister(bossAccelerator)
