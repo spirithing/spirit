@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "$schema": {
+      "$ref": "https://dprint.dev/schemas/v0.json#/properties/$schema"
+    },
+    "extends": {
+      "$ref": "https://dprint.dev/schemas/v0.json#/properties/extends"
+    },
+    "includes": {
+      "$ref": "https://dprint.dev/schemas/v0.json#/properties/includes"
+    },
+    "excludes": {
+      "$ref": "https://dprint.dev/schemas/v0.json#/properties/excludes"
+    },
+    "plugins": {
+      "$ref": "https://dprint.dev/schemas/v0.json#/properties/plugins"
+    },
+    "typescript": {
+      "$ref": "https://plugins.dprint.dev/dprint/dprint-plugin-typescript/0.94.0/schema.json#",
+      "description": "Configuration for the TypeScript plugin."
+    },
+    "json": {
+      "$ref": "https://plugins.dprint.dev/dprint/dprint-plugin-json/0.19.2/schema.json#",
+      "description": "Configuration for the JSON plugin."
+    },
+    "markdown": {
+      "$ref": "https://plugins.dprint.dev/dprint/dprint-plugin-markdown/0.16.4/schema.json#",
+      "description": "Configuration for the Markdown plugin."
+    },
+    "toml": {
+      "$ref": "https://plugins.dprint.dev/dprint/dprint-plugin-toml/0.6.1/schema.json#",
+      "description": "Configuration for the TOML plugin."
+    },
+    "malva": {
+      "$ref": "https://plugins.dprint.dev/g-plane/malva/v0.11.2/schema.json#",
+      "description": "Configuration for the Malva plugin."
+    },
+    "markup_fmt": {
+      "$ref": "https://plugins.dprint.dev/g-plane/markup_fmt/v0.19.1/schema.json#",
+      "description": "Configuration for the MarkupFmt plugin."
+    }
+  }
+}
