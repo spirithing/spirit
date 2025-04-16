@@ -95,7 +95,6 @@
 
     cursor: pointer;
     user-select: none;
-    transition: .3s;
     &.active, &:hover {
       backdrop-filter: blur(10px);
       background-color: color-mix(in srgb, var(--bg), transparent 30%);
