@@ -84,5 +84,25 @@
     "duckduckgo": "DuckDuckGo",
     "sogou": "Sogou",
     "youdao": "Youdao"
+  },
+
+  "chrome": {
+    "tools": "Chrome Tools",
+    "settings": "Chrome Settings",
+    "settingsDesc": "Open settings in Chrome",
+    "extensions": "Chrome Extensions",
+    "extensionsDesc": "Open extensions in Chrome",
+    "bookmarks": "Chrome Bookmarks",
+    "bookmarksDesc": "Open bookmarks in Chrome",
+    "history": "Chrome History",
+    "historyDesc": "Open history in Chrome",
+    "downloads": "Chrome Downloads",
+    "downloadsDesc": "Open downloads in Chrome",
+    "newTab": "Chrome New Tab",
+    "newTabDesc": "Open a new tab in Chrome",
+    "newWindow": "Chrome New Window",
+    "newWindowDesc": "Open a new window in Chrome",
+    "inspect": "Chrome Inspect",
+    "inspectDesc": "Open inspect in Chrome"
   }
 }

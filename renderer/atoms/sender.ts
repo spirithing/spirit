@@ -25,6 +25,7 @@ export type Selection = {
     | { type: 'icon'; value: string }
     | { type: 'image'; path: string }
   title: ReactNode
+  keywords?: string[]
   group?: string
   placeholder?: ReactNode
   operations?: {

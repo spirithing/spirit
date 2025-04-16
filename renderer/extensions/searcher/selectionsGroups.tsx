@@ -18,8 +18,19 @@ declare module 'spirit' {
 const googleSearchCompletionUrl = (lang: string, q: string) =>
   `https://suggestqueries.google.com/complete/search?output=toolbar&hl=${lang}&q=${encodeURIComponent(q)}`
 
+const chromeURLs = {
+  settings: 'chrome://settings',
+  extensions: 'chrome://extensions',
+  bookmarks: 'chrome://bookmarks',
+  history: 'chrome://history',
+  downloads: 'chrome://downloads',
+  newTab: 'chrome://newtab',
+  newWindow: 'chrome://newwindow',
+  inspect: 'chrome://inspect/#devices'
+}
+
 export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGroups(keyword => {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { data: completions = [] } = useSWR(
     keyword === '' ? null : googleSearchCompletionUrl(i18n.language, keyword),
     async url => {
@@ -35,6 +46,19 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
         .filter(Boolean)
         .map(suggestion => suggestion as string)
     }
+  )
+
+  const chromeSelections = useMemo(
+    () =>
+      (Object.entries(chromeURLs) as [keyof typeof chromeURLs, string][]).map(([key, url]) => ({
+        title: t(`chrome.${key}`),
+        placeholder: t(`chrome.${key}Desc`),
+        icon: { type: 'icon', value: 'link' },
+        actions: {
+          default: ['openBrowser', url]
+        }
+      } satisfies Selection)),
+    [t]
   )
 
   useAct('openBrowser', async url => {
@@ -64,32 +88,13 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
       {
         title: 'chrome.tools',
         order: -1,
-        selections: (
-          [
-            {
-              title: 'chrome inspect',
-              icon: { type: 'icon', value: 'link' },
-              actions: {
-                default: ['openBrowser', 'chrome://inspect/#devices']
-              }
-            },
-            {
-              title: 'chrome settings',
-              icon: { type: 'icon', value: 'link' },
-              actions: {
-                default: ['openBrowser', 'chrome://settings']
-              }
-            },
-            {
-              title: 'chrome history',
-              icon: { type: 'icon', value: 'link' },
-              actions: {
-                default: ['openBrowser', 'chrome://history']
-              }
-            }
-          ] satisfies Selection[]
-        ).filter(s => s.title.toLowerCase().includes(keyword))
+        selections: chromeSelections.filter(s => {
+          return [
+            s.title?.toLowerCase().includes(keyword),
+            s.placeholder?.toLowerCase().includes(keyword)
+          ].some(Boolean)
+        })
       }
     ]
-  }, [completions, keyword])
+  }, [chromeSelections, completions, keyword])
 })

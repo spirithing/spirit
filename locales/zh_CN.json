@@ -84,5 +84,25 @@
     "duckduckgo": "DuckDuckGo",
     "sogou": "搜狗",
     "youdao": "有道"
+  },
+
+  "chrome": {
+    "tools": "Chrome 工具",
+    "settings": "Chrome 设置",
+    "settingsDesc": "在 Chrome 中打开设置",
+    "extensions": "Chrome 扩展",
+    "extensionsDesc": "在 Chrome 中打开扩展",
+    "bookmarks": "Chrome 书签",
+    "bookmarksDesc": "在 Chrome 中打开书签",
+    "history": "Chrome 历史记录",
+    "historyDesc": "在 Chrome 中打开历史记录",
+    "downloads": "Chrome 下载",
+    "downloadsDesc": "在 Chrome 中打开下载",
+    "newTab": "Chrome 新标签页",
+    "newTabDesc": "在 Chrome 中打开新标签页",
+    "newWindow": "Chrome 新窗口",
+    "newWindowDesc": "在 Chrome 中打开新窗口",
+    "inspect": "Chrome 检查",
+    "inspectDesc": "在 Chrome 中打开检查"
   }
 }
