@@ -3,6 +3,8 @@ import fs from 'node:fs'
 import { nativeImage } from 'electron'
 import plist from 'simple-plist'
 
+import { logger } from '../logger'
+
 // eslint-disable-next-line react/display-name
 export default async function(path: string, { size = 32 } = {}) {
   const s = { width: size, height: size }
@@ -25,7 +27,8 @@ export default async function(path: string, { size = 32 } = {}) {
         CFBundleIconFile?: string | null
       }>(plistFilePath).CFBundleIconFile
     } catch (e) {
-      console.error(`${import.meta.url}:`, { path, plistFilePath, e })
+      logger.debug({ path, plistFilePath })
+      logger.error(String(e))
       return null
     }
 
@@ -41,7 +44,8 @@ export default async function(path: string, { size = 32 } = {}) {
       const icon = await nativeImage.createThumbnailFromPath(iconFilePath, s)
       return icon.toDataURL()
     } catch (e) {
-      console.error(`${import.meta.url}:`, { path, iconFilePath, e })
+      logger.debug({ path, iconFilePath })
+      logger.error(String(e))
       return null
     }
   }

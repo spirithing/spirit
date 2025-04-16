@@ -9,7 +9,11 @@
     "renderer/**/*.store.d.ts"
   ],
   "compilerOptions": {
+    "rootDir": ".",
     "composite": true,
-    "types": ["electron-vite/node"]
+    "types": ["node", "electron-vite/node"],
+    "emitDeclarationOnly": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
   }
 }
