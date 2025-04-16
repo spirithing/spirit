@@ -25,7 +25,6 @@ const chromeURLs = {
   history: 'chrome://history',
   downloads: 'chrome://downloads',
   newTab: 'chrome://newtab',
-  newWindow: 'chrome://newwindow',
   inspect: 'chrome://inspect/#devices'
 }
 
