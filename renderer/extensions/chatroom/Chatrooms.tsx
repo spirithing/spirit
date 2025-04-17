@@ -8,16 +8,16 @@ import { useTranslation } from 'react-i18next'
 import { UserIcon } from 'tdesign-icons-react'
 import { Avatar, AvatarGroup, Button, Tabs, Tooltip } from 'tdesign-react'
 
+import { senderAtom } from '#renderer/atoms/sender.ts'
 import { peer } from '#renderer/bridge.ts'
+import { Kbd } from '#renderer/components/Kbd.tsx'
+import { useChatroom, useChatrooms } from '#renderer/hooks/useChatroom.ts'
+import { useEventListener } from '#renderer/hooks/useEventListener.ts'
+import { useElectronStore } from '#renderer/hooks/useStore.ts'
+import { isShortcut } from '#renderer/utils/isShortcut.ts'
+import { uuid } from '#renderer/utils/uuid.ts'
 
 import chatgptIcon from '../../assets/chatgpt.svg'
-import { senderAtom } from '../../atoms/sender'
-import { Kbd } from '../../components/Kbd'
-import { useChatroom, useChatrooms } from '../../hooks/useChatroom'
-import { useEventListener } from '../../hooks/useEventListener'
-import { useElectronStore } from '../../hooks/useStore'
-import { isShortcut } from '../../utils/isShortcut'
-import { uuid } from '../../utils/uuid'
 
 export interface ChatroomsProps {
   style?: CSSProperties
