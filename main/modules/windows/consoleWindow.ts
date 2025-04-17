@@ -88,8 +88,8 @@ export async function createConsoleWindow() {
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env.ELECTRON_RENDERER_URL) {
-    void mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  if (is.dev && import.meta.env.ELECTRON_RENDERER_URL) {
+    void mainWindow.loadURL(import.meta.env.ELECTRON_RENDERER_URL)
   } else {
     void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
@@ -99,7 +99,7 @@ export async function createConsoleWindow() {
     await new Promise<void>(ok => webContents.on('did-finish-load', ok))
     webContents.openDevTools({
       mode: 'undocked',
-      activate: JSON.parse(process.env.VITE_MAIN_AUTO_OPEN_DEV_TOOLS ?? 'false')
+      activate: JSON.parse(import.meta.env.VITE_MAIN_AUTO_OPEN_DEV_TOOLS ?? 'false')
     })
     mainWindow.webContents.on('before-input-event', (_, e) => {
       const withMeta = platform.isMacOS
