@@ -16,8 +16,8 @@ import { electronStore, keyAtom } from './store'
 
 const root = document.getElementById('root')!
 
-root.addEventListener('click', e => {
-  if (e.target !== root) return
+document.body.addEventListener('click', e => {
+  if (e.target !== document.body) return
 
   const displayAtom = keyAtom('display')
   if (!displayAtom) return

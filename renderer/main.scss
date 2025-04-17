@@ -77,28 +77,30 @@ body {
     opacity: 1;
     animation: none;
     #root {
+      opacity: 1;
       animation: none;
-    }
-  }
-  &.error #root {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60vw;
-    height: 60vh;
-    padding: 20px;
-    border-radius: var(--td-radius-medium);
-    transform: translate(-50%, -50%);
-    background-color: white;
-    color: var(--td-error-color);
-    > h1 {
-      margin: 0;
-    }
-    pre {
-      margin: 0;
-      padding: 10px;
-      background-color: var(--td-bg-color-component);
-      overflow: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60vw;
+      height: 60vh;
+      padding: 20px;
+      border-radius: var(--td-radius-medium);
+      transform: translate(-50%, -50%);
+      background-color: white;
+      color: var(--td-error-color);
+      &::before {
+        display: none;
+      }
+      > h1 {
+        margin: 0;
+      }
+      pre {
+        margin: 0;
+        padding: 10px;
+        background-color: var(--td-bg-color-component);
+        overflow: auto;
+      }
     }
   }
 }
