@@ -1,17 +1,17 @@
 import { is } from '@electron-toolkit/utils'
 import type { Display } from 'electron'
-import { app, BrowserWindow, screen, shell } from 'electron'
+import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 
 import icon from '../../../resources/icon.png?asset'
-import {ee} from '../../lifecycle'
-import {setStore, watch} from '../../store'
+import { ee } from '../../lifecycle'
+import { setStore, watch } from '../../store'
 
 function getMouseHoverDisplay() {
   const displays = screen.getAllDisplays()
   const mousePoint = screen.getCursorScreenPoint()
   return displays.find(display => {
-    const {x, y, width, height} = display.bounds
+    const { x, y, width, height } = display.bounds
     return x <= mousePoint.x && mousePoint.x <= x + width && y <= mousePoint.y && mousePoint.y <= y + height
   })!
 }
@@ -75,7 +75,6 @@ export function createConsoleWindow() {
         }
         isShowing = false
         mainWindow.hide()
-        app.hide()
       }, 200)
     }
   }
