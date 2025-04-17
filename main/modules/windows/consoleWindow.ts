@@ -97,10 +97,11 @@ export async function createConsoleWindow() {
   if (is.dev) {
     const { webContents } = mainWindow
     await new Promise<void>(ok => webContents.on('did-finish-load', ok))
-    webContents.openDevTools({
-      mode: 'undocked',
-      activate: JSON.parse(import.meta.env.VITE_MAIN_AUTO_OPEN_DEV_TOOLS ?? 'false')
-    })
+    if (JSON.parse(import.meta.env.VITE_MAIN_AUTO_OPEN_DEV_TOOLS ?? 'false')) {
+      webContents.openDevTools({
+        mode: import.meta.env.VITE_MAIN_DEV_TOOLS_POSITION ?? 'undocked'
+      })
+    }
     mainWindow.webContents.on('before-input-event', (_, e) => {
       const withMeta = platform.isMacOS
         ? e.meta

@@ -6,6 +6,10 @@ import pkg from './package.json'
 process.env.VITE_APP_VERSION = pkg.version
 process.env.VITE_BUILD_TIME = String(Date.now())
 
+const port = process.env.PORT ?? 5173
+// @ts-ignore
+process.env.ELECTRON_RENDERER_URL = `http://localhost:${port}`
+
 export default defineConfig({
   main: {
     build: {
@@ -15,8 +19,10 @@ export default defineConfig({
     },
     envPrefix: [
       'VITE_',
-      'VITE_MAIN_'
+      'VITE_MAIN_',
+      'ELECTRON_'
     ],
+    envDir: '.env/main',
     plugins: [externalizeDepsPlugin()]
   },
   preload: {
@@ -31,6 +37,10 @@ export default defineConfig({
     root: 'renderer',
     esbuild: {
       jsx: 'automatic'
+    },
+    server: {
+      port: Number(port),
+      strictPort: true
     },
     build: {
       rollupOptions: {
