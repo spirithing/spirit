@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 export function ErrorFallback({ error, errorInfo }: { error: Error; errorInfo: ErrorInfo }) {
   const { t } = useTranslation()
+  // TODO: support copy error info to clipboard
   return <>
     <h1>{t('errorFallback.title')}</h1>
     <details style={{ whiteSpace: 'pre-wrap' }} open={import.meta.env.DEV}>
@@ -11,7 +12,7 @@ export function ErrorFallback({ error, errorInfo }: { error: Error; errorInfo: E
     {t('errorFallback.tooltip')}
     <ul>
       <li>
-        <a href='spirit-oe://github.com/NWYLZW/spirit/issues/new'>
+        <a href='spirit-oe://github.com/spirithing/spirit/issues/new'>
           GitHub
         </a>
       </li>
