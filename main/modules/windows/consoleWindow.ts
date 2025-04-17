@@ -4,7 +4,6 @@ import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 
 import icon from '../../../resources/icon.png?asset'
-import { peer } from '../../bridge.ts'
 import { ee } from '../../lifecycle'
 import { setStore, watch } from '../../store'
 
@@ -39,6 +38,7 @@ export async function createConsoleWindow() {
     enableLargerThanScreen: true,
     icon,
     webPreferences: {
+      devTools: is.dev,
       preload: join(__dirname, '../preload/index.mjs'),
       webSecurity: false,
       allowRunningInsecureContent: true,
@@ -52,7 +52,6 @@ export async function createConsoleWindow() {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
-  // mainWindow.webContents.debugger.sendCommand()
 
   const displayStoreUUID = Math.random().toString(36).slice(2)
   const setDisplay = (display: boolean) => {
@@ -100,14 +99,14 @@ export async function createConsoleWindow() {
     await new Promise<void>(ok => webContents.on('did-finish-load', ok))
     webContents.openDevTools({
       mode: 'undocked',
-      activate: true
+      activate: JSON.parse(process.env.VITE_MAIN_AUTO_OPEN_DEV_TOOLS ?? 'false')
     })
-    peer.on('keydown', (_, e) => {
+    mainWindow.webContents.on('before-input-event', (_, e) => {
       const withMeta = platform.isMacOS
-        ? e.metaKey
-        : e.ctrlKey
+        ? e.meta
+        : e.control
 
-      if (e.key === 'c' && e.shiftKey && withMeta) {
+      if (e.key === 'c' && e.shift && withMeta) {
         webContents.devToolsWebContents?.sendInputEvent({
           type: 'keyDown',
           modifiers: [

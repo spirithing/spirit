@@ -7,8 +7,6 @@ import './effect'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { peer } from '#renderer/bridge.ts'
-
 import { App } from './App'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { ErrorFallback } from './components/ErrorFallback'
@@ -26,33 +24,6 @@ document.body.addEventListener('click', e => {
 
   electronStore.set(displayAtom, false)
 })
-document.body.addEventListener('keydown', e =>
-  peer.emit('keydown', {
-    key: e.key,
-    code: e.code,
-    metaKey: e.metaKey,
-    ctrlKey: e.ctrlKey,
-    altKey: e.altKey,
-    shiftKey: e.shiftKey
-  }))
-document.body.addEventListener('keyup', e =>
-  peer.emit('keyup', {
-    key: e.key,
-    code: e.code,
-    metaKey: e.metaKey,
-    ctrlKey: e.ctrlKey,
-    altKey: e.altKey,
-    shiftKey: e.shiftKey
-  }))
-document.body.addEventListener('keypress', e =>
-  peer.emit('keypress', {
-    key: e.key,
-    code: e.code,
-    metaKey: e.metaKey,
-    ctrlKey: e.ctrlKey,
-    altKey: e.altKey,
-    shiftKey: e.shiftKey
-  }))
 
 createRoot(root)
   .render(
