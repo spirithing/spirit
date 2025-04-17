@@ -159,7 +159,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   const shikitorRef = useRef<Shikitor>(null)
   useEffect(() => {
     if (display) {
-      shikitorRef.current?.focus()
+      shikitorRef.current?.focus(shikitorRef.current.cursor)
     }
   }, [display])
 
