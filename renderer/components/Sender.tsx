@@ -13,11 +13,14 @@ import { Editor } from '@shikitor/react'
 import { useDebouncedValue } from 'foxact/use-debounced-value'
 import { useAtom } from 'jotai'
 import type { ForwardedRef, ReactNode } from 'react'
+import { useCallback } from 'react'
 import { Fragment } from 'react'
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
 import { Button, Dropdown, Image, ImageViewer, Input, MessagePlugin, Tooltip } from 'tdesign-react'
+
+import { scrollIntoViewIfNeeded } from '#renderer/utils/scrollIntoViewIfNeeded.ts'
 
 import { selectionsGroupsAtom, senderAtom } from '../atoms/sender'
 import { useChatroom } from '../hooks/useChatroom'
@@ -138,11 +141,34 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
     })
   ]
 
+  const focusSelectionsRef = useRef<(HTMLDivElement | null)[][]>([])
+
   const [selectionsGroups] = useAtom(selectionsGroupsAtom)
   const [selectionIndex, setSelectionIndex] = useState<[number, number] | undefined>(undefined)
   useEffect(() => {
     setSelectionIndex(undefined)
   }, [selectionsGroups])
+  const changeSelectionIndex = useCallback<typeof setSelectionIndex>((indexOrCallback) => {
+    setSelectionIndex(old => {
+      let result: [number, number] | undefined
+      if (indexOrCallback === undefined) {
+        result = undefined
+      } else if (typeof indexOrCallback === 'function') {
+        result = indexOrCallback(old)
+      } else {
+        result = indexOrCallback
+      }
+      if (!result) return result
+
+      const [i, j] = result
+      const el = focusSelectionsRef.current[i]?.[j]
+
+      if (!el) return result
+
+      scrollIntoViewIfNeeded(el)
+      return result
+    })
+  }, [])
   const triggerSelectionAction = useEventCallback((
     type: 'click' | 'enter',
     i: number,
@@ -204,7 +230,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
           onKeydown={async e => {
             if (isShortcut(e, ['Escape'])) {
               if (selectionIndex !== undefined) {
-                setSelectionIndex(undefined)
+                changeSelectionIndex(undefined)
                 e.preventDefault()
                 e.stopPropagation()
                 return
@@ -259,7 +285,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
               // TODO metaOrCtrl + shift + ArrowUp
               if (isShortcut(e, ['ArrowUp'])) {
                 if (cursor.line !== 1) return
-                setSelectionIndex((index) => {
+                changeSelectionIndex((index) => {
                   const [i, j] = index ?? [undefined, undefined]
                   if (i === undefined || j === undefined) {
                     return [0, 0]
@@ -285,7 +311,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
               if (isShortcut(e, ['ArrowDown'])) {
                 const lineCount = text?.split('\n').length ?? 1
                 if (cursor.line !== lineCount) return
-                setSelectionIndex((index) => {
+                changeSelectionIndex((index) => {
                   const [i, j] = index ?? [undefined, undefined]
                   if (i === undefined || j === undefined) {
                     return [0, 0]
@@ -389,13 +415,19 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
               ({ icon, title, placeholder, operations }, j) =>
                 <div
                   key={j}
+                  ref={el => {
+                    if (!focusSelectionsRef.current[i]) {
+                      focusSelectionsRef.current[i] = []
+                    }
+                    focusSelectionsRef.current[i][j] = el
+                  }}
                   className={classnames(`${prefix}__selection`, {
                     active: selectionIndex?.[0] === i && selectionIndex?.[1] === j
                   })}
                   onClick={e => {
                     e.preventDefault()
                     e.stopPropagation()
-                    setSelectionIndex([i, j])
+                    changeSelectionIndex([i, j])
                     triggerSelectionAction('click', i, j)
                   }}
                 >
