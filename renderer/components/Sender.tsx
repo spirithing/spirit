@@ -282,7 +282,6 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
             const shikitor = shikitorRef.current
             if (shikitor) {
               const { cursor } = shikitor
-              // TODO metaOrCtrl + shift + ArrowUp
               if (isShortcut(e, ['ArrowUp'])) {
                 if (cursor.line !== 1) return
                 changeSelectionIndex((index) => {
@@ -307,7 +306,6 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                 })
                 e.preventDefault()
               }
-              // TODO metaOrCtrl + shift + ArrowDown
               if (isShortcut(e, ['ArrowDown'])) {
                 const lineCount = text?.split('\n').length ?? 1
                 if (cursor.line !== lineCount) return
@@ -331,6 +329,37 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                   ]
                 })
                 e.preventDefault()
+              }
+              if (isShortcut(e, ['Home'])) {
+                const lineCount = text?.split('\n').length ?? 1
+                if (cursor.line !== lineCount) return
+                changeSelectionIndex([0, 0])
+                e.preventDefault()
+              }
+              if (isShortcut(e, ['End'])) {
+                const lineCount = text?.split('\n').length ?? 1
+                if (cursor.line !== lineCount) return
+                changeSelectionIndex([
+                  selectionsGroups.length - 1,
+                  selectionsGroups[selectionsGroups.length - 1].selections.length - 1
+                ])
+                e.preventDefault()
+              }
+              if (isShortcut(e, ['Tab'])) {
+                const lineCount = text?.split('\n').length ?? 1
+                if (cursor.line !== lineCount) return
+                // 以分组为单位进行跳跃
+                const [i, j] = selectionIndex ?? [undefined, undefined]
+                if (i === undefined || j === undefined) {
+                  changeSelectionIndex([0, 0])
+                  return
+                }
+                const nextI = (i + 1) >= selectionsGroups.length
+                  ? 0
+                  : i + 1
+                changeSelectionIndex([nextI, 0])
+                e.preventDefault()
+                e.stopPropagation()
               }
             }
           }}
