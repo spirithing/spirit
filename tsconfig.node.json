@@ -12,6 +12,7 @@
     "rootDir": ".",
     "composite": true,
     "types": ["node", "electron-vite/node"],
+    "moduleResolution": "Bundler",
     "emitDeclarationOnly": true,
     "noEmit": true,
     "allowImportingTsExtensions": true

@@ -59,21 +59,37 @@ ipcMain.on('wechat', (_, id) => {
   }
 })
 
+type AllWebviewEventMap = WebviewEventMap
+
+const webContentsMap = new Map<string, Electron.WebContents>()
+
+export const setWebContents = <
+  K extends keyof MainEventMap & string,
+>(k: K, webContents: Electron.WebContents) => {
+  webContentsMap.set(k, webContents)
+}
+
 export const peer = {
-  on: <K extends keyof WebviewEventMap & string>(
+  on: <K extends keyof AllWebviewEventMap & string>(
     k: K,
-    callback: (...args: [IpcMainEvent, ...WebviewEventMap[K]]) => void
+    callback: (...args: [IpcMainEvent, ...AllWebviewEventMap[K]]) => void
   ) => ipcMain.on(k, callback),
-  once: <K extends keyof WebviewEventMap & string>(
+  once: <K extends keyof AllWebviewEventMap & string>(
     k: K,
-    callback: (...args: [IpcMainEvent, ...WebviewEventMap[K]]) => void
+    callback: (...args: [IpcMainEvent, ...AllWebviewEventMap[K]]) => void
   ) => ipcMain.once(k, callback),
-  off: <K extends keyof WebviewEventMap & string>(
+  off: <K extends keyof AllWebviewEventMap & string>(
     k: K,
-    callback: (...args: [IpcMainEvent, ...WebviewEventMap[K]]) => void
+    callback: (...args: [IpcMainEvent, ...AllWebviewEventMap[K]]) => void
   ) => ipcMain.removeListener(k, callback),
-  emit: <K extends keyof MainEventMap & string>(
+  emit: <
+    K extends keyof MainEventMap & string,
+    T extends keyof MainEventMap[K] & string,
+  >(
     k: K,
-    ...args: MainEventMap[K]
-  ) => ipcMain.emit(k, ...args)
+    t: T,
+    ...args: MainEventMap[K][T]
+  ) => {
+    webContentsMap.get(k)?.send(t, ...args)
+  }
 }

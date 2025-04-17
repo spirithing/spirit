@@ -3,9 +3,11 @@ import type { Display } from 'electron'
 import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 
+import { setWebContents } from '#main/bridge.ts'
+import { ee } from '#main/lifecycle.ts'
+import { setStore, watch } from '#main/store.ts'
+
 import icon from '../../../resources/icon.png?asset'
-import { ee } from '../../lifecycle'
-import { setStore, watch } from '../../store'
 
 function getMouseHoverDisplay() {
   const displays = screen.getAllDisplays()
@@ -52,6 +54,7 @@ export async function createConsoleWindow() {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+  setWebContents('console', mainWindow.webContents)
 
   const displayStoreUUID = Math.random().toString(36).slice(2)
   const setDisplay = (display: boolean) => {

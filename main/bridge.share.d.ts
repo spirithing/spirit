@@ -1,4 +1,6 @@
 declare module 'spirit' {
-  interface MainEventMap extends Record<string, unknown[]> {
+  interface MainEventMapForConsole extends Record<string, unknown[]> {}
+  interface MainEventMap {
+    console: MainEventMapForConsole
   }
 }

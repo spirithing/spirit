@@ -1,9 +1,10 @@
 import { globalShortcut } from 'electron'
 import type { Shortcuts } from 'spirit'
 
-import { ee } from '../../lifecycle'
-import { getStore, watch } from '../../store'
-import { isWindows } from '../../utils/system'
+import { peer } from '#main/bridge.ts'
+import { ee } from '#main/lifecycle.ts'
+import { getStore, watch } from '#main/store.ts'
+import { isWindows } from '#main/utils/system.ts'
 
 const VARIOUS_PUNCTUATION = {
   // ), !, @, #, $, %, ^, &, *, (, :, ;, :, +, =, <, ,, _, -, >, ., ?, /, ~, `, {, ], [, |, \, }, "
@@ -67,7 +68,7 @@ ee.on('appReady', () => {
     : 'Command+W'
   watch('display', value => {
     if (value) {
-      globalShortcut.register(bossAccelerator, () => void 0)
+      globalShortcut.register(bossAccelerator, () => peer.emit('console', 'shortcutWhenBoss'))
     } else {
       globalShortcut.unregister(bossAccelerator)
     }

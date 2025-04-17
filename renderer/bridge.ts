@@ -54,18 +54,22 @@ export const bridge = new Proxy({} as Bridge, {
   }
 })
 
+// TODO: abstract create Peer tube function
+type T = 'console'
+type EventMap = MainEventMap[T]
+
 export const peer = {
-  on: <K extends keyof MainEventMap & string>(
+  on: <K extends keyof EventMap & string>(
     k: K,
-    callback: (...args: [IpcRendererEvent, ...MainEventMap[K]]) => void
+    callback: (...args: [IpcRendererEvent, ...EventMap[K]]) => void
   ) => ipcRenderer.on(k, callback),
-  once: <K extends keyof MainEventMap & string>(
+  once: <K extends keyof EventMap & string>(
     k: K,
-    callback: (...args: [IpcRendererEvent, ...MainEventMap[K]]) => void
+    callback: (...args: [IpcRendererEvent, ...EventMap[K]]) => void
   ) => ipcRenderer.once(k, callback),
-  off: <K extends keyof MainEventMap & string>(
+  off: <K extends keyof EventMap & string>(
     k: K,
-    callback: (...args: [IpcRendererEvent, ...MainEventMap[K]]) => void
+    callback: (...args: [IpcRendererEvent, ...EventMap[K]]) => void
   ) => ipcRenderer.removeListener(k, callback),
   emit: <K extends keyof WebviewEventMap & string>(
     k: K,

@@ -3,9 +3,12 @@ import './Chatrooms.scss'
 import { classnames } from '@shikitor/core/utils'
 import { useAtom } from 'jotai'
 import type { CSSProperties, ReactNode } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { UserIcon } from 'tdesign-icons-react'
 import { Avatar, AvatarGroup, Button, Tabs, Tooltip } from 'tdesign-react'
+
+import { peer } from '#renderer/bridge.ts'
 
 import chatgptIcon from '../../assets/chatgpt.svg'
 import { senderAtom } from '../../atoms/sender'
@@ -29,6 +32,17 @@ export function Chatrooms(props: ChatroomsProps) {
   const [activeChatroom, { setActiveChatroom }] = useChatroom()
   const [chatrooms, { addChatroom, delChatroom }] = useChatrooms()
   const [chatroomMetas] = useElectronStore('chatroomMetas', {})
+  useEffect(() =>
+    peer.on('shortcutWhenBoss', () => {
+      if (chatrooms.length === 1) return
+
+      const index = chatrooms.indexOf(activeChatroom.id)
+      if (index !== -1) {
+        setActiveChatroom(chatrooms[index + 1] ?? 'default')
+        delChatroom(activeChatroom.id)
+        return
+      }
+    }), [activeChatroom.id, chatrooms, delChatroom, setActiveChatroom])
   useEventListener('keydown', e => {
     if (chatrooms.length > 1 /* TODO add text is empty check */) {
       if (sender?.text) return
