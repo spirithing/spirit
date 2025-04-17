@@ -1,9 +1,10 @@
-import { is } from '@electron-toolkit/utils'
+import { is, platform } from '@electron-toolkit/utils'
 import type { Display } from 'electron'
 import { BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 
 import icon from '../../../resources/icon.png?asset'
+import { peer } from '../../bridge.ts'
 import { ee } from '../../lifecycle'
 import { setStore, watch } from '../../store'
 
@@ -24,7 +25,7 @@ function calcBounds(display: Display) {
   }
 }
 
-export function createConsoleWindow() {
+export async function createConsoleWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     title: 'Spirit',
@@ -88,9 +89,36 @@ export function createConsoleWindow() {
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+    void mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+
+  if (is.dev) {
+    const { webContents } = mainWindow
+    await new Promise<void>(ok => webContents.on('did-finish-load', ok))
+    webContents.openDevTools({
+      mode: 'undocked',
+      activate: true
+    })
+    peer.on('keydown', (_, e) => {
+      const withMeta = platform.isMacOS
+        ? e.metaKey
+        : e.ctrlKey
+
+      if (e.key === 'c' && e.shiftKey && withMeta) {
+        webContents.devToolsWebContents?.sendInputEvent({
+          type: 'keyDown',
+          modifiers: [
+            platform.isMacOS
+              ? 'meta'
+              : 'control',
+            'shift'
+          ],
+          keyCode: 'C'
+        })
+      }
+    })
   }
 }

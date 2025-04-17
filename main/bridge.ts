@@ -1,5 +1,5 @@
-import { ipcMain } from 'electron'
-import type { BridgeCalledContext, BridgeMethods, SyncMethodRtn } from 'spirit'
+import { ipcMain, type IpcMainEvent } from 'electron'
+import type { BridgeCalledContext, BridgeMethods, MainEventMap, SyncMethodRtn, WebviewEventMap } from 'spirit'
 
 import * as apis from './apis'
 import { isMac } from './utils/system'
@@ -58,3 +58,22 @@ ipcMain.on('wechat', (_, id) => {
     return
   }
 })
+
+export const peer = {
+  on: <K extends keyof WebviewEventMap & string>(
+    k: K,
+    callback: (...args: [IpcMainEvent, ...WebviewEventMap[K]]) => void
+  ) => ipcMain.on(k, callback),
+  once: <K extends keyof WebviewEventMap & string>(
+    k: K,
+    callback: (...args: [IpcMainEvent, ...WebviewEventMap[K]]) => void
+  ) => ipcMain.once(k, callback),
+  off: <K extends keyof WebviewEventMap & string>(
+    k: K,
+    callback: (...args: [IpcMainEvent, ...WebviewEventMap[K]]) => void
+  ) => ipcMain.removeListener(k, callback),
+  emit: <K extends keyof MainEventMap & string>(
+    k: K,
+    ...args: MainEventMap[K]
+  ) => ipcMain.emit(k, ...args)
+}

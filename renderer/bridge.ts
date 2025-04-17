@@ -1,4 +1,5 @@
-import type { Bridge, BridgeCalledContext, BridgeContext, SyncMethodRtn } from 'spirit'
+import type { IpcRendererEvent } from 'electron'
+import type { Bridge, BridgeCalledContext, BridgeContext, MainEventMap, SyncMethodRtn, WebviewEventMap } from 'spirit'
 
 import { ipcRenderer } from './electron'
 
@@ -52,3 +53,22 @@ export const bridge = new Proxy({} as Bridge, {
     }
   }
 })
+
+export const peer = {
+  on: <K extends keyof MainEventMap & string>(
+    k: K,
+    callback: (...args: [IpcRendererEvent, ...MainEventMap[K]]) => void
+  ) => ipcRenderer.on(k, callback),
+  once: <K extends keyof MainEventMap & string>(
+    k: K,
+    callback: (...args: [IpcRendererEvent, ...MainEventMap[K]]) => void
+  ) => ipcRenderer.once(k, callback),
+  off: <K extends keyof MainEventMap & string>(
+    k: K,
+    callback: (...args: [IpcRendererEvent, ...MainEventMap[K]]) => void
+  ) => ipcRenderer.removeListener(k, callback),
+  emit: <K extends keyof WebviewEventMap & string>(
+    k: K,
+    ...args: WebviewEventMap[K]
+  ) => ipcRenderer.send(k, ...args)
+}
