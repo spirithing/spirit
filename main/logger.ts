@@ -9,8 +9,16 @@ const logsDir = import.meta.env.MODE === 'production'
   : resolve(process.cwd(), 'logs')
 
 const resolveByLogs = (...paths: string[]) => {
-  const datetime = new Date().toISOString().replace(/:/g, '-').slice(0, 19)
-  return resolve(logsDir, datetime, ...paths)
+  const now = new Date()
+  return resolve(
+    logsDir,
+    `${
+      now
+        .toLocaleDateString()
+        .replaceAll('/', '-')
+    } ${now.getHours()}`,
+    ...paths
+  )
 }
 
 export const logger = createLogger({
