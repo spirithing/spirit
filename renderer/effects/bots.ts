@@ -15,9 +15,12 @@ const runTool = async (name: string, parameters: unknown): Promise<string> => {
   return tools[name].call(parameters)
 }
 
-ee.on('addMessage', async (m, { id, messages, options }) => {
+ee.on('addMessage', async (m, chatroom) => {
+  const { id, messages, options } = chatroom
+
   const botAtom = keyAtom('bot')
   if (!botAtom) return
+
   const bot = electronStore.get(botAtom)
   if (!bot) {
     // TODO check name and description is empty, and prompt user to configure it
