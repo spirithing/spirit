@@ -1,22 +1,28 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
-    "main/*.share.d.ts",
     "main/**/*.share.d.ts",
 
-    "sharing/*.d.ts",
-
-    "preload/*.d.ts",
+    "preload/**/*.d.ts",
 
     "renderer/**/*",
     "renderer/env.d.ts",
     "renderer/**/*.tsx",
     "renderer/.core/**/*"
   ],
+  "references": [
+    { "path": "./tsconfig.sharing.json" }
+  ],
   "compilerOptions": {
     "rootDir": ".",
     "composite": true,
     "jsx": "react-jsx",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable",
+      "ESNext.Disposable"
+    ],
     "moduleResolution": "Bundler",
     "noEmit": true,
     "allowImportingTsExtensions": true

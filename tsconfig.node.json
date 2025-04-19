@@ -1,12 +1,14 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
   "include": [
-    "sharing/*.d.ts",
     "electron.vite.config.*",
     "main/**/*",
     "preload/**/*",
     "renderer/**/*.share.d.ts",
     "renderer/**/*.store.d.ts"
+  ],
+  "references": [
+    { "path": "./tsconfig.sharing.json" }
   ],
   "compilerOptions": {
     "rootDir": ".",
