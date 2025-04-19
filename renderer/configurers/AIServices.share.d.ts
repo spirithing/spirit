@@ -1,17 +1,15 @@
-import type { Bot, IMessage, ITool, IToolCall } from 'spirit'
-
 declare module 'spirit' {
   export interface AIServiceCreators {
   }
-  export interface AIServiceAPIOptionsForChat {
-  }
-  export interface AIServiceAPIAdapter<K extends keyof AIServiceOptions> {
+  export interface AIServiceAPIAdapter<K extends keyof AIServiceOptionsMap> {
     chat(
       instance: AIServiceCreators[K],
       bot: Bot,
       messages: IMessage[],
-      adapterOptions?: AIServiceOptions[K],
-      options?: AIServiceAPIOptionsForChat[K] & {
+      adapterOptions?: AIServiceOptionsMap[K] & {
+        chat?: AIServiceAPIOptionsForChatMap[K]
+      },
+      options?: {
         tools?: ITool[]
       }
     ): AsyncIterable<[string, {
@@ -24,14 +22,25 @@ declare module 'spirit' {
       created?: number
     }[]>
   }
-  export interface AIServiceOptions {
+  export interface AIServiceOptionsMap {
   }
   // dprint-ignore
-  export type AIServiceOption = keyof AIServiceOptions extends infer K
+  export type AIServiceOptions = keyof AIServiceOptionsMap extends infer K
     ? K extends string
       ? {
         type: K
-      } & AIServiceOptions[K]
+        chat?: AIServiceAPIOptionsForChat[K]
+      } & AIServiceOptionsMap[K]
+      : never
+    : never
+  export interface AIServiceAPIOptionsForChatMap {
+  }
+  // dprint-ignore
+  export type AIServiceAPIOptionsForChat = keyof AIServiceAPIOptionsForChatMap extends infer K
+    ? K extends string
+      ? {
+      type: K
+    } & AIServiceAPIOptionsForChatMap[K]
       : never
     : never
   export interface AIService {
@@ -39,7 +48,7 @@ declare module 'spirit' {
     name: string
     description?: string
     avatar?: string
-    options: AIServiceOption
+    options: AIServiceOptions
   }
   export interface Store {
     defaultAIServiceUUID?: AIService['uuid']

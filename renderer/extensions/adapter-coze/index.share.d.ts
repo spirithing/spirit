@@ -4,12 +4,12 @@ declare module 'spirit' {
   export interface AIServiceCreators {
     coze: CozeQuester
   }
-  export interface AIServiceAPIOptionsForChat {
+  export interface AIServiceAPIOptionsForChatMap {
     coze: {
       botID: string
     }
   }
-  export interface AIServiceOptions {
+  export interface AIServiceOptionsMap {
     coze: {
       apiHost?: string
       bearerToken: string

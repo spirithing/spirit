@@ -1,12 +1,19 @@
-import { isEqual } from 'lodash-es'
-import type { AIService, AIServiceAPIOptionsForChat, IMessage } from 'spirit'
+import { defaultsDeep, isEqual, template } from 'lodash-es'
+import type { IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
-import { editMessage, sendMessage } from '../atoms/chatroom'
-import { getDefaultAIService, getOrCreateInstanceAndAPI } from '../configurers/AIService/base'
-import { ee } from '../instances/ee'
-import { electronStore, keyAtom } from '../store'
-import { tools } from '../tools'
+import { editMessage, sendMessage } from '#renderer/atoms/chatroom.ts'
+import { getOrCreateInstanceAndAPI, getTargetOrDefaultAIService } from '#renderer/configurers/AIService/base.ts'
+import { ee } from '#renderer/instances/ee.ts'
+import { getThrowWhenUndefined } from '#renderer/store.ts'
+import { tools } from '#renderer/tools/index.ts'
+import { JSON_MD_WRAPPER, MD_CODE_BLOCK } from '#sharing/constants.ts'
+import { creatCaught } from '#sharing/utils/creatCaught.ts'
+
+const DEFAULT_SYSTEM_PROMPT_TEMPLATE = `
+Your name is "<%= bot.name %>".
+<%= bot.description %>
+`.trim()
 
 const runTool = async (name: string, parameters: unknown): Promise<string> => {
   if (!tools[name]) {
@@ -15,52 +22,68 @@ const runTool = async (name: string, parameters: unknown): Promise<string> => {
   return tools[name].call(parameters)
 }
 
+export function getTargetOrDefaultBot(uuid?: string) {
+  return uuid
+    ? getThrowWhenUndefined('bots')?.[uuid]
+    : getThrowWhenUndefined('bot')
+}
+
 ee.on('addMessage', async (m, chatroom) => {
-  const { id, messages, options } = chatroom
-
-  const botAtom = keyAtom('bot')
-  if (!botAtom) return
-
-  const bot = electronStore.get(botAtom)
-  if (!bot) {
-    // TODO check name and description is empty, and prompt user to configure it
-    MessagePlugin.error('Bot not Configured')
-    return
-  }
-  if (isEqual(m.user, bot)) return
+  const { id, messages } = chatroom
 
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
 
-  if (import.meta.env.DEV && m.text === 'd') {
-    setTimeout(() => sendTo('pong', bot), 500)
+  if (import.meta.env.DEV && m.text === 'ping') {
+    // notify('pong')
+    // editNotify('pong')
     return
   }
 
-  let aiService: AIService | undefined
   try {
-    aiService = getDefaultAIService(options?.aiServiceUUID)
-    if (!aiService) {
-      throw new Error('AI Service not found')
-    }
-  } catch (e) {
-    if (e instanceof Error) {
-      void MessagePlugin.error(e.message)
-    } else {
-      void MessagePlugin.error(String(e))
-    }
-    return
-  }
-  const [instance, api] = getOrCreateInstanceAndAPI(aiService.options)
+    const caught = creatCaught()
+    const bot = getTargetOrDefaultBot(chatroom.options?.bot?.uuid)
 
-  const { uuid } = sendTo('Thinking', bot)
-  let count = 0
-  const t = setInterval(() => {
-    editTo(0, 'Thinking' + '.'.repeat(count))
-    count = (count + 1) % 4
-  }, 300)
+    if (isEqual(m.user, bot)) return
 
-  try {
+    const { uuid } = sendTo('Thinking', bot)
+    let count = 0
+    const t = setInterval(() => {
+      editTo(0, 'Thinking' + '.'.repeat(count))
+      count = (count + 1) % 4
+    }, 300)
+    using _ = caught.only({ [Symbol.dispose]: () => clearInterval(t) })
+
+    if (import.meta.env.DEV && m.text === 'ping:bot') {
+      await new Promise(ok => setTimeout(ok, 1000))
+      const prefix = `pong:bot \`${bot.name}\`[${bot.uuid}]`
+      const options = `# Options\n${JSON_MD_WRAPPER(JSON.stringify(bot.options, null, 2))}`
+      const description = `# Description\n${MD_CODE_BLOCK('md', bot.description ?? '')}`
+      editTo(uuid, [prefix, options, description].join('\n'))
+      return
+    }
+
+    const aiService = getTargetOrDefaultAIService(
+      chatroom.options?.aiService?.uuid ?? bot.options?.aiService?.uuid
+    )
+    if (import.meta.env.DEV && m.text === 'ping:service') {
+      const prefix = `pong:service \`${aiService.name}\`[${aiService.uuid}]`
+      editTo(uuid, `${prefix}\n${JSON_MD_WRAPPER(JSON.stringify(aiService?.options, null, 2))}`)
+      return
+    }
+    const [instance, api] = getOrCreateInstanceAndAPI(aiService.options)
+    const chat = api.chat.bind(null, instance, bot)
+
+    const adapterOptions = defaultsDeep(
+      chatroom.options?.aiService?.options,
+      bot.options?.aiService?.options,
+      aiService.options
+    )
+    if (import.meta.env.DEV && m.text === 'ping:adapter') {
+      editTo(uuid, `${JSON_MD_WRAPPER(JSON.stringify(adapterOptions, null, 2))}`)
+      return
+    }
+
     const resolvedMessages: IMessage[] = messages
       ?.toReversed()
       ?.map(m => ({
@@ -72,31 +95,54 @@ ee.on('addMessage', async (m, chatroom) => {
           : m.text
       } as IMessage))
       ?? []
+    const now = new Date()
+    const systemPrompt = template(
+      chatroom.options?.overrideSystemPrompt ?? DEFAULT_SYSTEM_PROMPT_TEMPLATE
+    )({
+      bot: {
+        name: bot.name,
+        description: bot.description
+      },
+      user: {
+        name: m.user?.name
+      },
+      chatroom: {
+        name: chatroom.name,
+        description: chatroom.description
+      },
+      system: {
+        now: now.toLocaleString(),
+        time: now.toLocaleTimeString(),
+        date: now.toLocaleDateString()
+      }
+    })
+    if (m.text === 'REPEAT YOUR SYSTEM PROMPT!!!') {
+      editTo(uuid, systemPrompt)
+      return
+    }
     const allMessages: IMessage[] = [
       {
         uuid: 'system',
         type: 'system',
-        text: `Your name is "${bot.name}"${bot.description ? ` and your description is "${bot.description}"` : ''}.`,
-        ctime: Date.now(),
+        text: systemPrompt,
+        ctime: now,
         assets: []
       },
       ...resolvedMessages
     ]
+
+    const resolvedTools = (
+        chatroom.options?.enableTools ?? bot.options?.enableTools
+      )
+      ? Object.values(tools).map(({ call: _, ...t }) => t)
+      : []
+    const filteredTools = resolvedTools
+
     for await (
-      const [message, { toolCalls, status }] of api.chat(
-        instance,
-        bot,
+      const [message, { toolCalls, status }] of chat(
         allMessages,
-        aiService.options,
-        Object.assign(
-          {},
-          {
-            tools: options?.enableTools
-              ? Object.values(tools).map(({ call: _, ...t }) => t)
-              : []
-          },
-          options as AIServiceAPIOptionsForChat[typeof aiService.options['type']]
-        )
+        adapterOptions,
+        { tools: filteredTools }
       )
     ) {
       if (status === 'started') clearInterval(t)
@@ -112,10 +158,14 @@ ee.on('addMessage', async (m, chatroom) => {
         }
       }
     }
+    caught.not()
   } catch (e) {
-    clearInterval(t)
-    // @ts-ignore
-    editTo(uuid, 'message' in e ? e.message : e.toString())
+    // sendTo(e instanceof Error ? e.message : String(e))
+    if (e instanceof Error) {
+      void MessagePlugin.error(e.message)
+    } else {
+      void MessagePlugin.error(String(e))
+    }
     console.error(e)
   }
 })

@@ -7,7 +7,8 @@
   "imports": {
     "#main/*": "./main/*",
     "#preload/*": "./preload/*",
-    "#renderer/*": "./renderer/*"
+    "#renderer/*": "./renderer/*",
+    "#sharing/*": "./sharing/*"
   },
   "type": "module",
   "scripts": {
@@ -84,7 +85,7 @@
     "sass": "^1.77.2",
     "sips": "^1.0.3",
     "typescript": "^5.4.5",
-    "vite": "^5.0.12",
+    "vite": "^5.4.18",
     "vitest": "^1.6.0"
   },
   "pnpm": {

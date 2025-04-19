@@ -54,18 +54,34 @@ declare module 'spirit' {
       }
     )
   export interface ChatRoomOptions {
-    aiServiceUUID?: string
-    model?: string
-    sessionLength?: number
+    /**
+     * Override the system prompt for the chatroom.
+     */
+    overrideSystemPrompt?: string
+
     maxMessages?: number
+    sessionLength?: number
+
+    tools?: string[]
     enableTools?: boolean
+
+    aiService?: {
+      uuid: string
+      options?: AIServiceOptions
+    }
+
+    bot?: {
+      uuid: string
+      options?: BotOptions
+    }
   }
   export interface ChatRoom {
     id: string
     name?: string
     description?: string
-    options?: ChatRoomOptions
     messages: IMessage[] | null
+
+    options?: ChatRoomOptions
   }
   export interface Store {
     activeChatroom: string

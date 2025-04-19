@@ -4,12 +4,12 @@ declare module 'spirit' {
   export interface AIServiceCreators {
     openai: OpenAI
   }
-  export interface AIServiceAPIOptionsForChat {
+  export interface AIServiceAPIOptionsForChatMap {
     openai: {
       model: string
     }
   }
-  export interface AIServiceOptions {
+  export interface AIServiceOptionsMap {
     openai: {
       apiHost: string
       apiKey: string

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { AIServiceOption } from 'spirit'
+import type { AIServiceOptions } from 'spirit'
 import { Col, Input, Row } from 'tdesign-react'
 
 import type { ListItemWriterProps } from '../../components/ListWithPreview'
@@ -9,7 +9,7 @@ import { OpenAIProvider } from './Provider'
 import { ModelSelector } from './selectors/ModelSelector'
 
 export function OptionConfigurer(
-  props: ListItemWriterProps<AIServiceOption & { type: 'openai' }>
+  props: ListItemWriterProps<AIServiceOptions & { type: 'openai' }>
 ) {
   const { t } = useTranslation()
   const { isEditing, value, onChange, onOnConfirm } = props

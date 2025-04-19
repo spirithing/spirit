@@ -4,12 +4,12 @@ declare module 'spirit' {
   export interface AIServiceCreators {
     ollama: Ollama
   }
-  export interface AIServiceAPIOptionsForChat {
+  export interface AIServiceAPIOptionsForChatMap {
     ollama: {
       model: string
     }
   }
-  export interface AIServiceOptions {
+  export interface AIServiceOptionsMap {
     ollama: {
       apiHost: string
       defaultModel: string

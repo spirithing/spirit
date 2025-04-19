@@ -1,4 +1,4 @@
-import type { AIService, AIServiceOptions } from 'spirit'
+import type { AIService, AIServiceOptionsMap } from 'spirit'
 
 import type { AIServiceAdapter } from '../../extension'
 import AdapterCoze from '../../extensions/adapter-coze'
@@ -6,15 +6,20 @@ import AdapterOllama from '../../extensions/adapter-ollama'
 import AdapterOpenAI from '../../extensions/adapter-openai'
 import { getThrowWhenUndefined } from '../../store'
 
-export function getDefaultAIService(uuid?: string) {
-  const aiServiceDefaultUUID = uuid ?? getThrowWhenUndefined('defaultAIServiceUUID')
+export function getTargetOrDefaultAIService(uuid?: string) {
+  const aiServiceUUID = uuid ?? getThrowWhenUndefined('defaultAIServiceUUID')
   const aiServices = getThrowWhenUndefined('aiServices')
-  return aiServices.find(s => s.uuid === aiServiceDefaultUUID)
+  const aiService = aiServices.find(s => s.uuid === aiServiceUUID)
+  if (!aiService) {
+    throw new Error(`AI Service [${aiServiceUUID}] not found`)
+  }
+  return aiService
 }
+
 const instances = new WeakMap<
   AIService['options'],
   ReturnType<
-    AIServiceAdapter<keyof AIServiceOptions>['creator']
+    AIServiceAdapter<keyof AIServiceOptionsMap>['creator']
   >
 >()
 function getOrCreateInstance(option: AIService['options']): ReturnType<
@@ -32,7 +37,7 @@ function getOrCreateInstance(option: AIService['options']): ReturnType<
   return adapter
 }
 export function getOrCreateInstanceAndAPI<
-  K extends keyof AIServiceOptions,
+  K extends keyof AIServiceOptionsMap,
   A extends AIServiceAdapter<K>,
 >(
   option: AIService['options'] & { type: K }
