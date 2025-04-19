@@ -18,7 +18,6 @@
     "composite": true,
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
-    "emitDeclarationOnly": true,
     "noEmit": true,
     "allowImportingTsExtensions": true
   }
