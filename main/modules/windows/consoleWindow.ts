@@ -5,6 +5,7 @@ import { join } from 'path'
 
 import { setWebContents } from '#main/bridge.ts'
 import { ee } from '#main/lifecycle.ts'
+import { logger } from '#main/logger.ts'
 import { setStore, watch } from '#main/store.ts'
 
 import icon from '../../../resources/icon.png?asset'
@@ -55,6 +56,7 @@ export async function createConsoleWindow() {
     return { action: 'deny' }
   })
   setWebContents('console', mainWindow.webContents)
+  mainWindow.webContents.on('destroyed', () => logger.error('Console window destroyed'))
 
   const displayStoreUUID = Math.random().toString(36).slice(2)
   const setDisplay = (display: boolean) => {
