@@ -5,6 +5,7 @@ import { pick } from 'lodash-es'
 import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { SearchIcon } from 'tdesign-icons-react'
 import {
   Avatar,
   AvatarGroup,
@@ -21,7 +22,6 @@ import {
 } from 'tdesign-react'
 import type { UploadFile } from 'tdesign-react/es/upload/type'
 
-import { SearchIcon } from 'tdesign-icons-react'
 import notFound from '../assets/not_found.svg'
 import { useEventCallback } from '../hooks/useEventCallback'
 import type { WithPrefixProps } from '../utils/prefixes'
@@ -38,16 +38,16 @@ export interface ListItem {
   name: string
   description?: string
   avatar?: string
-  option: {
+  options: {
     type: string
   } & Record<string, unknown>
 }
 
-export interface ListItemReaderProps<T extends ListItem['option']> {
+export interface ListItemReaderProps<T extends ListItem['options']> {
   value?: T
 }
 
-export interface ListItemWriterProps<T extends ListItem['option']> {
+export interface ListItemWriterProps<T extends ListItem['options']> {
   isEditing: boolean
   value: T
   onChange: (value: T) => void
@@ -60,8 +60,8 @@ interface ListItemPreviewProps<T extends ListItem> {
     [key: string]: ListType
   }
   next: () => void
-  Reader?: (props: ListItemReaderProps<T['option']>) => ReactNode
-  Writer?: (props: ListItemWriterProps<T['option']>) => ReactNode
+  Reader?: (props: ListItemReaderProps<T['options']>) => ReactNode
+  Writer?: (props: ListItemWriterProps<T['options']>) => ReactNode
   onCreate?: (item: T) => void
   onDelete?: (uuid: T['uuid'], item: T) => void
   onUpdate?: (item: T) => void
@@ -79,14 +79,14 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     Reader,
     Writer
   } = props
-  const [option, setOption] = useState(() => item.option)
-  const type = useMemo(() => option?.type, [option])
+  const [options, setOptions] = useState(() => item.options)
+  const type = useMemo(() => options?.type, [options])
   const changeType = useEventCallback((newType: string) => {
     if (newType === type) return
     const ins = DialogPlugin.confirm({
       body: t('aiService.confirmChangeType'),
       onConfirm: () => {
-        setOption({
+        setOptions({
           type: newType
         })
         ins.destroy()
@@ -108,13 +108,13 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
   useEffect(() => {
     if (!base.uuid) return
     if (base.uuid !== item?.uuid) {
-      setOption(item?.option)
+      setOptions(item?.options)
       setBase(pickBase())
     }
   }, [base.uuid, item, pickBase])
-  const onConfirmRef = useRef<((value: T['option']) => void) | undefined>()
+  const onConfirmRef = useRef<((value: T['options']) => void) | undefined>()
   const onOnConfirm = useCallback((
-    onConfirm: (value: T['option']) => void
+    onConfirm: (value: T['options']) => void
   ) => {
     onConfirmRef.current = onConfirm
     return () => onConfirmRef.current = undefined
@@ -123,7 +123,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
     const result = {
       ...item,
       ...base,
-      option: { ...item?.option, ...option }
+      options: { ...item?.options, ...options }
     }
     if (result.uuid === undefined) {
       result.uuid = uuid()
@@ -133,7 +133,7 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
       return
     }
     try {
-      onConfirmRef?.current?.(result.option as T['option'])
+      onConfirmRef?.current?.(result.options as T['options'])
     } catch (e) {
       // @ts-expect-error
       MessagePlugin.error(e.message ?? String(e))
@@ -332,11 +332,11 @@ function ListItemPreview<T extends ListItem>(props: ListItemPreviewProps<T>) {
       {isEditing || Reader === undefined
         ? Writer && <Writer
           isEditing={isEditing}
-          value={option}
-          onChange={setOption}
+          value={options}
+          onChange={setOptions}
           onOnConfirm={onOnConfirm}
         />
-        : Reader && <Reader value={option} />}
+        : Reader && <Reader value={options} />}
     </div>
   </div>
 }
@@ -410,9 +410,9 @@ function List(props: ListProps<ListItem>) {
           {item.avatar
             ? <Avatar image={item.avatar} />
             : null}
-          {item.option?.type && types[item.option.type]?.image
+          {item.options?.type && types[item.options.type]?.image
             ? <Avatar
-              image={types[item.option.type].image}
+              image={types[item.options.type].image}
               imageProps={{
                 fit: 'cover'
               }}
@@ -501,7 +501,7 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
         const newItem = {
           uuid: uuid(),
           name: t('untitled'),
-          option: {
+          options: {
             type: Object.keys(types)[0]
           }
         } as T
@@ -532,7 +532,7 @@ export function ListWithPreview<T extends ListItem>(props: ListWithPreviewProps<
               const newItem = {
                 uuid: uuid(),
                 name: t('untitled'),
-                option: {
+                options: {
                   type: Object.keys(types)[0]
                 }
               } as T

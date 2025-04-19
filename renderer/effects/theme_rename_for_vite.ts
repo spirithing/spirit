@@ -2,7 +2,7 @@ import { subAtomByKey } from '../atoms/keys'
 import { electronStore, keyAtom } from '../store'
 
 subAtomByKey('theme', () => {
-  const themeStore = electronStore.get(keyAtom('theme'))
+  const themeStore = electronStore.get(keyAtom('theme')!)
   const { colors } = themeStore ?? {}
   if (colors) {
     if (colors.primary) {

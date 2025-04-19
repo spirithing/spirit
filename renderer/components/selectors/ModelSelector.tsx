@@ -43,13 +43,13 @@ export function ModelSelector({
     return mapped
   }, [aiServices, defaultValue?.aiServiceUUID, value?.aiServiceUUID])
   const [instance, api] = useMemo(
-    () => aiService?.option ? getOrCreateInstanceAndAPI(aiService.option) : [],
+    () => aiService?.options ? getOrCreateInstanceAndAPI(aiService.options) : [],
     [
-      aiService?.option
+      aiService?.options
     ]
   )
   const { data: models, isLoading, isValidating } = useSWR(
-    [`${aiService?.option.type}.models`, instance, api],
+    [`${aiService?.options.type}.models`, instance, api],
     () => instance && api?.models(instance)
   )
   return <div className={prefix}>

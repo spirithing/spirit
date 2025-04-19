@@ -39,7 +39,7 @@ declare module 'spirit' {
     name: string
     description?: string
     avatar?: string
-    option: AIServiceOption
+    options: AIServiceOption
   }
   export interface Store {
     defaultAIServiceUUID?: AIService['uuid']

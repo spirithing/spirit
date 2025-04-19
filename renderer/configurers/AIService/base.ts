@@ -12,13 +12,13 @@ export function getDefaultAIService(uuid?: string) {
   return aiServices.find(s => s.uuid === aiServiceDefaultUUID)
 }
 const instances = new WeakMap<
-  AIService['option'],
+  AIService['options'],
   ReturnType<
     AIServiceAdapter<keyof AIServiceOptions>['creator']
   >
 >()
-function getOrCreateInstance(option: AIService['option']): ReturnType<
-  AIServiceAdapter<AIService['option']['type']>['creator']
+function getOrCreateInstance(option: AIService['options']): ReturnType<
+  AIServiceAdapter<AIService['options']['type']>['creator']
 > {
   const instance = instances.get(option)
   if (instance) {
@@ -35,7 +35,7 @@ export function getOrCreateInstanceAndAPI<
   K extends keyof AIServiceOptions,
   A extends AIServiceAdapter<K>,
 >(
-  option: AIService['option'] & { type: K }
+  option: AIService['options'] & { type: K }
 ): [ReturnType<A['creator']>, A['api']] {
   const instance = getOrCreateInstance(option)
   const api = apis[option.type]

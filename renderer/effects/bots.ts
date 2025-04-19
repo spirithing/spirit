@@ -40,7 +40,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
     MessagePlugin.error(e.message ?? String(e))
     return
   }
-  const [instance, api] = getOrCreateInstanceAndAPI(aiService.option)
+  const [instance, api] = getOrCreateInstanceAndAPI(aiService.options)
 
   if (import.meta.env.DEV && m.text === 'd') {
     setTimeout(() => sendTo('pong', bot), 500)
@@ -81,7 +81,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
         instance,
         bot,
         allMessages,
-        aiService.option,
+        aiService.options,
         Object.assign(
           {},
           {
@@ -89,7 +89,7 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
               ? Object.values(tools).map(({ call: _, ...t }) => t)
               : []
           },
-          options as AIServiceAPIOptionsForChat[typeof aiService.option['type']]
+          options as AIServiceAPIOptionsForChat[typeof aiService.options['type']]
         )
       )
     ) {
