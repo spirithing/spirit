@@ -35,7 +35,7 @@ declare module 'spirit' {
     & {
       uuid: string
       user?: IUser
-      type?: 'system' | 'tool' | 'developer' | 'assistant' | 'user' | (string & {})
+      type?: 'system' | 'tool' | 'developer' | 'assistant' | 'user' | '__spirit:system__' | (string & {})
       text?: string
       assets?: Asset[]
       hidden?: boolean
