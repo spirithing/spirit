@@ -30,7 +30,7 @@ const chromeURLs = {
 
 export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGroups(keyword => {
   const { t, i18n } = useTranslation()
-  const { data: completions = [] } = useSWR(
+  const { data: completions } = useSWR(
     keyword === '' ? null : googleSearchCompletionUrl(i18n.language, keyword),
     async url => {
       const res = await fetch(url)
@@ -71,7 +71,7 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
       {
         title: 'searcher.google',
         selections: completions
-          .map(completion =>
+          ?.map(completion =>
             ({
               title: hightlightKeywords(completion, keyword),
               icon: { type: 'icon', value: 'search' },
@@ -83,6 +83,7 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
               }
             }) as Selection
           )
+          ?? []
       },
       {
         title: 'chrome.tools',
