@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import type { Actions } from 'spirit'
 
-import { ipcRenderer } from '../electron'
-import { ee } from '../instances/ee'
-import { electronStore, keyAtom } from '../store'
+import { ipcRenderer } from '#renderer/electron.ts'
+import { useEventCallback } from '#renderer/hooks/useEventCallback.ts'
+import { ee } from '#renderer/instances/ee.ts'
+import { electronStore, keyAtom } from '#renderer/store.ts'
 
 ee.on('act', (type, ...args) => {
   if (type === 'wechat') {
@@ -14,11 +15,12 @@ ee.on('act', (type, ...args) => {
 })
 
 export const useAct = <K extends keyof Actions>(type: K, callback: (...args: Actions[K]) => void) => {
+  const cb = useEventCallback(callback)
   useEffect(() =>
     ee.on('act', (lisType, ...args) => {
       // @ts-ignore
       if (lisType !== type) return
 
-      callback(...(args as Actions[K]))
-    }), [callback, type])
+      cb(...(args as Actions[K]))
+    }), [cb, type])
 }
