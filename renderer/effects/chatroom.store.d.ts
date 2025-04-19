@@ -55,9 +55,13 @@ declare module 'spirit' {
     )
   export interface ChatRoomOptions {
     /**
-     * Override the system prompt for the chatroom.
+     * 覆盖系统提示词
      */
     overrideSystemPrompt?: string
+    /**
+     * 一条会被隐藏的消息，它会作为机器人的第一条回复而被提交到服务器请求
+     */
+    firstBotMessage?: string
 
     maxMessages?: number
     sessionLength?: number

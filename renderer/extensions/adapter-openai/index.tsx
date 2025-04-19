@@ -20,7 +20,7 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
       case 'system':
       case 'developer':
         return {
-          name,
+          name: m.type,
           role: m.type as 'system' | 'developer',
           content: m.text ?? ''
         }
@@ -37,11 +37,11 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
   return {
     name,
     role: 'user',
-    content: m.assets
+    content: (m.assets && m.assets.length > 0)
       ? [
         {
           type: 'text',
-          text: isBot ? '' : `${m.user?.name}:\n${m.text}`
+          text: m.text ?? ''
         },
         ...m.assets?.map(({ type, url }) => ({
           type: {
@@ -51,7 +51,7 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
           image_url: { url }
         })) ?? []
       ]
-      : m.text
+      : m.text ?? ''
   }
 }
 
@@ -71,7 +71,7 @@ export default defineAIServiceAdapter('openai', {
       adapterOptions,
       options
     ) {
-      const model = options?.model ?? adapterOptions?.defaultModel ?? 'gpt-3.5-turbo'
+      const model = adapterOptions?.chat?.model ?? adapterOptions?.defaultModel ?? 'gpt-3.5-turbo'
       if (!model) throw new Error('Model not configured')
 
       const completions = await instance.chat.completions.create({

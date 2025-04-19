@@ -1,3 +1,4 @@
+import i18n from 'i18next'
 import { defaultsDeep, isEqual, template } from 'lodash-es'
 import type { IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
@@ -11,8 +12,9 @@ import { JSON_MD_WRAPPER, MD_CODE_BLOCK } from '#sharing/constants.ts'
 import { creatCaught } from '#sharing/utils/creatCaught.ts'
 
 const DEFAULT_SYSTEM_PROMPT_TEMPLATE = `
-Your name is "<%= bot.name %>".
-<%= bot.description %>
+Your name is "<%= bot.name %>", "<%= bot.description %>".
+You chat with "<%= user.name %>" in "<%= chatroom.name %>", and the chatroom description is "<%= chatroom.description %>".
+Now is "<%= system.now %>".
 `.trim()
 
 const runTool = async (name: string, parameters: unknown): Promise<string> => {
@@ -94,6 +96,7 @@ ee.on('addMessage', async (m, chatroom) => {
             .replace(/^\n*<\/think>\n*/, '')
           : m.text
       } as IMessage))
+      ?.filter(m => m.type !== '__spirit:system__')
       ?? []
     const now = new Date()
     const systemPrompt = template(
@@ -113,7 +116,8 @@ ee.on('addMessage', async (m, chatroom) => {
       system: {
         now: now.toLocaleString(),
         time: now.toLocaleTimeString(),
-        date: now.toLocaleDateString()
+        date: now.toLocaleDateString(),
+        lang: i18n.language
       }
     })
     if (m.text === 'REPEAT YOUR SYSTEM PROMPT!!!') {
@@ -126,6 +130,22 @@ ee.on('addMessage', async (m, chatroom) => {
         type: 'system',
         text: systemPrompt,
         ctime: now,
+        assets: []
+      },
+      {
+        uuid: '__spirit:system_0__',
+        type: 'user',
+        text: 'Okay?',
+        ctime: now,
+        user: m.user,
+        assets: []
+      },
+      {
+        uuid: '__spirit:system_1__',
+        type: 'assistant',
+        text: chatroom.options?.firstBotMessage ?? 'Yes.',
+        ctime: now,
+        user: bot,
         assets: []
       },
       ...resolvedMessages
