@@ -36,8 +36,11 @@ ee.on('addMessage', async (m, { id, messages, options }) => {
       throw new Error('AI Service not found')
     }
   } catch (e) {
-    // @ts-ignore
-    MessagePlugin.error(e.message ?? String(e))
+    if (e instanceof Error) {
+      void MessagePlugin.error(e.message)
+    } else {
+      void MessagePlugin.error(String(e))
+    }
     return
   }
   const [instance, api] = getOrCreateInstanceAndAPI(aiService.options)
