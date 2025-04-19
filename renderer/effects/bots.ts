@@ -32,6 +32,11 @@ ee.on('addMessage', async (m, chatroom) => {
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
 
+  if (import.meta.env.DEV && m.text === 'd') {
+    setTimeout(() => sendTo('pong', bot), 500)
+    return
+  }
+
   let aiService: AIService | undefined
   try {
     aiService = getDefaultAIService(options?.aiServiceUUID)
@@ -47,11 +52,6 @@ ee.on('addMessage', async (m, chatroom) => {
     return
   }
   const [instance, api] = getOrCreateInstanceAndAPI(aiService.options)
-
-  if (import.meta.env.DEV && m.text === 'd') {
-    setTimeout(() => sendTo('pong', bot), 500)
-    return
-  }
 
   const { uuid } = sendTo('Thinking', bot)
   let count = 0
