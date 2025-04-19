@@ -36,6 +36,8 @@ export default defineConfig({
   renderer: {
     root: 'renderer',
     esbuild: {
+      // for using
+      target: 'es2022',
       jsx: 'automatic'
     },
     server: {
