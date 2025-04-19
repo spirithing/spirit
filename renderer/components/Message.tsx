@@ -79,7 +79,7 @@ export function Message(props: MessageProps) {
         {isEditing
           ? <Editor
             ref={shikitorRef}
-            value={value.text}
+            defaultValue={value.text}
             options={editorOptions}
           />
           : <>
