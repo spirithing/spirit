@@ -28,7 +28,7 @@
   },
   "model": "Model",
   "highlight": "Text highlight",
-  "highlightDark": "Higlight theme when dark mode",
+  "highlightDark": "Highlight theme when dark mode",
   "shortcuts": "Shortcuts",
   "startShortcut": "Start shortcut",
   "startShortcutDesc": "How to replace Spotlight with Spirit",
@@ -48,7 +48,7 @@
   },
   "required": "{{name}} is required",
   "aiService": {
-    "confirmChangeType": ""
+    "confirmChangeType": "Modifying the type will clear the current type configuration data, please confirm whether to continue switching"
   },
   "search": "Search by keywords",
   "untitled": "Untitled",
