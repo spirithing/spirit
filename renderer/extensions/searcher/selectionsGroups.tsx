@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import useSWR from 'swr'
 
@@ -44,6 +44,9 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
         .map(suggestion => suggestion.getAttribute('data'))
         .filter(Boolean)
         .map(suggestion => suggestion as string)
+    },
+    {
+      fallbackData: useRef([]).current
     }
   )
 
@@ -71,7 +74,7 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
       {
         title: 'searcher.google',
         selections: completions
-          ?.map(completion =>
+          .map(completion =>
             ({
               title: hightlightKeywords(completion, keyword),
               icon: { type: 'icon', value: 'search' },
@@ -83,7 +86,6 @@ export const useSelectionsGroupsForSearcherCompletions = createUseSelectionsGrou
               }
             }) as Selection
           )
-          ?? []
       },
       {
         title: 'chrome.tools',
