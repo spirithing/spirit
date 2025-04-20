@@ -14,6 +14,7 @@
   "themeDark": "Dark",
   "themeAuto": "Auto",
   "highlightTheme": "Highlight Theme",
+  "unknown": "Unknown",
   "Display configure panel": "Display configure panel",
   "errorFallback": {
     "title": "Something went wrong.",

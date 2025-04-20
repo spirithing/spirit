@@ -15,6 +15,7 @@
   "themeDark": "暗色",
   "themeAuto": "自动",
   "highlightTheme": "高亮主题",
+  "unknown": "未知",
   "Display configure panel": "显示配置面板",
   "errorFallback": {
     "title": "发生了一些错误",

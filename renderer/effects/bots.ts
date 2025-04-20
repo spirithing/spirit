@@ -32,17 +32,24 @@ export function getTargetOrDefaultBot(uuid?: string) {
 
 ee.on('addMessage', async (m, chatroom) => {
   const { id, messages } = chatroom
+  if (m.type?.startsWith('__spirit:')) return
 
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
 
+  const alert = (type: 'info' | 'warn' | 'error', text: string) => {
+    sendTo(text, { name: `system:alert[${type}]` }, { type: '__spirit:system__' })
+  }
+
   if (import.meta.env.DEV && m.text === 'ping') {
-    // notify('pong')
-    // editNotify('pong')
+    alert('info', 'pong')
     return
   }
 
   try {
+    if (import.meta.env.DEV && m.text === 'throw') {
+      throw new Error('Test error')
+    }
     const caught = creatCaught()
     const bot = getTargetOrDefaultBot(chatroom.options?.bot?.uuid)
 
@@ -180,6 +187,12 @@ ee.on('addMessage', async (m, chatroom) => {
     }
     caught.not()
   } catch (e) {
+    const errMsg = e instanceof Error
+      ? import.meta.env.DEV
+        ? e.stack ?? ''
+        : `${e.name}: ${e.message}`
+      : String(e)
+    alert('error', errMsg)
     // sendTo(e instanceof Error ? e.message : String(e))
     if (e instanceof Error) {
       void MessagePlugin.error(e.message)

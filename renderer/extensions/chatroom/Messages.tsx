@@ -3,8 +3,9 @@ import './Messages.scss'
 import { classnames } from '@shikitor/core/utils'
 import type { CSSProperties } from 'react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronRightIcon } from 'tdesign-icons-react'
-import { MessagePlugin } from 'tdesign-react'
+import { Alert, MessagePlugin } from 'tdesign-react'
 
 import { Message } from '../../components/Message'
 import { useChatroom } from '../../hooks/useChatroom'
@@ -86,6 +87,7 @@ function MessageMdRender({ text }: { text: string }) {
 }
 
 export function Messages(props: MessagesProps) {
+  const { t } = useTranslation()
   const { prefix } = Messages
   const { className, style } = props
   const [user] = useUser()
@@ -103,20 +105,35 @@ export function Messages(props: MessagesProps) {
     style={style}
     className={classnames(prefix, className)}
   >
-    {messages?.map(message => (
-      <Message
-        key={message.uuid}
-        className={classnames(
-          message.user?.name === user.name ? 'self' : 'other',
-          message.type === 'tool' && 'tool',
-          (message.toolCalls?.length ?? 0) > 0 && 'tool-call'
-        )}
-        value={message}
-        onTextChange={text => editMessage(message.uuid, text)}
-        onDelete={() => delMessage(message.uuid)}
-        TextRender={MessageMdRender}
-      />
-    ))}
+    {messages?.map(message =>
+      message.type === '__spirit:system__'
+        ? <Alert
+          key={message.uuid}
+          className={classnames(
+            'message system'
+          )}
+          theme={message.user?.name
+            ? (
+              /^system:alert\[([^\]]+)]$/.exec(message.user?.name)?.[1] ?? 'info'
+            ) as 'info'
+            : 'info'}
+          message={<pre>{message.text ?? t('unknown')}</pre>}
+        />
+        : (
+          <Message
+            key={message.uuid}
+            className={classnames(
+              message.user?.name === user.name ? 'self' : 'other',
+              message.type === 'tool' && 'tool',
+              (message.toolCalls?.length ?? 0) > 0 && 'tool-call'
+            )}
+            value={message}
+            onTextChange={text => editMessage(message.uuid, text)}
+            onDelete={() => delMessage(message.uuid)}
+            TextRender={MessageMdRender}
+          />
+        )
+    )}
   </div>
 }
 Messages.prefix = `${'spirit'}-messages`

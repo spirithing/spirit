@@ -58,6 +58,20 @@
       display: none;
     }
   }
+  > .message {
+    &.system {
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: inherit;
+      border-radius: var(--td-radius-medium);
+      pre {
+        margin: 0;
+      }
+      &::after {
+        display: none;
+      }
+    }
+  }
   .message-text {
     > .think-state {
       display: flex;
