@@ -17,6 +17,8 @@
   "highlightTheme": "高亮主题",
   "unknown": "未知",
   "Display configure panel": "显示配置面板",
+  "clear": "清空",
+  "send": "发送",
   "errorFallback": {
     "title": "发生了一些错误",
     "tooltip": "选择以下方式之一将上面的信息提供给开发者：",
@@ -105,5 +107,6 @@
     "newWindowDesc": "在 Chrome 中打开新窗口",
     "inspect": "Chrome 检查",
     "inspectDesc": "在 Chrome 中打开检查"
-  }
+  },
+  "contentIsEmpty": "内容为空"
 }

@@ -7,12 +7,19 @@ import { useTranslation } from 'react-i18next'
 import { ChevronRightIcon } from 'tdesign-icons-react'
 import { Alert, MessagePlugin } from 'tdesign-react'
 
-import { Message } from '../../components/Message'
-import { useChatroom } from '../../hooks/useChatroom'
-import { useEventListener } from '../../hooks/useEventListener'
-import { useMDRender } from '../../hooks/useMDRender'
-import { useUser } from '../../hooks/useUser'
-import { isShortcut } from '../../utils/isShortcut'
+import { Message } from '#renderer/components/Message.tsx'
+import { useAct } from '#renderer/effects/actions.ts'
+import { useChatroom } from '#renderer/hooks/useChatroom.ts'
+import { useEventListener } from '#renderer/hooks/useEventListener.ts'
+import { useMDRender } from '#renderer/hooks/useMDRender.ts'
+import { useUser } from '#renderer/hooks/useUser.ts'
+import { isShortcut } from '#renderer/utils/isShortcut.ts'
+
+declare module 'spirit' {
+  interface Actions {
+    clearCurrentChatroom: []
+  }
+}
 
 export interface MessagesProps {
   style?: CSSProperties
@@ -94,13 +101,14 @@ export function Messages(props: MessagesProps) {
   const [{ messages }, { editMessage, delMessage, clearMessages }] = useChatroom()
 
   useEventListener('keydown', e => {
-    if (isShortcut(e, ['meta', 'k']) || isShortcut(e, ['ctrl', 'k'])) {
+    if (isShortcut(e, ['metaOrCtrl', 'k'])) {
       clearMessages()
       e.stopPropagation()
       e.preventDefault()
       return
     }
   })
+  useAct('clearCurrentChatroom', clearMessages)
   return <div
     style={style}
     className={classnames(prefix, className)}

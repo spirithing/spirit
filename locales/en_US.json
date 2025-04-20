@@ -15,7 +15,10 @@
   "themeAuto": "Auto",
   "highlightTheme": "Highlight Theme",
   "unknown": "Unknown",
+  "contentIsEmpty": "Content is empty",
   "Display configure panel": "Display configure panel",
+  "clear": "Clear",
+  "send": "Send",
   "errorFallback": {
     "title": "Something went wrong.",
     "tooltip": "Provide this information to the developer, select one of the following ways:",

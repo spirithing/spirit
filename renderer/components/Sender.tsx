@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 import type { Asset } from 'spirit'
 import { Button, Dropdown, Image, ImageViewer, Input, MessagePlugin, Tooltip } from 'tdesign-react'
 
+import { useAct } from '#renderer/effects/actions.ts'
 import { scrollIntoViewIfNeeded } from '#renderer/utils/scrollIntoViewIfNeeded.ts'
 
 import { selectionsGroupsAtom, senderAtom } from '../atoms/sender'
@@ -37,6 +38,16 @@ import { classnames } from '../utils/classnames'
 import { imgBlob2base64 } from '../utils/imgBlob2base64'
 import { isShortcut } from '../utils/isShortcut'
 import { Kbd } from './Kbd'
+
+declare module 'spirit' {
+  interface Actions {
+    sendToCurrentChatroom: [
+      text: string | undefined,
+      assets: Asset[]
+    ]
+    sendToCurrentChatroomWithCurrentState: []
+  }
+}
 
 const plugins = [
   providePopup,
@@ -126,12 +137,20 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
   const [assets, setAssets] = useState<Asset[]>([])
   const [, { sendMessage }] = useChatroom()
   const send = useEventCallback((text: string | undefined, assets: Asset[]) => {
-    if (!text || text.trim().length === 0 && assets.length === 0) {
-      throw new Error('Empty message')
+    try {
+      if (!text || text.trim().length === 0 && assets.length === 0) {
+        throw new Error('Message is empty, please input something')
+      }
+      sendMessage(text, assets)
+      setAssets([])
+      setText('')
+    } catch (e) {
+      void MessagePlugin.error(e instanceof Error ? e.message : String(e))
     }
-    sendMessage(text, assets)
-    setAssets([])
-    setText('')
+  })
+  useAct('sendToCurrentChatroom', send)
+  useAct('sendToCurrentChatroomWithCurrentState', () => send(text, assets))
+  useAct('clearCurrentChatroom', () => {
   })
   const [sender, setSender] = useAtom(senderAtom)
   const [text, setText] = [
@@ -535,6 +554,8 @@ function StatusBar(props: StatusBarProps) {
   const { t } = useTranslation()
   const { prefix } = StatusBar
   const { icon, iconTooltip, message } = props
+  const [{ messages }] = useChatroom()
+  const [sender] = useAtom(senderAtom)
 
   return <div className={prefix}>
     <div className={`${prefix}__message`}>
@@ -557,21 +578,31 @@ function StatusBar(props: StatusBarProps) {
       </span>
     </div>
     <div className={`${prefix}__actions`}>
-      <Button
-        className={`${prefix}__action`}
-        size='small'
-        variant='text'
+      {(messages?.length ?? 0) > 0 && <>
+        <Button
+          className={`${prefix}__action`}
+          size='small'
+          variant='text'
+          onClick={() => ee.emit('act', 'clearCurrentChatroom')}
+        >
+          {t('clear')} <Kbd keys={['meta', 'K']} />
+        </Button>
+        <div className={`${prefix}__action-split`} />
+      </>}
+      <Tooltip
+        content={sender?.text?.length ? t('send') : t('contentIsEmpty')}
+        placement='bottom'
       >
-        Clear <Kbd keys={['meta', 'K']} />
-      </Button>
-      <div className={`${prefix}__action-split`} />
-      <Button
-        className={`${prefix}__action`}
-        size='small'
-        variant='text'
-      >
-        Send <Kbd keys={['meta', 'enter']} />
-      </Button>
+        <Button
+          className={`${prefix}__action`}
+          size='small'
+          variant='text'
+          disabled={(sender?.text?.length ?? 0) === 0}
+          onClick={() => ee.emit('act', 'sendToCurrentChatroomWithCurrentState')}
+        >
+          {t('send')} <Kbd keys={['meta', 'enter']} />
+        </Button>
+      </Tooltip>
       <div className={`${prefix}__action-split`} />
       <Dropdown
         trigger='click'

@@ -127,6 +127,34 @@ function Shortcuts() {
         </div>
       </Col>
     </Row>
+    <Row gutter={12}>
+      <Col span={3}>
+        <div className='spirit-field'>
+          <label>{t('startShortcut')}</label>
+          <KbdRecorder
+            resettable
+            defaultValue={shortcuts?.start && shortcuts.start.length > 0
+              ? shortcuts.start
+              : ['opt', 'space']}
+            onRecordEnd={v => {
+              if (!v) return
+
+              setShortcuts({ ...shortcuts, start: v })
+            }}
+          />
+          <Tooltip
+            content={
+              <>
+                {/* TODO */}
+                Open your system preferences and set a global shortcut for this action.
+              </>
+            }
+          >
+            <Link className='spirit-field__desc'>{t('startShortcutDesc')}</Link>
+          </Tooltip>
+        </div>
+      </Col>
+    </Row>
   </>
 }
 
