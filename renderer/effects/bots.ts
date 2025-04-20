@@ -177,10 +177,19 @@ ee.on('addMessage', async (m, chatroom) => {
       if (status === 'completed') {
         if (toolCalls?.length && toolCalls.length > 0) {
           editTo(uuid, message, { toolCalls })
-          for (const { function: { name = undefined, arguments: parameters = {} } = {} } of toolCalls) {
+          for (
+            const {
+              id,
+              function: { name = undefined, arguments: parameters = {} } = {}
+            } of toolCalls
+          ) {
             if (!name) continue
 
-            sendTo(await runTool(name, parameters), m.user!, { type: 'tool' })
+            sendTo(
+              await runTool(name, parameters),
+              m.user!,
+              { type: 'tool', toolCallId: id }
+            )
           }
         }
       }

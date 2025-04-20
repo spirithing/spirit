@@ -41,6 +41,7 @@ declare module 'spirit' {
       hidden?: boolean
       ctime: Date | number | string
       nexts?: IMessage[][]
+      toolCallId?: string
       toolCalls?: IToolCall[]
     }
     & (

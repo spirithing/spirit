@@ -28,7 +28,7 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
         return {
           // TODO: tool_call_id
           // eslint-disable-next-line camelcase
-          tool_call_id: '',
+          tool_call_id: m.toolCallId!,
           role: 'tool',
           content: m.text ?? ''
         }

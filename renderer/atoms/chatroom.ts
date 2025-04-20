@@ -36,6 +36,7 @@ export const setChatroom = (id: string, chatroomOrSetter: ChatRoom | ((chatroom:
 }
 export const sendMessage = (id: string, text: string, user: IUser, options?: {
   type?: IMessage['type']
+  toolCallId?: IMessage['toolCallId']
 }) => {
   const message: IMessage = {
     uuid: uuid(),
@@ -43,6 +44,7 @@ export const sendMessage = (id: string, text: string, user: IUser, options?: {
     text,
     user,
     ctime: Date.now(),
+    toolCallId: options?.toolCallId,
     assets: []
   }
   setChatroom(id, chatroom => ({
