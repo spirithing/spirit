@@ -1,8 +1,9 @@
 import OpenAI from 'openai'
 import type { Bot, IMessage, IToolCall } from 'spirit'
 
-import chatgptIcon from '../../assets/chatgpt.svg'
-import { defineAIServiceAdapter } from '../../extension'
+import chatgptIcon from '#renderer/assets/chatgpt.svg'
+import { defineAIServiceAdapter } from '#renderer/extension.ts'
+
 import { OptionConfigurer } from './OptionConfigurer'
 
 function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
