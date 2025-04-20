@@ -1,14 +1,17 @@
+import { defaultsDeep } from 'lodash-es'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { AIServiceOptions } from 'spirit'
-import { Col, Input, Row } from 'tdesign-react'
+import { Col, Collapse, Input, Row } from 'tdesign-react'
 
-import type { ListItemWriterProps } from '../../components/ListWithPreview'
-import { getOrCreateInstanceAndAPI } from '../../configurers/AIService/base'
+import type { ListItemWriterProps } from '#renderer/components/ListWithPreview.tsx'
+import { getOrCreateInstanceAndAPI } from '#renderer/configurers/AIService/base.ts'
+
+import { ChatConfigurer } from './configurers/ChatConfigurer'
 import { OpenAIProvider } from './Provider'
 import { ModelSelector } from './selectors/ModelSelector'
 
-export function OptionConfigurer(
+export function OptionsConfigurer(
   props: ListItemWriterProps<AIServiceOptions & { type: 'openai' }>
 ) {
   const { t } = useTranslation()
@@ -26,7 +29,6 @@ export function OptionConfigurer(
           name: t('apiKey')
         }))
       }
-      console.log('onConfirm', value)
     })
   }, [onOnConfirm, t])
   return <OpenAIProvider value={{ instance, api }}>
@@ -67,5 +69,16 @@ export function OptionConfigurer(
         </div>
       </Col>
     </Row>
+    <Collapse>
+      <Collapse.Panel header={t('aiService.chatroomOptions')}>
+        <ChatConfigurer
+          readonly={!isEditing}
+          value={defaultsDeep(value.chat, {
+            model: value.defaultModel
+          })}
+          onChange={v => onChange({ ...value, chat: v })}
+        />
+      </Collapse.Panel>
+    </Collapse>
   </OpenAIProvider>
 }

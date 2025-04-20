@@ -1,10 +1,10 @@
 import type { AIService, AIServiceOptionsMap } from 'spirit'
 
-import type { AIServiceAdapter } from '../../extension'
-import AdapterCoze from '../../extensions/adapter-coze'
-import AdapterOllama from '../../extensions/adapter-ollama'
-import AdapterOpenAI from '../../extensions/adapter-openai'
-import { getThrowWhenUndefined } from '../../store'
+import type { AIServiceAdapter } from '#renderer/extension.ts'
+import AdapterCoze from '#renderer/extensions/adapter-coze/index.tsx'
+import AdapterOllama from '#renderer/extensions/adapter-ollama/index.tsx'
+import AdapterOpenAI from '#renderer/extensions/adapter-openai/index.tsx'
+import { getThrowWhenUndefined } from '#renderer/store.ts'
 
 export function getTargetOrDefaultAIService(uuid?: string) {
   const aiServiceUUID = uuid ?? getThrowWhenUndefined('defaultAIServiceUUID')
@@ -73,4 +73,10 @@ export const aiServiceOptionConfigurerMapping = {
   openai: AdapterOpenAI.Writer,
   ollama: AdapterOllama.Writer,
   coze: AdapterCoze.Writer
+}
+
+export const aiServiceExtensionMap = {
+  openai: AdapterOpenAI,
+  ollama: AdapterOllama,
+  coze: AdapterCoze
 }

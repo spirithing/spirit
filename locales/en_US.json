@@ -36,6 +36,10 @@
   "shortcuts": "Shortcuts",
   "startShortcut": "Start shortcut",
   "startShortcutDesc": "How to replace Spotlight with Spirit",
+  "shortcut": {
+    "send": "Send",
+    "sendDesc": "Send message to chat room"
+  },
   "filteredApplications": "Filtered applications",
   "primaryColor": "Primary color",
   "linearGradient": "Linear gradient",
@@ -51,7 +55,9 @@
     "description": "Please input description"
   },
   "required": "{{name}} is required",
+  "chatroomOptions": "Chatroom Options",
   "aiService": {
+    "chatroomOptions": "AI Service Chatroom Options",
     "confirmChangeType": "Modifying the type will clear the current type configuration data, please confirm whether to continue switching"
   },
   "search": "Search by keywords",

@@ -29,7 +29,7 @@ declare module 'spirit' {
     ? K extends string
       ? {
         type: K
-        chat?: AIServiceAPIOptionsForChat[K]
+        chat?: AIServiceAPIOptionsForChatMap[K]
       } & AIServiceOptionsMap[K]
       : never
     : never

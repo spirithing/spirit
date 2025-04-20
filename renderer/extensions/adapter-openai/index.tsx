@@ -4,7 +4,8 @@ import type { Bot, IMessage, IToolCall } from 'spirit'
 import chatgptIcon from '#renderer/assets/chatgpt.svg'
 import { defineAIServiceAdapter } from '#renderer/extension.ts'
 
-import { OptionConfigurer } from './OptionConfigurer'
+import { ChatConfigurer } from './configurers/ChatConfigurer'
+import { OptionsConfigurer } from './OptionsConfigurer'
 
 function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
   const isBot = m.user?.name === bot.name
@@ -127,5 +128,6 @@ export default defineAIServiceAdapter('openai', {
     label: 'OpenAI',
     image: chatgptIcon
   },
-  Writer: OptionConfigurer
+  Writer: OptionsConfigurer,
+  ChatOptionsWriter: ChatConfigurer
 })

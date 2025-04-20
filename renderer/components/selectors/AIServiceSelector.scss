@@ -1,0 +1,13 @@
+.spirit-ai-service-selector {
+  .t-select-option {
+    height: auto;
+  }
+  &__option {
+    display: flex;
+    align-items: center;
+    &--description {
+      font-size: 12px;
+      color: var(--td-text-color-placeholder);
+    }
+  }
+}

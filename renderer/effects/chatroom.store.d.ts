@@ -71,12 +71,12 @@ declare module 'spirit' {
     enableTools?: boolean
 
     aiService?: {
-      uuid: string
+      uuid?: string
       options?: AIServiceOptions
     }
 
     bot?: {
-      uuid: string
+      uuid?: string
       options?: BotOptions
     }
   }

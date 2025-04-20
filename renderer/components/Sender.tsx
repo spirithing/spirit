@@ -217,6 +217,8 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
       setDisplay(false)
     }
   })
+
+  const [shortcuts] = useElectronStore('shortcuts')
   return <div className={`${prefix}-wrap`}>
     <div className={`${prefix}-bg`} />
     <div
@@ -279,7 +281,7 @@ function Sender(props: SenderProps, ref: ForwardedRef<SenderContext>) {
                   .map(image => ({ type: 'image' as const, url: image }))
               ])
             }
-            if (isShortcut(e, ['metaOrCtrl', 'Enter'])) {
+            if (isShortcut(e, shortcuts?.send ?? ['enter'])) {
               try {
                 send(text, assets)
                 e.stopPropagation()
@@ -556,6 +558,7 @@ function StatusBar(props: StatusBarProps) {
   const { icon, iconTooltip, message } = props
   const [{ messages }] = useChatroom()
   const [sender] = useAtom(senderAtom)
+  const [shortcuts] = useElectronStore('shortcuts')
 
   return <div className={prefix}>
     <div className={`${prefix}__message`}>
@@ -600,7 +603,7 @@ function StatusBar(props: StatusBarProps) {
           disabled={(sender?.text?.length ?? 0) === 0}
           onClick={() => ee.emit('act', 'sendToCurrentChatroomWithCurrentState')}
         >
-          {t('send')} <Kbd keys={['meta', 'enter']} />
+          {t('send')} <Kbd keys={shortcuts?.send ?? ['enter']} />
         </Button>
       </Tooltip>
       <div className={`${prefix}__action-split`} />

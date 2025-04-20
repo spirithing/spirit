@@ -5,16 +5,15 @@ import type { FC, ReactNode } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
 import type { BundledTheme } from 'shiki'
 import { bundledThemes } from 'shiki'
-import { Col, Input, Link, Row, Select, Switch, Tabs, Textarea, Tooltip } from 'tdesign-react'
+import { Col, Input, Link, Row, Select, Tabs, Textarea, Tooltip } from 'tdesign-react'
 
-import { AIServices } from '../configurers/AIServices'
-import { Base } from '../configurers/Base'
-import { useBot } from '../hooks/useBot'
-import { useChatroom } from '../hooks/useChatroom'
-import { useElectronStore } from '../hooks/useStore'
-import { useThemeStore } from '../providers/theme'
-import { KbdRecorder } from './KbdRecorder'
-import { ModelSelector } from './selectors/ModelSelector'
+import { KbdRecorder } from '#renderer/components/KbdRecorder.tsx'
+import { AIServices } from '#renderer/configurers/AIServices.tsx'
+import { Base } from '#renderer/configurers/Base.tsx'
+import { Chatroom } from '#renderer/configurers/Chatroom.tsx'
+import { useBot } from '#renderer/hooks/useBot.ts'
+import { useElectronStore } from '#renderer/hooks/useStore.ts'
+import { useThemeStore } from '#renderer/providers/theme.tsx'
 
 function Theme() {
   const { t } = useTranslation()
@@ -120,7 +119,7 @@ function Shortcuts() {
           </Tooltip>
         </div>
       </Col>
-      <Col span={3}>
+      <Col span={9}>
         <div className='spirit-field'>
           <label>{t('filteredApplications')}</label>
           {/* TODO */}
@@ -128,86 +127,30 @@ function Shortcuts() {
       </Col>
     </Row>
     <Row gutter={12}>
-      <Col span={3}>
+      <Col span={12}>
         <div className='spirit-field'>
-          <label>{t('startShortcut')}</label>
-          <KbdRecorder
-            resettable
-            defaultValue={shortcuts?.start && shortcuts.start.length > 0
-              ? shortcuts.start
-              : ['opt', 'space']}
-            onRecordEnd={v => {
-              if (!v) return
+          <label>{t('shortcuts')}</label>
+          <Row gutter={12}>
+            <Col span={3}>
+              <KbdRecorder
+                resettable
+                defaultValue={shortcuts?.send && shortcuts.send.length > 0
+                  ? shortcuts.send
+                  : ['enter']}
+                onRecordEnd={v => {
+                  if (!v) return
 
-              setShortcuts({ ...shortcuts, start: v })
-            }}
-          />
-          <Tooltip
-            content={
-              <>
-                {/* TODO */}
-                Open your system preferences and set a global shortcut for this action.
-              </>
-            }
-          >
-            <Link className='spirit-field__desc'>{t('startShortcutDesc')}</Link>
-          </Tooltip>
-        </div>
-      </Col>
-    </Row>
-  </>
-}
-
-function Chatroom() {
-  const { t } = useTranslation()
-  const [chatroom, { setChatroom }] = useChatroom()
-  return <>
-    <Row gutter={12}>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('name')}</label>
-          <Input
-            value={chatroom?.name}
-            onChange={v => setChatroom({ ...chatroom!, name: v })}
-          />
-        </div>
-        <div className='spirit-field'>
-          <label>{t('model')}</label>
-          <ModelSelector
-            value={{
-              aiServiceUUID: chatroom?.options?.aiServiceUUID,
-              model: chatroom?.options?.model
-            }}
-            onChange={v =>
-              setChatroom({
-                ...chatroom!,
-                options: { ...chatroom?.options, ...v }
-              })}
-          />
-        </div>
-        <div className='spirit-field'>
-          <label>工具</label>
-          <div>
-            <Switch
-              value={chatroom.options?.enableTools}
-              onChange={v =>
-                setChatroom({
-                  ...chatroom!,
-                  options: { ...chatroom.options, enableTools: v }
-                })}
-              label={['启用', '停用']}
-            />
-          </div>
-        </div>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('desc')}</label>
-          <Textarea
-            value={chatroom?.description}
-            onChange={v => setChatroom({ ...chatroom!, description: v })}
-            autosize={{ minRows: 1, maxRows: 6 }}
-          />
+                  setShortcuts({
+                    ...shortcuts,
+                    send: v.map(k => ({
+                      NumpadEnter: 'Enter'
+                    }[k] ?? k))
+                  })
+                }}
+              />
+              <Link className='spirit-field__desc'>{t('shortcut.sendDesc')}</Link>
+            </Col>
+          </Row>
         </div>
       </Col>
     </Row>

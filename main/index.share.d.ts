@@ -6,7 +6,8 @@ declare module 'spirit' {
     username: string
   }
   export interface Shortcuts {
-    start: string[]
+    start?: string[]
+    send?: string[]
   }
   export interface Application {
     name: string

@@ -3,7 +3,7 @@ declare module 'spirit' {
     tools?: string[]
     enableTools?: boolean
     aiService?: {
-      uuid: string
+      uuid?: string
       options?: AIServiceOptions
     }
   }
