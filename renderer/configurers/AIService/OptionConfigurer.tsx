@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import type { AIServiceOptions } from 'spirit'
 
 import type { ListItemWriterProps } from '../../components/ListWithPreview'
-import { aiServiceOptionConfigurerMapping } from './base'
+import { aiServiceOptionConfigurerMapping } from './base.tsx'
 
 export function AIServiceOptionConfigurer(
   props: ListItemWriterProps<AIServiceOptions>

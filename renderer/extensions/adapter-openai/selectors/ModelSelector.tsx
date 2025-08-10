@@ -4,9 +4,8 @@ import useSWR from 'swr'
 import { LoadingIcon } from 'tdesign-icons-react'
 import { Select } from 'tdesign-react'
 
-import { useOpenAI } from '../Provider'
-
 import ChatModel = OpenAI.ChatModel
+import { useInstanceAndAPI } from '#renderer/configurers/AIService/base.tsx'
 
 export interface ModelSelectorProps {
   style?: CSSProperties
@@ -25,7 +24,7 @@ export function ModelSelector({
   defaultValue,
   onChange
 }: ModelSelectorProps) {
-  const { api, instance } = useOpenAI() ?? {}
+  const { api, instance } = useInstanceAndAPI() ?? {}
   const { data: models, isLoading, isValidating } = useSWR(
     ['openai.chatroom', api, instance],
     async () => (instance && await api?.models(instance)) ?? []

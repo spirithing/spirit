@@ -1,6 +1,6 @@
 import cozeIcon from '../../assets/coze.svg'
 import { defineAIServiceAdapter } from '../../extension'
-import { OptionConfigurer } from './OptionConfigurer'
+import { OptionConfigurer } from './configurers/OptionConfigurer'
 import type { CozeQuesterMessage } from './Quester'
 import CozeQuester from './Quester'
 

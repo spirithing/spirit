@@ -9,7 +9,6 @@ ChatConfigurer.prefix = `${'spirit'}-chat-configurer`
 export function ChatConfigurer(props: ChatConfigurerProps<'openai'>) {
   const { t } = useTranslation()
   const { readonly, value, defaultValue, onChange } = props
-  console.log({ value })
   return <>
     <div className='spirit-field'>
       <label>{t('model')}</label>

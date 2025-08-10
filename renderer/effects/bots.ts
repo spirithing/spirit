@@ -4,7 +4,7 @@ import type { IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '#renderer/atoms/chatroom.ts'
-import { getOrCreateInstanceAndAPI, getTargetOrDefaultAIService } from '#renderer/configurers/AIService/base.ts'
+import { getOrCreateInstanceAndAPI, getTargetOrDefaultAIService } from '#renderer/configurers/AIService/base.tsx'
 import { ee } from '#renderer/instances/ee.ts'
 import { getThrowWhenUndefined } from '#renderer/store.ts'
 import { tools } from '#renderer/tools/index.ts'

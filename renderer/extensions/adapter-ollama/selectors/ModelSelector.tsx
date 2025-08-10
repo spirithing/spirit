@@ -3,7 +3,7 @@ import useSWR from 'swr'
 import { LoadingIcon } from 'tdesign-icons-react'
 import { Select } from 'tdesign-react'
 
-import { useOllama } from '../Provider'
+import { useInstanceAndAPI } from '#renderer/configurers/AIService/base.tsx'
 
 export interface ModelSelectorProps {
   style?: CSSProperties
@@ -22,7 +22,7 @@ export function ModelSelector({
   defaultValue,
   onChange
 }: ModelSelectorProps) {
-  const { api, instance } = useOllama() ?? {}
+  const { api, instance } = useInstanceAndAPI() ?? {}
   const { data: models, isLoading, isValidating } = useSWR(
     ['ollama.models', api, instance],
     async () => instance ? await api?.models(instance) : undefined

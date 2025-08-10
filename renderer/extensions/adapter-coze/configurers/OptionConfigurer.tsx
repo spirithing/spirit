@@ -1,19 +1,18 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { AIServiceOptions } from 'spirit'
 import { Col, Input, Row } from 'tdesign-react'
 
-import type { ListItemWriterProps } from '../../components/ListWithPreview'
-import { getOrCreateInstanceAndAPI } from '../../configurers/AIService/base'
-import { CozeProvider } from './Provider'
-import { ModelSelector } from './selectors/ModelSelector'
+import type { ListItemWriterProps } from '#renderer/components/ListWithPreview.tsx'
+import { InstanceAndAPIProvider } from '#renderer/configurers/AIService/base.tsx'
+
+import { ModelSelector } from '../selectors/ModelSelector'
 
 export function OptionConfigurer(
   props: ListItemWriterProps<AIServiceOptions & { type: 'coze' }>
 ) {
   const { t } = useTranslation()
   const { isEditing, value, onChange, onOnConfirm } = props
-  const [instance, api] = useMemo(() => getOrCreateInstanceAndAPI(value), [value])
   useEffect(() => {
     return onOnConfirm?.(value => {
       if (!value?.defaultBotID || value?.defaultBotID === '') {
@@ -23,7 +22,7 @@ export function OptionConfigurer(
       }
     })
   }, [onOnConfirm, t])
-  return <CozeProvider value={{ instance, api }}>
+  return <InstanceAndAPIProvider options={value}>
     <Row gutter={12}>
       <Col span={6}>
         <div className='spirit-field'>
@@ -59,5 +58,5 @@ export function OptionConfigurer(
         </div>
       </Col>
     </Row>
-  </CozeProvider>
+  </InstanceAndAPIProvider>
 }

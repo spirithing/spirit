@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import { LoadingIcon } from 'tdesign-icons-react'
 import { Select } from 'tdesign-react'
 
-import { getOrCreateInstanceAndAPI } from '../../configurers/AIService/base'
+import { getOrCreateInstanceAndAPI } from '../../configurers/AIService/base.tsx'
 import { useElectronStore } from '../../hooks/useStore'
 
 interface Value {

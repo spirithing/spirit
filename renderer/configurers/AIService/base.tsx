@@ -1,4 +1,6 @@
-import type { AIService, AIServiceOptionsMap } from 'spirit'
+import type { PropsWithChildren } from 'react'
+import { createContext, useContext, useMemo } from 'react'
+import type { AIService, AIServiceAPIAdapter, AIServiceCreators, AIServiceOptionsMap } from 'spirit'
 
 import type { AIServiceAdapter } from '#renderer/extension.ts'
 import AdapterCoze from '#renderer/extensions/adapter-coze/index.tsx'
@@ -40,15 +42,48 @@ export function getOrCreateInstanceAndAPI<
   K extends keyof AIServiceOptionsMap,
   A extends AIServiceAdapter<K>,
 >(
-  option: AIService['options'] & { type: K }
+  options: AIService['options'] & { type: K }
 ): [ReturnType<A['creator']>, A['api']] {
-  const instance = getOrCreateInstance(option)
-  const api = apis[option.type]
+  const instance = getOrCreateInstance(options)
+  const api = apis[options.type]
   if (!api) throw new Error('API not found, please check your configuration')
   return [
     instance as ReturnType<A['creator']>,
     api as A['api']
   ]
+}
+
+const InstanceAndAPIContext = createContext<
+  null | {
+    instance: AIServiceCreators[keyof AIServiceOptionsMap]
+    api: AIServiceAPIAdapter<keyof AIServiceOptionsMap>
+  }
+>(null)
+
+export const InstanceAndAPIProvider = <
+  K extends keyof AIServiceOptionsMap,
+>({
+  options,
+  children
+}: PropsWithChildren<{
+  options: AIService['options'] & { type: K }
+}>) => {
+  const [instance, api] = useMemo(() =>
+    getOrCreateInstanceAndAPI(
+      // @ts-expect-error
+      options
+    ), [options])
+  return <InstanceAndAPIContext.Provider value={{ instance, api }}>
+    {children}
+  </InstanceAndAPIContext.Provider>
+}
+
+export const useInstanceAndAPI = () => {
+  const context = useContext(InstanceAndAPIContext)
+  if (!context) {
+    throw new Error('useInstanceAndAPI must be used within a InstanceAndAPIProvider')
+  }
+  return context
 }
 
 export const apis = {

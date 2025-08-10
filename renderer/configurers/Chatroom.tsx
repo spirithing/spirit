@@ -5,7 +5,7 @@ import type { AIServiceAPIOptionsForChat } from 'spirit'
 import { Col, Collapse, Input, Row, Switch, Textarea } from 'tdesign-react'
 
 import { AIServiceSelector } from '#renderer/components/selectors/AIServiceSelector.tsx'
-import { aiServiceExtensionMap } from '#renderer/configurers/AIService/base.ts'
+import { aiServiceExtensionMap, InstanceAndAPIProvider } from '#renderer/configurers/AIService/base.tsx'
 import type { ChatConfigurerProps } from '#renderer/extension.ts'
 import { useChatroom } from '#renderer/hooks/useChatroom.ts'
 import { useElectronStore } from '#renderer/hooks/useStore.ts'
@@ -62,20 +62,22 @@ export function Chatroom() {
                   })}
               />
             </div>
-            <ChatOptionsWriter
-              value={chatroom?.options?.aiService?.options?.chat as any}
-              onChange={v =>
-                setChatroom({
-                  ...chatroom!,
-                  options: defaultsDeep({
-                    aiService: {
-                      options: {
-                        chat: v
+            {aiService && <InstanceAndAPIProvider options={aiService.options}>
+              <ChatOptionsWriter
+                value={chatroom?.options?.aiService?.options?.chat as any}
+                onChange={v =>
+                  setChatroom({
+                    ...chatroom!,
+                    options: defaultsDeep({
+                      aiService: {
+                        options: {
+                          chat: v
+                        }
                       }
-                    }
-                  }, chatroom.options)
-                })}
-            />
+                    }, chatroom.options)
+                  })}
+              />
+            </InstanceAndAPIProvider>}
           </Collapse.Panel>
         </Collapse>
       </Col>

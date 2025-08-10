@@ -1,22 +1,20 @@
 import { defaultsDeep } from 'lodash-es'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { AIServiceOptions } from 'spirit'
 import { Col, Collapse, Input, Row } from 'tdesign-react'
 
 import type { ListItemWriterProps } from '#renderer/components/ListWithPreview.tsx'
-import { getOrCreateInstanceAndAPI } from '#renderer/configurers/AIService/base.ts'
+import { InstanceAndAPIProvider } from '#renderer/configurers/AIService/base.tsx'
 
-import { ChatConfigurer } from './configurers/ChatConfigurer'
-import { OpenAIProvider } from './Provider'
-import { ModelSelector } from './selectors/ModelSelector'
+import { ModelSelector } from '../selectors/ModelSelector'
+import { ChatConfigurer } from './ChatConfigurer'
 
 export function OptionsConfigurer(
   props: ListItemWriterProps<AIServiceOptions & { type: 'openai' }>
 ) {
   const { t } = useTranslation()
   const { isEditing, value, onChange, onOnConfirm } = props
-  const [instance, api] = useMemo(() => getOrCreateInstanceAndAPI(value), [value])
   useEffect(() => {
     return onOnConfirm?.(value => {
       if (!value?.apiHost || value?.apiHost === '') {
@@ -31,7 +29,7 @@ export function OptionsConfigurer(
       }
     })
   }, [onOnConfirm, t])
-  return <OpenAIProvider value={{ instance, api }}>
+  return <InstanceAndAPIProvider options={value}>
     <Row gutter={12}>
       <Col span={6}>
         <div className='spirit-field'>
@@ -80,5 +78,5 @@ export function OptionsConfigurer(
         />
       </Collapse.Panel>
     </Collapse>
-  </OpenAIProvider>
+  </InstanceAndAPIProvider>
 }

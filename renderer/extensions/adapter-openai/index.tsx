@@ -5,7 +5,7 @@ import chatgptIcon from '#renderer/assets/chatgpt.svg'
 import { defineAIServiceAdapter } from '#renderer/extension.ts'
 
 import { ChatConfigurer } from './configurers/ChatConfigurer'
-import { OptionsConfigurer } from './OptionsConfigurer'
+import { OptionsConfigurer } from './configurers/OptionsConfigurer'
 
 function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessageParam {
   const isBot = m.user?.name === bot.name

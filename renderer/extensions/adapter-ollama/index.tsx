@@ -3,7 +3,7 @@ import type { IToolCall } from 'spirit'
 
 import ollamaIcon from '../../assets/ollama.svg'
 import { defineAIServiceAdapter } from '../../extension'
-import { OptionConfigurer } from './OptionConfigurer'
+import { OptionConfigurer } from './configurers/OptionConfigurer'
 
 export default defineAIServiceAdapter('ollama', {
   creator: options =>
