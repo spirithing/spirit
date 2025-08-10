@@ -1,13 +1,14 @@
 import i18n from 'i18next'
 import { defaultsDeep, isEqual, template } from 'lodash-es'
-import type { IMessage } from 'spirit'
+import type { Bot, IMessage } from 'spirit'
 import { MessagePlugin } from 'tdesign-react'
 
 import { editMessage, sendMessage } from '#renderer/atoms/chatroom.ts'
 import { getOrCreateInstanceAndAPI, getTargetOrDefaultAIService } from '#renderer/configurers/AIService/base.tsx'
 import { ee } from '#renderer/instances/ee.ts'
-import { getThrowWhenUndefined } from '#renderer/store.ts'
+import { getFromStore, getThrowWhenUndefined } from '#renderer/store.ts'
 import { tools } from '#renderer/tools/index.ts'
+import { notify } from '#renderer/utils/notify.ts'
 import { JSON_MD_WRAPPER, MD_CODE_BLOCK } from '#sharing/constants.ts'
 import { creatCaught } from '#sharing/utils/creatCaught.ts'
 
@@ -30,6 +31,14 @@ export function getTargetOrDefaultBot(uuid?: string) {
     : getThrowWhenUndefined('bot')
 }
 
+const notifyOnlyBackend: typeof notify = (...args) => {
+  const isDisplaying = getFromStore('display') ?? false
+  if (isDisplaying) {
+    return
+  }
+  notify(...args)
+}
+
 ee.on('addMessage', async (m, chatroom) => {
   const { id, messages } = chatroom
   if (m.type?.startsWith('__spirit:')) return
@@ -37,13 +46,72 @@ ee.on('addMessage', async (m, chatroom) => {
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
 
-  const alert = (type: 'info' | 'warn' | 'error', text: string) => {
-    sendTo(text, { name: `system:alert[${type}]` }, { type: '__spirit:system__' })
+  let isAlerted = false
+  let currentBot: Bot | undefined
+  using _ = {
+    [Symbol.dispose]: () => {
+      if (isAlerted) return
+
+      notifyOnlyBackend(`${currentBot?.name} 给您发送了一条消息：\n...`, {
+        title: chatroom.name
+      })
+    }
   }
 
-  if (import.meta.env.DEV && m.text === 'ping') {
-    alert('info', 'pong')
-    return
+  const alert = (type: 'info' | 'success' | 'warn' | 'error', text: string) => {
+    isAlerted = true
+
+    sendTo(text, { name: `system:alert[${type}]` }, { type: '__spirit:system__' })
+    notifyOnlyBackend(`${currentBot?.name} 给您发送了一条消息：\n${text}`, {
+      title: chatroom.name,
+      type
+    })
+  }
+
+  const debug = async (prefix = '') => {
+    let text = m.text
+    let matchedPrepare: () => Promise<void> = async () => void 0
+    if (text?.startsWith('delay')) {
+      const regexp = /delay\s+(\d+)(?:\s+(.*))?/
+      const match = text.match(regexp)
+      if (match) {
+        const delay = parseInt(match[1], 10)
+        if (isNaN(delay)) {
+          alert('error', 'Invalid delay value')
+          return false
+        }
+        matchedPrepare = async () => {
+          await new Promise(resolve => setTimeout(resolve, delay))
+        }
+        text = match[2] || ''
+      }
+    }
+    console.log({ text, prefix })
+    if (text === `${prefix}ping`) {
+      await matchedPrepare()
+      alert('info', 'pong')
+      return true
+    }
+    if (text === `${prefix}ping:s`) {
+      await matchedPrepare()
+      alert('success', 'pong')
+      return true
+    }
+    if (text === `${prefix}ping:w`) {
+      await matchedPrepare()
+      alert('warn', 'pong')
+      return true
+    }
+    if (text === `${prefix}ping:e`) {
+      await matchedPrepare()
+      alert('error', 'pong')
+      return true
+    }
+    return false
+  }
+
+  if (import.meta.env.DEV) {
+    if (await debug()) return
   }
 
   try {
@@ -54,6 +122,12 @@ ee.on('addMessage', async (m, chatroom) => {
     const bot = getTargetOrDefaultBot(chatroom.options?.bot?.uuid)
 
     if (isEqual(m.user, bot)) return
+    currentBot = bot
+
+    if (import.meta.env.DEV) {
+      if (await debug('wbr ')) return
+      if (await debug('whenbotready ')) return
+    }
 
     const { uuid } = sendTo('Thinking', bot)
     let count = 0
