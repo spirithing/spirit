@@ -60,7 +60,7 @@ export function Chatroom() {
     <Row gutter={12}>
       <Col span={12}>
         <Collapse>
-          <Collapse.Panel header={t('chatroomOptions')}>
+          <Collapse.Panel header={t('aiServiceOptions')}>
             <div className='spirit-field'>
               <label>{t('aiServices')}</label>
               <AIServiceSelector

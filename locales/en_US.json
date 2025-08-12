@@ -61,6 +61,7 @@
     "chatroomOptions": "AI Service Chatroom Options",
     "confirmChangeType": "Modifying the type will clear the current type configuration data, please confirm whether to continue switching"
   },
+  "aiServiceOptions": "AI Service Options",
   "search": "Search by keywords",
   "untitled": "Untitled",
   "dragUploadTooltip": "Click or drag and drop to replace the image in this area.",
