@@ -204,24 +204,6 @@ const tabs = [
     Configurer: Base
   },
   {
-    icon: 'palette',
-    value: 'theme',
-    title: <Translation>{t => t('theme')}</Translation>,
-    Configurer: Theme
-  },
-  {
-    icon: 'keyboard',
-    value: 'shortcuts',
-    title: <Translation>{t => t('shortcuts')}</Translation>,
-    Configurer: Shortcuts
-  },
-  {
-    icon: 'robot',
-    value: 'aiServices',
-    title: <Translation>{t => t('aiServices')}</Translation>,
-    Configurer: AIServices
-  },
-  {
     icon: 'forum',
     value: 'chatroom',
     title: <Translation>{t => t('chatroom')}</Translation>,
@@ -232,6 +214,24 @@ const tabs = [
     value: 'bot',
     title: <Translation>{t => t('bot')}</Translation>,
     Configurer: Bot
+  },
+  {
+    icon: 'robot',
+    value: 'aiServices',
+    title: <Translation>{t => t('aiServices')}</Translation>,
+    Configurer: AIServices
+  },
+  {
+    icon: 'keyboard',
+    value: 'shortcuts',
+    title: <Translation>{t => t('shortcuts')}</Translation>,
+    Configurer: Shortcuts
+  },
+  {
+    icon: 'palette',
+    value: 'theme',
+    title: <Translation>{t => t('theme')}</Translation>,
+    Configurer: Theme
   },
   {
     icon: 'verified_user',
