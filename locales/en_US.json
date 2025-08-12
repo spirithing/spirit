@@ -116,5 +116,7 @@
     "newWindowDesc": "Open a new window in Chrome",
     "inspect": "Chrome Inspect",
     "inspectDesc": "Open inspect in Chrome"
-  }
+  },
+
+  "tools": "Tools"
 }

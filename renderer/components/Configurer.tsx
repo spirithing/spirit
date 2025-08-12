@@ -5,13 +5,13 @@ import type { FC, ReactNode } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
 import type { BundledTheme } from 'shiki'
 import { bundledThemes } from 'shiki'
-import { Col, Input, Link, Row, Select, Tabs, Textarea, Tooltip } from 'tdesign-react'
+import { Col, Link, Row, Select, Tabs, Tooltip } from 'tdesign-react'
 
 import { KbdRecorder } from '#renderer/components/KbdRecorder.tsx'
 import { AIServices } from '#renderer/configurers/AIServices.tsx'
 import { Base } from '#renderer/configurers/Base.tsx'
+import { Bot } from '#renderer/configurers/Bot.tsx'
 import { Chatroom } from '#renderer/configurers/Chatroom.tsx'
-import { useBot } from '#renderer/hooks/useBot.ts'
 import { useElectronStore } from '#renderer/hooks/useStore.ts'
 import { useThemeStore } from '#renderer/providers/theme.tsx'
 
@@ -151,37 +151,6 @@ function Shortcuts() {
               <Link className='spirit-field__desc'>{t('shortcut.sendDesc')}</Link>
             </Col>
           </Row>
-        </div>
-      </Col>
-    </Row>
-  </>
-}
-
-function Bot() {
-  const { t } = useTranslation()
-  const [bot, setBot] = useBot()
-  return <>
-    <Row gutter={12}>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('name')}</label>
-          <Input
-            value={bot?.name}
-            onChange={v => setBot({ ...bot!, name: v })}
-          />
-        </div>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('desc')}</label>
-          <Textarea
-            value={bot?.description}
-            onChange={v => setBot({ ...bot!, description: v })}
-            autosize={{
-              maxRows: 6,
-              minRows: 2
-            }}
-          />
         </div>
       </Col>
     </Row>

@@ -116,5 +116,6 @@
     "inspect": "Chrome 检查",
     "inspectDesc": "在 Chrome 中打开检查"
   },
-  "contentIsEmpty": "内容为空"
+  "contentIsEmpty": "内容为空",
+  "tools": "工具"
 }
