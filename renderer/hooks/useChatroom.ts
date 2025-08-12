@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { ChatRoom, IMessage, IUser, Store } from 'spirit'
 
 import { ipcRenderer } from '../electron'
@@ -142,8 +143,10 @@ export const useChatroom = () => {
 
 const defaultChatrooms = ['default']
 export const useChatrooms = () => {
+  const { t } = useTranslation()
   const [chatrooms, setChatrooms] = useElectronStore('chatrooms', defaultChatrooms)
-  const addChatroom = useCallback((id: string, model?: string) => {
+  const addChatroom = useCallback((id: string, options?: { model?: string; name?: string }) => {
+    const { model, name = t('newChatroom') } = options ?? {}
     setChatrooms(prev => {
       if (!prev) return defaultChatrooms
       return [id, ...prev]
@@ -158,7 +161,10 @@ export const useChatrooms = () => {
         messages: []
       }
     )
-  }, [setChatrooms])
+    updateChatroomMeta(id, {
+      name
+    })
+  }, [setChatrooms, t])
   const delChatroom = useCallback((id: string) => {
     setChatrooms(prev => {
       if (!prev) return defaultChatrooms
