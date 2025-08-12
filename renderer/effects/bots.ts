@@ -31,20 +31,25 @@ export function getTargetOrDefaultBot(uuid?: string) {
     : getThrowWhenUndefined('bot')
 }
 
-const notifyOnlyBackend: typeof notify = (...args) => {
-  const isDisplaying = getFromStore('display') ?? false
-  if (isDisplaying) {
-    return
-  }
-  notify(...args)
-}
-
 ee.on('addMessage', async (m, chatroom) => {
   const { id, messages } = chatroom
   if (m.type?.startsWith('__spirit:')) return
 
   const sendTo = sendMessage.bind(null, id)
   const editTo = editMessage.bind(null, id)
+
+  const notifyOnlyBackend: typeof notify = (...args) => {
+    const isDisplaying = getFromStore('display') ?? false
+
+    const activeChatroom = getThrowWhenUndefined('activeChatroom')
+    const isActive = activeChatroom === id
+
+    const isBackend = !isDisplaying || !isActive
+    if (!isBackend) {
+      return
+    }
+    notify(...args)
+  }
 
   let isAlerted = false
   let currentBot: Bot | undefined
@@ -62,7 +67,10 @@ ee.on('addMessage', async (m, chatroom) => {
     isAlerted = true
 
     sendTo(text, { name: `system:alert[${type}]` }, { type: '__spirit:system__' })
-    notifyOnlyBackend(`${currentBot?.name} 给您发送了一条消息：\n${text}`, {
+    const limitText = text.length > 200
+      ? `${text.slice(0, 200)}...`
+      : text
+    notifyOnlyBackend(`${currentBot?.name} 给您发送了一条消息：\n${limitText}`, {
       title: chatroom.name,
       type
     })

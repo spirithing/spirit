@@ -10,25 +10,34 @@ export const notify = (
      */
     type?: 'info' | 'success' | 'warn' | 'error'
     title?: string
+    /**
+     * @default false
+     */
+    autoClose?: boolean | number
+
+    onClick?: (e: Event) => void
+    onClose?: (e: Event) => void
   }
 ) => {
-  const type = options?.type || 'info'
+  const {
+    type = 'info',
+    autoClose = false,
+    onClick,
+    onClose
+  } = options || {}
   const notification = new Notification(options?.title || 'Spirit', {
     body: text,
     icon: type === 'info' ? undefined : {
       error: errorIcon,
       success: successIcon,
       warn: warnIcon
-    }[type],
-    ...options
+    }[type]
   })
-  notification.onclick = (e) => {
-    console.log('Notification clicked:', e)
+  notification.onclick = onClick ?? null
+  notification.onclose = onClose ?? null
+  if (autoClose) {
+    setTimeout(() => {
+      notification.close()
+    }, typeof autoClose === 'number' ? autoClose : 5000)
   }
-  notification.onclose = (e) => {
-    console.log('Notification closed:', e)
-  }
-  setTimeout(() => {
-    notification.close()
-  }, 5000)
 }
