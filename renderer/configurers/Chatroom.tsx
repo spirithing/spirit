@@ -45,6 +45,20 @@ export function Chatroom() {
             onChange={v => setChatroom({ ...chatroom!, name: v })}
           />
         </div>
+      </Col>
+      <Col span={6}>
+        <div className='spirit-field'>
+          <label>{t('desc')}</label>
+          <Textarea
+            value={chatroom?.description}
+            onChange={v => setChatroom({ ...chatroom!, description: v })}
+            autosize={{ minRows: 1, maxRows: 6 }}
+          />
+        </div>
+      </Col>
+    </Row>
+    <Row gutter={12}>
+      <Col span={12}>
         <Collapse>
           <Collapse.Panel header={t('chatroomOptions')}>
             <div className='spirit-field'>
@@ -78,36 +92,22 @@ export function Chatroom() {
                   })}
               />
             </InstanceAndAPIProvider>}
+            <div className='spirit-field'>
+              <label>工具</label>
+              <div>
+                <Switch
+                  value={chatroom.options?.enableTools}
+                  onChange={v =>
+                    setChatroom({
+                      ...chatroom!,
+                      options: { ...chatroom.options, enableTools: v }
+                    })}
+                  label={['启用', '停用']}
+                />
+              </div>
+            </div>
           </Collapse.Panel>
         </Collapse>
-      </Col>
-      <Col span={6}>
-        <div className='spirit-field'>
-          <label>{t('desc')}</label>
-          <Textarea
-            value={chatroom?.description}
-            onChange={v => setChatroom({ ...chatroom!, description: v })}
-            autosize={{ minRows: 1, maxRows: 6 }}
-          />
-        </div>
-      </Col>
-    </Row>
-    <Row gutter={12}>
-      <Col span={12}>
-        <div className='spirit-field'>
-          <label>工具</label>
-          <div>
-            <Switch
-              value={chatroom.options?.enableTools}
-              onChange={v =>
-                setChatroom({
-                  ...chatroom!,
-                  options: { ...chatroom.options, enableTools: v }
-                })}
-              label={['启用', '停用']}
-            />
-          </div>
-        </div>
       </Col>
     </Row>
   </>
