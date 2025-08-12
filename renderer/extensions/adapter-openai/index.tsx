@@ -14,7 +14,17 @@ function messageTransform(bot: Bot, m: IMessage): OpenAI.ChatCompletionMessagePa
     return {
       name,
       role: 'assistant',
-      content: m.text
+      content: m.text,
+      // eslint-disable-next-line camelcase
+      tool_calls: m.toolCalls?.map(c => ({
+        ...c,
+        id: c.id ?? 'unknown',
+        function: {
+          ...c.function,
+          // eslint-disable-next-line camelcase
+          arguments: JSON.stringify(c.function?.arguments ?? {})
+        }
+      } as OpenAI.ChatCompletionMessageToolCall))
     }
   }
   if (m.type) {
@@ -87,28 +97,42 @@ export default defineAIServiceAdapter('openai', {
         } as OpenAI.ChatCompletionTool))
       })
       let streamMessage = ''
-      const toolCalls: IToolCall[] = []
-      yield [streamMessage, { status: 'started' }]
+      const toolCalls: OpenAI.ChatCompletionChunk.Choice.Delta.ToolCall[] = []
+      yield [streamMessage, { status: 'started' }] as const
       for await (const { choices: [{ delta }] } of completions) {
         streamMessage += delta.content ?? ''
-        if (delta.tool_calls) {
-          toolCalls.push(...delta.tool_calls.map(rest => ({
-            ...rest,
-            function: {
-              name: rest.function?.name ?? undefined,
-              arguments: rest.function?.arguments
-                ? JSON.parse(rest.function.arguments)
-                : undefined
+        const { tool_calls: deltaToolCalls } = delta
+        if (deltaToolCalls) {
+          deltaToolCalls.forEach((toolCall, index) => {
+            if (toolCalls[index] === undefined) {
+              toolCalls[index] = toolCall
+            } else {
+              const func = toolCalls[index].function
+              if (
+                func?.arguments !== undefined
+                && toolCall.function?.arguments !== undefined
+              ) {
+                func.arguments += toolCall.function?.arguments
+              }
             }
-          })))
+          })
         }
         yield [streamMessage, {
-          toolCalls,
+          toolCalls: [],
           status: 'running'
-        }]
+        }] as const
       }
+      const resolveToolCalls = toolCalls.map(rest => ({
+        ...rest,
+        function: {
+          ...rest.function,
+          arguments: rest.function?.arguments
+            ? JSON.parse(rest.function.arguments)
+            : {}
+        }
+      } as IToolCall))
       yield [streamMessage, {
-        toolCalls,
+        toolCalls: resolveToolCalls,
         status: 'completed'
       }]
     },

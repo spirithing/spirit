@@ -94,7 +94,6 @@ ee.on('addMessage', async (m, chatroom) => {
         text = match[2] || ''
       }
     }
-    console.log({ text, prefix })
     if (text === `${prefix}ping`) {
       await matchedPrepare()
       alert('info', 'pong')
